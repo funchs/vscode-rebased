@@ -12,6 +12,35 @@ interface FileChange {
 
 const vscode = acquireVsCodeApi<unknown>();
 
+// --- Conventional Commits live validator ------------------------------------
+const CC_TYPES = ["feat","fix","docs","style","refactor","perf","test","build","ci","chore","revert"];
+const HEADER_RE = /^([a-zA-Z][a-zA-Z0-9_-]*)(?:\(([^)]+)\))?(!)?:[ \t]+(.+)$/;
+
+function validateCC(text: string): { type?: string; scope?: string; bang?: boolean; subject?: string; issues: { sev: string; msg: string }[] } {
+  const issues: { sev: string; msg: string }[] = [];
+  if (!text.trim()) return { issues: [] };
+  const first = text.split("\n", 1)[0];
+  const m = first.match(HEADER_RE);
+  if (!m) {
+    issues.push({ sev: "error", msg: "Header must be type(scope)?[!]: subject" });
+    return { issues };
+  }
+  const [, type, scope, bang, subject] = m;
+  const out = { type, scope, bang: !!bang, subject, issues };
+  if (!CC_TYPES.includes(type.toLowerCase())) {
+    issues.push({ sev: "warn", msg: `Unknown type "${type}"` });
+  }
+  if (type !== type.toLowerCase()) issues.push({ sev: "warn", msg: "Type should be lowercase" });
+  if (first.length > 72) issues.push({ sev: "warn", msg: `${first.length} chars (recommended ≤ 72)` });
+  if (/\.\s*$/.test(subject)) issues.push({ sev: "warn", msg: "No period at end" });
+  if (subject[0] && subject[0] !== subject[0].toLowerCase()) issues.push({ sev: "warn", msg: "Lowercase subject" });
+  const lines = text.split("\n");
+  if (lines.length > 1 && lines[1].trim() !== "") {
+    issues.push({ sev: "warn", msg: "Blank line after header" });
+  }
+  return out;
+}
+
 const stagedEl = document.getElementById("staged") as HTMLUListElement;
 const changesEl = document.getElementById("changes") as HTMLUListElement;
 const stagedCount = document.getElementById("staged-count") as HTMLSpanElement;
@@ -102,10 +131,55 @@ commitBtn.addEventListener("click", () => {
   vscode.postMessage({ type: "commit", message: msgEl.value, amend: amendEl.checked });
   msgEl.value = "";
   amendEl.checked = false;
+  updateCC();
 });
 amendEl.addEventListener("change", () => {
   commitBtn.disabled = false;
 });
+
+const badgesEl = document.getElementById("cc-badges") as HTMLSpanElement;
+const ccStatus = document.getElementById("cc-status") as HTMLDivElement;
+const wizardBtn = document.getElementById("wizard") as HTMLButtonElement;
+wizardBtn.textContent = "Wizard…";
+wizardBtn.addEventListener("click", () => vscode.postMessage({ type: "wizard" }));
+
+function clearChildren(el: HTMLElement) { while (el.firstChild) el.removeChild(el.firstChild); }
+
+function updateCC() {
+  const r = validateCC(msgEl.value);
+  clearChildren(badgesEl);
+  if (r.type) {
+    const chip = document.createElement("span");
+    chip.className = `cc-chip cc-type-${r.type.toLowerCase()}`;
+    chip.textContent = r.type;
+    badgesEl.appendChild(chip);
+  }
+  if (r.scope) {
+    const chip = document.createElement("span");
+    chip.className = "cc-chip cc-scope";
+    chip.textContent = r.scope;
+    badgesEl.appendChild(chip);
+  }
+  if (r.bang) {
+    const chip = document.createElement("span");
+    chip.className = "cc-chip cc-breaking";
+    chip.textContent = "BREAKING";
+    badgesEl.appendChild(chip);
+  }
+  clearChildren(ccStatus);
+  if (!msgEl.value.trim()) { ccStatus.style.display = "none"; return; }
+  ccStatus.style.display = "block";
+  if (!r.issues.length) {
+    ccStatus.className = "cc-status ok";
+    ccStatus.textContent = "✓ Conventional Commit";
+    return;
+  }
+  const hasError = r.issues.some((i) => i.sev === "error");
+  ccStatus.className = "cc-status " + (hasError ? "error" : "warn");
+  ccStatus.textContent = (hasError ? "✕ " : "⚠ ") + r.issues.map((i) => i.msg).join(" · ");
+}
+msgEl.addEventListener("input", updateCC);
+updateCC();
 
 window.addEventListener("message", (event) => {
   const m = event.data;

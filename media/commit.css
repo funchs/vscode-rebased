@@ -80,6 +80,62 @@ button.ghost:hover { background: var(--vscode-toolbar-hoverBackground); }
   padding-top: 8px;
   border-top: 1px solid var(--vscode-panel-border);
 }
+.cc-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+.cc-toolbar .spacer { flex: 1; }
+.cc-toolbar button {
+  background: transparent;
+  border: 1px solid var(--vscode-button-border, var(--vscode-panel-border));
+  color: var(--vscode-foreground);
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.cc-toolbar button:hover { background: var(--vscode-toolbar-hoverBackground); }
+.cc-chip {
+  display: inline-block;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-right: 4px;
+  letter-spacing: 0.3px;
+  color: white;
+}
+.cc-type-feat   { background: var(--vscode-charts-green); }
+.cc-type-fix    { background: var(--vscode-charts-red); }
+.cc-type-docs,
+.cc-type-style,
+.cc-type-chore  { background: var(--vscode-charts-blue); }
+.cc-type-refactor,
+.cc-type-perf   { background: var(--vscode-charts-purple); }
+.cc-type-test,
+.cc-type-ci,
+.cc-type-build  { background: var(--vscode-charts-orange); }
+.cc-type-revert { background: #888; }
+.cc-scope {
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+}
+.cc-breaking {
+  background: var(--vscode-charts-red);
+  color: white;
+}
+.cc-status {
+  font-size: 11px;
+  padding: 3px 0;
+  display: none;
+}
+.cc-status.ok    { color: var(--vscode-charts-green); }
+.cc-status.warn  { color: var(--vscode-charts-yellow); }
+.cc-status.error { color: var(--vscode-charts-red); }
 textarea {
   width: 100%;
   box-sizing: border-box;

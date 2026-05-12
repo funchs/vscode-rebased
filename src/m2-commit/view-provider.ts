@@ -33,6 +33,8 @@ export class CommitViewProvider implements vscode.WebviewViewProvider {
         await vscode.commands.executeCommand("git.openChange", uri);
       } else if (msg.type === "hunks") {
         await vscode.commands.executeCommand("rebased.hunks.open", msg.path);
+      } else if (msg.type === "wizard") {
+        await vscode.commands.executeCommand("rebased.commit.wizard");
       } else if (msg.type === "commit") {
         if (!msg.message?.trim()) {
           vscode.window.showWarningMessage("Commit message cannot be empty.");
@@ -81,7 +83,13 @@ export class CommitViewProvider implements vscode.WebviewViewProvider {
     <ul id="changes" class="filelist"></ul>
   </section>
   <section class="message">
-    <textarea id="msg" placeholder="Commit message" rows="3"></textarea>
+    <div class="cc-toolbar">
+      <span id="cc-badges"></span>
+      <span class="spacer"></span>
+      <button id="wizard" type="button" title="Run commit wizard">$cc Wizard</button>
+    </div>
+    <textarea id="msg" placeholder="type(scope): subject" rows="3"></textarea>
+    <div id="cc-status" class="cc-status"></div>
     <div class="actions">
       <label><input type="checkbox" id="amend" /> Amend last commit</label>
       <button id="commit" class="primary">Commit</button>

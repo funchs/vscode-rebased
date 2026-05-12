@@ -68,6 +68,7 @@ export async function loadSrcModules() {
       { in: resolve(repoRoot, "src/m0-rebase/rebase-todo.ts"), out: "rebase-todo" },
       { in: resolve(repoRoot, "src/m1-log/graph.ts"), out: "graph" },
       { in: resolve(repoRoot, "src/m2-commit/hunks.ts"), out: "hunks" },
+      { in: resolve(repoRoot, "src/core/conventional-commit.ts"), out: "cc" },
     ],
     outdir: out,
     format: "esm",
@@ -79,6 +80,7 @@ export async function loadSrcModules() {
     rebaseTodo: await import(`file://${out}/rebase-todo.js`),
     graph: await import(`file://${out}/graph.js`),
     hunks: await import(`file://${out}/hunks.js`),
+    cc: await import(`file://${out}/cc.js`),
   };
   return modulesCache;
 }

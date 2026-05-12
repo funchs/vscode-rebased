@@ -1,0 +1,116 @@
+{
+  "name": "vscode-rebased",
+  "displayName": "Rebased",
+  "description": "JetBrains-style git client features for VS Code: drag-drop interactive rebase, log graph, commit view, stash/cherry-pick",
+  "version": "0.0.1",
+  "publisher": "rebased",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["SCM Providers", "Other"],
+  "keywords": ["git", "rebase", "interactive rebase", "log", "graph", "stash"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "rebased",
+          "title": "Rebased",
+          "icon": "media/icons/rebased.svg"
+        }
+      ]
+    },
+    "views": {
+      "rebased": [
+        { "id": "rebased.log", "name": "Log", "type": "webview" },
+        { "id": "rebased.commit", "name": "Commit", "type": "webview" },
+        { "id": "rebased.stash", "name": "Stashes" },
+        { "id": "rebased.branches", "name": "Branches" }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "rebased.rebaseTodo",
+        "displayName": "Rebased: Interactive Rebase",
+        "selector": [
+          { "filenamePattern": "**/.git/rebase-merge/git-rebase-todo" },
+          { "filenamePattern": "**/git-rebase-todo" }
+        ],
+        "priority": "default"
+      }
+    ],
+    "commands": [
+      { "command": "rebased.log.refresh", "title": "Refresh Log", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.commit.refresh", "title": "Refresh Commit View", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.stash.refresh", "title": "Refresh Stashes", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.stash.create", "title": "Stash Changes...", "category": "Rebased", "icon": "$(add)" },
+      { "command": "rebased.stash.apply", "title": "Apply Stash", "category": "Rebased" },
+      { "command": "rebased.stash.pop", "title": "Pop Stash", "category": "Rebased" },
+      { "command": "rebased.stash.drop", "title": "Drop Stash", "category": "Rebased", "icon": "$(trash)" },
+      { "command": "rebased.cherryPick", "title": "Cherry-pick Commit...", "category": "Rebased" },
+      { "command": "rebased.rebase.interactive", "title": "Interactive Rebase from...", "category": "Rebased" },
+      { "command": "rebased.branch.checkout", "title": "Checkout Branch", "category": "Rebased" },
+      { "command": "rebased.branch.create", "title": "New Branch...", "category": "Rebased", "icon": "$(git-branch)" },
+      { "command": "rebased.commit.amend", "title": "Amend Last Commit", "category": "Rebased" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "rebased.log.refresh",     "when": "view == rebased.log",    "group": "navigation" },
+        { "command": "rebased.commit.refresh",  "when": "view == rebased.commit", "group": "navigation" },
+        { "command": "rebased.stash.refresh",   "when": "view == rebased.stash",  "group": "navigation" },
+        { "command": "rebased.stash.create",    "when": "view == rebased.stash",  "group": "navigation" },
+        { "command": "rebased.branch.create",   "when": "view == rebased.branches","group": "navigation" }
+      ],
+      "view/item/context": [
+        { "command": "rebased.stash.apply", "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@1" },
+        { "command": "rebased.stash.pop",   "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@2" },
+        { "command": "rebased.stash.drop",  "when": "view == rebased.stash && viewItem == stash", "group": "9_danger@1" },
+        { "command": "rebased.branch.checkout", "when": "view == rebased.branches && viewItem == branch", "group": "1_actions@1" }
+      ]
+    },
+    "keybindings": [
+      { "command": "rebased.commit.amend", "key": "ctrl+alt+k", "mac": "cmd+alt+k" }
+    ],
+    "configuration": {
+      "title": "Rebased",
+      "properties": {
+        "rebased.log.maxCommits": {
+          "type": "number",
+          "default": 2000,
+          "description": "Maximum commits loaded in the log view per batch."
+        },
+        "rebased.log.allBranches": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show commits from all branches in the log graph."
+        },
+        "rebased.rebase.autoStash": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically stash working tree changes before starting interactive rebase."
+        },
+        "rebased.gitPath": {
+          "type": "string",
+          "default": "git",
+          "description": "Path to the git executable."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.config.mjs --production",
+    "watch": "node esbuild.config.mjs --watch",
+    "compile": "tsc --noEmit",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.4.0"
+  }
+}

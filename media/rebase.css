@@ -1,0 +1,107 @@
+:root {
+  color-scheme: light dark;
+}
+body {
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground);
+  background: var(--vscode-editor-background);
+  margin: 0;
+  padding: 16px 24px 64px;
+}
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--vscode-panel-border);
+}
+h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+.hint {
+  color: var(--vscode-descriptionForeground);
+  font-size: 12px;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+}
+button {
+  font: inherit;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--vscode-button-border, transparent);
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  cursor: pointer;
+}
+button.primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+button:hover {
+  filter: brightness(1.1);
+}
+ul#list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+li.row {
+  display: grid;
+  grid-template-columns: 24px 80px 70px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--vscode-list-hoverBackground);
+  border: 1px solid transparent;
+  user-select: none;
+  cursor: grab;
+}
+li.row:hover {
+  border-color: var(--vscode-focusBorder);
+}
+li.row.dragging {
+  opacity: 0.45;
+}
+li.row.drop-target {
+  border-top: 2px solid var(--vscode-focusBorder);
+}
+li.row.dropped .subject,
+li.row.dropped .hash {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.handle {
+  color: var(--vscode-descriptionForeground);
+  cursor: grab;
+  text-align: center;
+}
+.action {
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: white;
+  border: none;
+  padding: 4px 0;
+  border-radius: 4px;
+}
+.hash {
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-charts-orange);
+  font-size: 12px;
+}
+.subject {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

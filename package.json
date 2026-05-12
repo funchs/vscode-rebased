@@ -1,19 +1,40 @@
 {
   "name": "vscode-rebased",
-  "displayName": "Rebased",
-  "description": "JetBrains-style git client features for VS Code: drag-drop interactive rebase, log graph, commit view, stash/cherry-pick",
-  "version": "0.0.1",
+  "displayName": "Rebased — JetBrains-style Git Client",
+  "description": "Drag-drop interactive rebase, log graph, hunk staging, changelists, local history, commit wizard. The git features of an IntelliJ IDE, distilled into a single VS Code extension.",
+  "version": "0.1.0",
   "publisher": "rebased",
   "license": "MIT",
+  "icon": "media/icons/rebased.png",
+  "galleryBanner": {
+    "color": "#3b3b80",
+    "theme": "dark"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/example/vscode-rebased.git"
   },
+  "bugs": {
+    "url": "https://github.com/example/vscode-rebased/issues"
+  },
+  "homepage": "https://github.com/example/vscode-rebased#readme",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": ["SCM Providers", "Other"],
-  "keywords": ["git", "rebase", "interactive rebase", "log", "graph", "stash"],
+  "keywords": [
+    "git",
+    "rebase",
+    "interactive rebase",
+    "log",
+    "graph",
+    "stash",
+    "blame",
+    "conventional commits",
+    "changelists",
+    "local history",
+    "jetbrains"
+  ],
   "activationEvents": [
     "onStartupFinished"
   ],

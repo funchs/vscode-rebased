@@ -26,6 +26,8 @@ import {
   ChangelistTreeProvider,
   registerChangelistCommands,
 } from "./m2-commit/changelists";
+import { LocalHistory } from "./m4-settings/local-history";
+import { SubmoduleTreeProvider, registerSubmoduleCommands } from "./m3-stash/submodules";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -120,6 +122,22 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.window.registerTreeDataProvider("rebased.changelists", changelistTree)
   );
   registerChangelistCommands(ctx, changelistMgr, changelistTree);
+
+  // Local history
+  const localHistory = new LocalHistory(ctx, repos);
+  ctx.subscriptions.push(localHistory);
+  ctx.subscriptions.push(
+    vscode.commands.registerCommand("rebased.localHistory.show", (uri?: vscode.Uri) =>
+      localHistory.showHistory(uri)
+    )
+  );
+
+  // Submodules
+  const submoduleTree = new SubmoduleTreeProvider(repos);
+  ctx.subscriptions.push(
+    vscode.window.registerTreeDataProvider("rebased.submodules", submoduleTree)
+  );
+  registerSubmoduleCommands(ctx, repos);
 }
 
 export function deactivate(): void {

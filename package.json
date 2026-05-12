@@ -34,7 +34,8 @@
         { "id": "rebased.commit", "name": "Commit", "type": "webview" },
         { "id": "rebased.stash", "name": "Stashes" },
         { "id": "rebased.branches", "name": "Branches" },
-        { "id": "rebased.changelists", "name": "Changelists" }
+        { "id": "rebased.changelists", "name": "Changelists" },
+        { "id": "rebased.submodules", "name": "Submodules" }
       ]
     },
     "customEditors": [
@@ -80,7 +81,12 @@
       { "command": "rebased.changelist.setActive", "title": "Set as Active", "category": "Rebased" },
       { "command": "rebased.changelist.commit", "title": "Commit Changelist...", "category": "Rebased", "icon": "$(check)" },
       { "command": "rebased.changelist.moveFile", "title": "Move to Changelist...", "category": "Rebased" },
-      { "command": "rebased.changelist.refresh", "title": "Refresh Changelists", "category": "Rebased", "icon": "$(refresh)" }
+      { "command": "rebased.changelist.refresh", "title": "Refresh Changelists", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.localHistory.show", "title": "Show Local History", "category": "Rebased" },
+      { "command": "rebased.submodule.init", "title": "Init Submodules", "category": "Rebased" },
+      { "command": "rebased.submodule.update", "title": "Update Submodules", "category": "Rebased" },
+      { "command": "rebased.submodule.sync", "title": "Sync Submodule URLs", "category": "Rebased" },
+      { "command": "rebased.submodule.refresh", "title": "Refresh Submodules", "category": "Rebased", "icon": "$(refresh)" }
     ],
     "menus": {
       "view/title": [
@@ -96,13 +102,18 @@
         { "command": "rebased.push",            "when": "view == rebased.commit", "group": "navigation@1" },
         { "command": "rebased.pull",            "when": "view == rebased.commit", "group": "navigation@2" },
         { "command": "rebased.changelist.create","when": "view == rebased.changelists","group": "navigation@1" },
-        { "command": "rebased.changelist.refresh","when": "view == rebased.changelists","group": "navigation@2" }
+        { "command": "rebased.changelist.refresh","when": "view == rebased.changelists","group": "navigation@2" },
+        { "command": "rebased.submodule.init",    "when": "view == rebased.submodules", "group": "navigation@1" },
+        { "command": "rebased.submodule.update",  "when": "view == rebased.submodules", "group": "navigation@2" },
+        { "command": "rebased.submodule.refresh", "when": "view == rebased.submodules", "group": "navigation@3" }
       ],
       "explorer/context": [
-        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" }
+        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" },
+        { "command": "rebased.localHistory.show", "when": "resourceScheme == file", "group": "1_rebased@2" }
       ],
       "editor/context": [
-        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" }
+        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" },
+        { "command": "rebased.localHistory.show", "when": "resourceScheme == file", "group": "1_rebased@2" }
       ],
       "view/item/context": [
         { "command": "rebased.stash.apply", "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@1" },
@@ -150,6 +161,16 @@
           "type": "boolean",
           "default": true,
           "description": "Show inline blame on the current line (author, age, subject)."
+        },
+        "rebased.localHistory.maxPerFile": {
+          "type": "number",
+          "default": 50,
+          "description": "Maximum number of local-history snapshots to keep per file."
+        },
+        "rebased.localHistory.maxBytes": {
+          "type": "number",
+          "default": 1048576,
+          "description": "Skip local-history snapshots for files larger than this many bytes."
         }
       }
     }

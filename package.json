@@ -67,7 +67,11 @@
       { "command": "rebased.branches.pick", "title": "Branches...", "category": "Rebased", "icon": "$(git-branch)" },
       { "command": "rebased.file.history", "title": "Show File History", "category": "Rebased" },
       { "command": "rebased.branch.compare", "title": "Compare Branch With Current...", "category": "Rebased" },
-      { "command": "rebased.tags.pick", "title": "Tags...", "category": "Rebased", "icon": "$(tag)" }
+      { "command": "rebased.tags.pick", "title": "Tags...", "category": "Rebased", "icon": "$(tag)" },
+      { "command": "rebased.blame.toggleGutter", "title": "Toggle Full-File Blame", "category": "Rebased" },
+      { "command": "rebased.push", "title": "Push...", "category": "Rebased", "icon": "$(cloud-upload)" },
+      { "command": "rebased.pull", "title": "Pull...", "category": "Rebased", "icon": "$(cloud-download)" },
+      { "command": "rebased.commit.search", "title": "Search Commits...", "category": "Rebased", "icon": "$(search)" }
     ],
     "menus": {
       "view/title": [
@@ -78,7 +82,10 @@
         { "command": "rebased.branch.create",   "when": "view == rebased.branches","group": "navigation" },
         { "command": "rebased.reflog.open",     "when": "view == rebased.log",    "group": "navigation@9" },
         { "command": "rebased.branches.pick",   "when": "view == rebased.branches","group": "navigation@1" },
-        { "command": "rebased.tags.pick",       "when": "view == rebased.branches","group": "navigation@2" }
+        { "command": "rebased.tags.pick",       "when": "view == rebased.branches","group": "navigation@2" },
+        { "command": "rebased.commit.search",   "when": "view == rebased.log",    "group": "navigation@1" },
+        { "command": "rebased.push",            "when": "view == rebased.commit", "group": "navigation@1" },
+        { "command": "rebased.pull",            "when": "view == rebased.commit", "group": "navigation@2" }
       ],
       "explorer/context": [
         { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" }
@@ -96,7 +103,9 @@
     "keybindings": [
       { "command": "rebased.commit.amend", "key": "ctrl+alt+k", "mac": "cmd+alt+k" },
       { "command": "rebased.branches.pick", "key": "ctrl+shift+b", "mac": "cmd+shift+b" },
-      { "command": "rebased.file.history", "key": "ctrl+alt+h", "mac": "cmd+alt+h", "when": "editorTextFocus" }
+      { "command": "rebased.file.history", "key": "ctrl+alt+h", "mac": "cmd+alt+h", "when": "editorTextFocus" },
+      { "command": "rebased.blame.toggleGutter", "key": "ctrl+alt+b", "mac": "cmd+alt+b", "when": "editorTextFocus" },
+      { "command": "rebased.commit.search", "key": "ctrl+alt+f", "mac": "cmd+alt+f" }
     ],
     "configuration": {
       "title": "Rebased",

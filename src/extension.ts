@@ -17,6 +17,9 @@ import { showBranchesPicker } from "./m3-stash/branches-picker";
 import { showFileHistory } from "./m1-log/file-history";
 import { compareBranches } from "./m1-log/compare-branches";
 import { showTagsPicker } from "./m3-stash/tags-picker";
+import { BlameGutter } from "./m4-settings/blame-gutter";
+import { showPushDialog, showPullDialog } from "./m3-stash/push-pull";
+import { showCommitSearch } from "./m1-log/commit-search";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -28,6 +31,9 @@ export function activate(ctx: vscode.ExtensionContext): void {
   if (vscode.workspace.getConfiguration("rebased").get<boolean>("blame.enabled", true)) {
     ctx.subscriptions.push(new InlineBlame(repos));
   }
+
+  const blameGutter = new BlameGutter(repos);
+  ctx.subscriptions.push(blameGutter);
 
   // External git operations (terminal commands, other tools) don't touch our
   // FileSystemWatcher reliably. Refresh whenever the window regains focus so
@@ -93,7 +99,11 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("rebased.branch.compare", (name?: string) =>
       compareBranches(repos, name)
     ),
-    vscode.commands.registerCommand("rebased.tags.pick", () => showTagsPicker(repos))
+    vscode.commands.registerCommand("rebased.tags.pick", () => showTagsPicker(repos)),
+    vscode.commands.registerCommand("rebased.blame.toggleGutter", () => blameGutter.toggle()),
+    vscode.commands.registerCommand("rebased.push", () => showPushDialog(repos)),
+    vscode.commands.registerCommand("rebased.pull", () => showPullDialog(repos)),
+    vscode.commands.registerCommand("rebased.commit.search", () => showCommitSearch(repos))
   );
 }
 

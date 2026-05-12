@@ -87,8 +87,11 @@ export async function getLog(
   repo: string,
   opts: { maxCount: number; allBranches: boolean }
 ): Promise<CommitRef[]> {
+  // -z separates commits with NUL on stdout; we keep NUL out of argv (node 24+ rejects it).
   const format = ["%H", "%P", "%an", "%ae", "%at", "%s", "%D"].join(RECORD);
-  const args = ["log", `--pretty=format:${format}${NUL}`, `--max-count=${opts.maxCount}`];
+  // --topo-order guarantees a child always precedes its parent — required for the
+  // graph layout's invariant that parents are resolved against subsequent rows.
+  const args = ["log", "-z", "--topo-order", `--pretty=format:${format}`, `--max-count=${opts.maxCount}`];
   if (opts.allBranches) args.push("--all");
   const out = await runGit(args, { cwd: repo });
   return out.split(NUL).filter(Boolean).map((line) => {

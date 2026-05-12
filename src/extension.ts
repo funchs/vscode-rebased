@@ -7,10 +7,22 @@ import { StashTreeProvider } from "./m3-stash/tree-provider";
 import { BranchTreeProvider } from "./m3-stash/branch-tree";
 import { registerStashCommands } from "./m3-stash/commands";
 import { registerBranchCommands } from "./m3-stash/branch-commands";
+import { BranchStatusBar } from "./m4-settings/status-bar";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
   ctx.subscriptions.push(repos);
+
+  ctx.subscriptions.push(new BranchStatusBar(repos));
+
+  // External git operations (terminal commands, other tools) don't touch our
+  // FileSystemWatcher reliably. Refresh whenever the window regains focus so
+  // the user sees fresh state on tab return.
+  ctx.subscriptions.push(
+    vscode.window.onDidChangeWindowState((s) => {
+      if (s.focused) repos.fire();
+    })
+  );
 
   ctx.subscriptions.push(
     vscode.window.registerCustomEditorProvider(

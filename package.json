@@ -105,6 +105,7 @@
     "build": "node esbuild.config.mjs --production",
     "watch": "node esbuild.config.mjs --watch",
     "compile": "tsc --noEmit",
+    "test": "node scripts/smoke-test.mjs",
     "package": "vsce package"
   },
   "devDependencies": {

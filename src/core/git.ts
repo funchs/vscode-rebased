@@ -216,12 +216,14 @@ export async function getCommitDetail(repo: string, hash: string): Promise<Commi
 
   // After the header NUL, --name-status output follows then --numstat (or interleaved).
   // We'll parse files via a separate, cleaner call.
+  // -M enables rename detection; without it renames appear as separate D + A and the
+  // UI loses the cross-reference. Same for numstat.
   const fileRaw = await runGit(
-    ["show", `--format=`, "--name-status", "-z", hash],
+    ["show", `--format=`, "--name-status", "-M", "-z", hash],
     { cwd: repo }
   );
   const numRaw = await runGit(
-    ["show", `--format=`, "--numstat", "-z", hash],
+    ["show", `--format=`, "--numstat", "-M", "-z", hash],
     { cwd: repo }
   );
 

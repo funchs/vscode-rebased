@@ -27,26 +27,35 @@ export function parseTodo(text: string): ParsedTodo {
   const entries: RebaseTodoEntry[] = [];
   const trailing: string[] = [];
   for (const rawLine of text.split(/\r?\n/)) {
-    const line = rawLine.trimEnd();
+    const line = rawLine.trim();
     if (!line) continue;
     if (line.startsWith("#")) {
       trailing.push(rawLine);
       continue;
     }
-    const m = /^(\S+)\s+(\S+)(?:\s+(.*))?$/.exec(line);
-    if (!m) {
+    // Split into action + rest. "break" with no args is valid.
+    const headMatch = line.match(/^(\S+)(?:\s+(.*))?$/);
+    if (!headMatch) {
       trailing.push(rawLine);
       continue;
     }
-    const action = SHORT_ACTIONS[m[1].toLowerCase()];
+    const action = SHORT_ACTIONS[headMatch[1].toLowerCase()];
     if (!action) {
       trailing.push(rawLine);
       continue;
     }
+    const rest = (headMatch[2] ?? "").trim();
     if (ARG_ACTIONS.has(action)) {
-      entries.push({ action, argument: line.slice(m[1].length).trim() });
+      // exec/break/label/reset: free-form argument, possibly empty (`break`).
+      entries.push({ action, argument: rest });
     } else {
-      entries.push({ action, hash: m[2], subject: m[3] ?? "" });
+      // pick/reword/edit/squash/fixup/drop: <hash> [subject]
+      const m = rest.match(/^(\S+)(?:\s+(.*))?$/);
+      if (!m) {
+        trailing.push(rawLine);
+        continue;
+      }
+      entries.push({ action, hash: m[1], subject: m[2] ?? "" });
     }
   }
   return { entries, trailing };

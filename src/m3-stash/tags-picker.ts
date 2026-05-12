@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
+import { showGitError, stripCodicons } from "../core/notify";
 
 const RECORD = "\x1e";
 
@@ -75,7 +76,7 @@ async function createTag(repos: RepoManager, root: string): Promise<void> {
     repos.fire();
     vscode.window.showInformationMessage(`Tag ${name} created on ${ref}.`);
   } catch (e: unknown) {
-    vscode.window.showErrorMessage(`Tag create failed: ${(e as Error).message}`);
+    await showGitError("Tag create", e);
   }
 }
 
@@ -119,6 +120,6 @@ async function tagAction(repos: RepoManager, root: string, name: string): Promis
     }
     repos.fire();
   } catch (e: unknown) {
-    vscode.window.showErrorMessage(`${action.label}: ${(e as Error).message}`);
+    await showGitError(`${stripCodicons(action.label)} tag ${name}`, e);
   }
 }

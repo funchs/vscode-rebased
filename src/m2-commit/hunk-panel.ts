@@ -3,6 +3,7 @@ import { diffFile, applyPatch } from "../core/git";
 import { parsePatch, buildPatch } from "./hunks";
 import type { RepoManager } from "../core/repo";
 import { asset, csp, nonce } from "../core/webview-util";
+import { showGitError } from "../core/notify";
 
 export class HunkPanel {
   private static panels = new Map<string, HunkPanel>();
@@ -67,7 +68,7 @@ export class HunkPanel {
       await applyPatch(root, minimal, { cached: true });
       this.repos.fire();
     } catch (e: unknown) {
-      vscode.window.showErrorMessage(`Stage hunks failed: ${(e as Error).message}`);
+      await showGitError("Stage hunks", e);
     }
   }
 
@@ -81,7 +82,7 @@ export class HunkPanel {
       await applyPatch(root, minimal, { cached: true, reverse: true });
       this.repos.fire();
     } catch (e: unknown) {
-      vscode.window.showErrorMessage(`Unstage hunks failed: ${(e as Error).message}`);
+      await showGitError("Unstage hunks", e);
     }
   }
 

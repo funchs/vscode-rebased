@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getCommitDetail } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import { asset, csp, nonce } from "../core/webview-util";
+import { showGitError } from "../core/notify";
 
 export class CommitDetailsPanel {
   private static current: CommitDetailsPanel | undefined;
@@ -84,7 +85,7 @@ export class CommitDetailsPanel {
       this.panel.title = `${detail.shortHash} · ${detail.subject.slice(0, 60)}`;
       this.panel.webview.postMessage({ type: "detail", detail });
     } catch (e: unknown) {
-      vscode.window.showErrorMessage(`Failed to load commit: ${(e as Error).message}`);
+      await showGitError("Load commit", e);
     }
   }
 

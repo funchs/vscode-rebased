@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getStatus, runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
+import { showGitError } from "../core/notify";
 
 // JetBrains-style "changelists": named groups of working-tree file paths.
 // State lives in workspaceState, scoped per repo root. Files not in any
@@ -216,7 +217,7 @@ export function registerChangelistCommands(
         await mgr.commitChangelist(node.name, msg);
         vscode.window.showInformationMessage(`Committed "${node.name}".`);
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Commit failed: ${(e as Error).message}`);
+        await showGitError(`Commit changelist "${node.name}"`, e);
       }
     }),
     vscode.commands.registerCommand("rebased.changelist.moveFile", async (node: Node) => {

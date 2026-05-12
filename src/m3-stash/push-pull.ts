@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
+import { showGitError, isWorkingTreeDirtyError } from "../core/notify";
 
 const RECORD = "\x1e";
 const NUL = "\x00";
@@ -120,7 +121,7 @@ export async function showPushDialog(repos: RepoManager): Promise<void> {
     repos.fire();
     vscode.window.setStatusBarMessage("$(check) Pushed.", 3000);
   } catch (e: unknown) {
-    vscode.window.showErrorMessage(`Push failed: ${(e as Error).message}`);
+    await showGitError("Push", e);
   }
 }
 
@@ -176,6 +177,24 @@ export async function showPullDialog(repos: RepoManager): Promise<void> {
     repos.fire();
     vscode.window.setStatusBarMessage("$(check) Pulled.", 3000);
   } catch (e: unknown) {
-    vscode.window.showErrorMessage(`Pull failed: ${(e as Error).message}`);
+    const msg = (e as Error).message;
+    const actions: Array<{ label: string; run: () => Promise<void> }> = [];
+    if (isWorkingTreeDirtyError(msg)) {
+      actions.push({
+        label: "Stash and retry pull --rebase",
+        run: async () => {
+          try {
+            await runGit(["stash", "push", "-u", "-m", "rebased: auto before pull"], { cwd: root });
+            await runGit(["pull", "--rebase"], { cwd: root });
+            await runGit(["stash", "pop"], { cwd: root });
+            repos.fire();
+            vscode.window.showInformationMessage("Pulled with --rebase; stash popped.");
+          } catch (e2: unknown) {
+            await showGitError("Auto-stash pull", e2);
+          }
+        },
+      });
+    }
+    await showGitError("Pull", e, actions);
   }
 }

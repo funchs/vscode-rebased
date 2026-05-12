@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getOperationState, continueOperation, abortOperation } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import type { OperationState } from "../core/git";
+import { showGitError } from "../core/notify";
 
 // Auto-popups the conflict panel whenever .git enters rebase/merge/cherry-pick.
 // The panel itself uses a plain QuickPick + status-bar combo rather than a
@@ -93,7 +94,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
       repos.fire();
       vscode.window.showInformationMessage(`${state.kind} continued.`);
     } catch (e: unknown) {
-      vscode.window.showErrorMessage(`Continue failed: ${(e as Error).message}`);
+      await showGitError(`Continue ${state.kind}`, e);
     }
     return;
   }
@@ -108,7 +109,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
       await abortOperation(root, state.kind as NonNullable<OperationState["kind"]>);
       repos.fire();
     } catch (e: unknown) {
-      vscode.window.showErrorMessage(`Abort failed: ${(e as Error).message}`);
+      await showGitError(`Abort ${state.kind}`, e);
     }
     return;
   }

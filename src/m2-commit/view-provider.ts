@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getStatus, stage, unstage, commit } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import { asset, csp, nonce } from "../core/webview-util";
+import { showGitError } from "../core/notify";
 
 export class CommitViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "rebased.commit";
@@ -45,7 +46,7 @@ export class CommitViewProvider implements vscode.WebviewViewProvider {
           this.repos.fire();
           vscode.window.showInformationMessage("Committed.");
         } catch (e: unknown) {
-          vscode.window.showErrorMessage(`Commit failed: ${(e as Error).message}`);
+          await showGitError("Commit", e);
         }
       }
     });

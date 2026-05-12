@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
+import { showGitError } from "../core/notify";
 
 interface Submodule {
   prefix: string;     // " ", "-" (not init), "+" (out of sync), "U" (merge conflict)
@@ -72,7 +73,7 @@ export function registerSubmoduleCommands(ctx: vscode.ExtensionContext, repos: R
           await runGit(args, { cwd: root });
           repos.fire();
         } catch (e: unknown) {
-          vscode.window.showErrorMessage(`${success}: ${(e as Error).message}`);
+          await showGitError(success, e);
         }
       }
     );

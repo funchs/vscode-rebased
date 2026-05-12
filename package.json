@@ -182,7 +182,7 @@
     "build": "node esbuild.config.mjs --production",
     "watch": "node esbuild.config.mjs --watch",
     "compile": "tsc --noEmit",
-    "test": "node scripts/smoke-test.mjs && node scripts/integration-test.mjs && node scripts/edge-cases-test.mjs && node scripts/cc-test.mjs",
+    "test": "node scripts/smoke-test.mjs && node scripts/integration-test.mjs && node scripts/edge-cases-test.mjs && node scripts/cc-test.mjs && node scripts/notify-test.mjs",
     "package": "vsce package"
   },
   "devDependencies": {

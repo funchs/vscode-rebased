@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getBranches, runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
+import { showGitError, stripCodicons, isWorkingTreeDirtyError } from "../core/notify";
 
 interface BranchAction {
   label: string;
@@ -117,8 +118,40 @@ async function runBranchAction(
         break;
     }
     repos.fire();
-    vscode.window.setStatusBarMessage(`$(check) ${choice.label.replace(/\$\([^)]+\)\s?/, "")} — ${name}`, 3000);
+    vscode.window.setStatusBarMessage(`$(check) ${stripCodicons(choice.label)} — ${name}`, 3000);
   } catch (e: unknown) {
-    vscode.window.showErrorMessage(`${choice.label}: ${(e as Error).message}`);
+    const msg = (e as Error).message;
+    const scope = `${stripCodicons(choice.label)} ${name}`;
+    const actions: Array<{ label: string; run: () => Promise<void> }> = [];
+
+    if (
+      (choice.action === "merge" || choice.action === "rebaseOnto") &&
+      isWorkingTreeDirtyError(msg)
+    ) {
+      actions.push({
+        label: "Stash and retry",
+        run: async () => {
+          try {
+            await runGit(["stash", "push", "-u", "-m", `rebased: auto before ${choice.action} ${name}`], { cwd: root });
+            const op = choice.action === "merge"
+              ? ["merge", "--no-ff", name]
+              : ["rebase", name];
+            await runGit(op, { cwd: root });
+            await runGit(["stash", "pop"], { cwd: root });
+            repos.fire();
+            vscode.window.showInformationMessage(`${choice.action} completed; stash popped.`);
+          } catch (e2: unknown) {
+            await showGitError(`Auto-stash ${choice.action}`, e2);
+          }
+        },
+      });
+      actions.push({
+        label: "Open Stash dialog",
+        run: async () => {
+          await vscode.commands.executeCommand("rebased.stash.create");
+        },
+      });
+    }
+    await showGitError(scope, e, actions);
   }
 }

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { cherryPick, runGit, startInteractiveRebase, commit as gitCommit } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import type { BranchItem } from "./branch-tree";
+import { showGitError, isWorkingTreeDirtyError } from "../core/notify";
 
 export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: RepoManager): void {
   ctx.subscriptions.push(
@@ -13,7 +14,24 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
         await runGit(["checkout", name.replace(/^origin\//, "")], { cwd: root });
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Checkout failed: ${(e as Error).message}`);
+        const msg = (e as Error).message;
+        const actions: Array<{ label: string; run: () => Promise<void> }> = [];
+        if (isWorkingTreeDirtyError(msg)) {
+          actions.push({
+            label: "Stash and retry",
+            run: async () => {
+              try {
+                await runGit(["stash", "push", "-u", "-m", `rebased: auto before checkout ${name}`], { cwd: root });
+                await runGit(["checkout", name.replace(/^origin\//, "")], { cwd: root });
+                await runGit(["stash", "pop"], { cwd: root });
+                repos.fire();
+              } catch (e2: unknown) {
+                await showGitError("Auto-stash checkout", e2);
+              }
+            },
+          });
+        }
+        await showGitError(`Checkout ${name}`, e, actions);
       }
     }),
     vscode.commands.registerCommand("rebased.branch.create", async () => {
@@ -25,7 +43,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
         await runGit(["checkout", "-b", name], { cwd: root });
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Branch creation failed: ${(e as Error).message}`);
+        await showGitError("Branch creation", e);
       }
     }),
     vscode.commands.registerCommand("rebased.cherryPick", async (hash: string | undefined) => {
@@ -37,7 +55,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
         await cherryPick(root, h);
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Cherry-pick failed: ${(e as Error).message}`);
+        await showGitError("Cherry-pick", e);
       }
     }),
     vscode.commands.registerCommand("rebased.rebase.interactive", async (baseRef: string | undefined) => {
@@ -49,7 +67,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
         await startInteractiveRebase(root, `${ref}^`);
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Rebase failed: ${(e as Error).message}`);
+        await showGitError("Rebase", e);
       }
     }),
     vscode.commands.registerCommand("rebased.commit.amend", async () => {
@@ -62,7 +80,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
         await gitCommit(root, msg, true);
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Amend failed: ${(e as Error).message}`);
+        await showGitError("Amend", e);
       }
     })
   );

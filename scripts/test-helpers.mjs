@@ -69,6 +69,7 @@ export async function loadSrcModules() {
       { in: resolve(repoRoot, "src/m1-log/graph.ts"), out: "graph" },
       { in: resolve(repoRoot, "src/m2-commit/hunks.ts"), out: "hunks" },
       { in: resolve(repoRoot, "src/core/conventional-commit.ts"), out: "cc" },
+      { in: resolve(repoRoot, "src/core/notify-pure.ts"), out: "notify-pure" },
     ],
     outdir: out,
     format: "esm",
@@ -81,6 +82,7 @@ export async function loadSrcModules() {
     graph: await import(`file://${out}/graph.js`),
     hunks: await import(`file://${out}/hunks.js`),
     cc: await import(`file://${out}/cc.js`),
+    notify: await import(`file://${out}/notify-pure.js`),
   };
   return modulesCache;
 }

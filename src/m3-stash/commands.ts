@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import type { StashItem } from "./tree-provider";
+import { showGitError } from "../core/notify";
 
 export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoManager): void {
   ctx.subscriptions.push(
@@ -26,7 +27,7 @@ export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoM
         repos.fire();
         vscode.window.showInformationMessage("Stashed.");
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Stash failed: ${(e as Error).message}`);
+        await showGitError("Stash", e);
       }
     }),
     vscode.commands.registerCommand("rebased.stash.apply", async (item: StashItem) => {
@@ -36,7 +37,7 @@ export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoM
         await runGit(["stash", "apply", item.stash.ref], { cwd: root });
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Apply failed: ${(e as Error).message}`);
+        await showGitError("Apply stash", e);
       }
     }),
     vscode.commands.registerCommand("rebased.stash.pop", async (item: StashItem) => {
@@ -46,7 +47,7 @@ export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoM
         await runGit(["stash", "pop", item.stash.ref], { cwd: root });
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Pop failed: ${(e as Error).message}`);
+        await showGitError("Pop stash", e);
       }
     }),
     vscode.commands.registerCommand("rebased.stash.drop", async (item: StashItem) => {
@@ -62,7 +63,7 @@ export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoM
         await runGit(["stash", "drop", item.stash.ref], { cwd: root });
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Drop failed: ${(e as Error).message}`);
+        await showGitError("Drop stash", e);
       }
     }),
     vscode.commands.registerCommand("rebased.stash.refresh", () => repos.fire())

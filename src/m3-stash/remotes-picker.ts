@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
+import { showGitError, stripCodicons } from "../core/notify";
 
 interface RemoteInfo {
   name: string;
@@ -65,7 +66,7 @@ async function addRemote(repos: RepoManager, root: string): Promise<void> {
     repos.fire();
     vscode.window.showInformationMessage(`Added remote ${name}.`);
   } catch (e: unknown) {
-    vscode.window.showErrorMessage(`Add remote failed: ${(e as Error).message}`);
+    await showGitError("Add remote", e);
   }
 }
 
@@ -81,7 +82,7 @@ async function fetch(repos: RepoManager, root: string, name?: string, prune = tr
         await runGit(args, { cwd: root });
         repos.fire();
       } catch (e: unknown) {
-        vscode.window.showErrorMessage(`Fetch failed: ${(e as Error).message}`);
+        await showGitError("Fetch", e);
       }
     }
   );
@@ -134,6 +135,6 @@ async function remoteAction(repos: RepoManager, root: string, r: RemoteInfo): Pr
     }
     repos.fire();
   } catch (e: unknown) {
-    vscode.window.showErrorMessage(`${action.label}: ${(e as Error).message}`);
+    await showGitError(`${stripCodicons(action.label)} remote ${r.name}`, e);
   }
 }

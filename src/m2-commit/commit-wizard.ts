@@ -3,6 +3,7 @@ import { commit as gitCommit } from "../core/git";
 import { COMMIT_TYPES, formatCC, validateCC } from "../core/conventional-commit";
 import { mineScopes } from "../core/scope-miner";
 import type { RepoManager } from "../core/repo";
+import { showGitError } from "../core/notify";
 
 interface State {
   type?: string;
@@ -154,7 +155,7 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
       repos.fire();
       vscode.window.setStatusBarMessage("$(check) Committed.", 3000);
     } catch (e: unknown) {
-      vscode.window.showErrorMessage(`Commit failed: ${(e as Error).message}`);
+      await showGitError("Commit", e);
     }
   } else if (action === "Edit & continue") {
     // Stash the structured message into the clipboard so the user can paste.

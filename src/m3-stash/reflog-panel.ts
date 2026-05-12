@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getReflog, runGit } from "../core/git";
 import type { RepoManager } from "../core/repo";
+import { showGitError } from "../core/notify";
 import { asset, csp, nonce } from "../core/webview-util";
 
 export class ReflogPanel {
@@ -38,7 +39,7 @@ export class ReflogPanel {
       if (msg.type === "ready") await this.refresh();
       else if (msg.type === "checkout") {
         try { await runGit(["checkout", msg.hash], { cwd: root }); repos.fire(); }
-        catch (e: unknown) { vscode.window.showErrorMessage(`Checkout failed: ${(e as Error).message}`); }
+        catch (e: unknown) { await showGitError("Checkout", e); }
       } else if (msg.type === "reset") {
         const mode = await vscode.window.showQuickPick(
           [
@@ -58,7 +59,7 @@ export class ReflogPanel {
           if (ok !== "Reset") return;
         }
         try { await runGit(["reset", mode.value, msg.hash], { cwd: root }); repos.fire(); }
-        catch (e: unknown) { vscode.window.showErrorMessage(`Reset failed: ${(e as Error).message}`); }
+        catch (e: unknown) { await showGitError("Reset", e); }
       } else if (msg.type === "cherryPick") {
         await vscode.commands.executeCommand("rebased.cherryPick", msg.hash);
       }

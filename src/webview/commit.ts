@@ -61,6 +61,15 @@ function row(f: FileChange, action: "stage" | "unstage"): HTMLLIElement {
   path.title = f.path;
   path.onclick = () => vscode.postMessage({ type: "diff", path: f.path });
 
+  const hunks = document.createElement("button");
+  hunks.className = "ghost";
+  hunks.textContent = "↹";
+  hunks.title = "Stage individual hunks";
+  hunks.onclick = (e) => {
+    e.stopPropagation();
+    vscode.postMessage({ type: "hunks", path: f.path });
+  };
+
   const btn = document.createElement("button");
   btn.className = "ghost";
   btn.textContent = action === "stage" ? "+" : "−";
@@ -72,6 +81,7 @@ function row(f: FileChange, action: "stage" | "unstage"): HTMLLIElement {
 
   li.appendChild(badge);
   li.appendChild(path);
+  li.appendChild(hunks);
   li.appendChild(btn);
   return li;
 }

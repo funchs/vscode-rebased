@@ -174,6 +174,33 @@ export async function cherryPick(repo: string, hash: string): Promise<void> {
   await runGit(["cherry-pick", hash], { cwd: repo });
 }
 
+export async function diffFile(repo: string, path: string, staged = false): Promise<string> {
+  const args = ["diff", "--no-color", "-U3"];
+  if (staged) args.push("--cached");
+  args.push("--", path);
+  return await runGit(args, { cwd: repo });
+}
+
+export async function applyPatch(repo: string, patch: string, options: { cached?: boolean; reverse?: boolean }): Promise<void> {
+  const args = ["apply", "--unidiff-zero", "--whitespace=nowarn"];
+  if (options.cached) args.push("--cached");
+  if (options.reverse) args.push("--reverse");
+  args.push("-");
+  await runGit(args, { cwd: repo, stdin: patch });
+}
+
+export async function getReflog(repo: string, limit = 200): Promise<Array<{ ref: string; hash: string; subject: string; date: number }>> {
+  const fmt = ["%gd", "%H", "%gs", "%at"].join(RECORD);
+  const out = await runGit(["reflog", "-z", `--format=${fmt}`, `--max-count=${limit}`], { cwd: repo });
+  return out
+    .split(NUL)
+    .filter(Boolean)
+    .map((line) => {
+      const [ref, hash, subject, date] = line.split(RECORD);
+      return { ref, hash, subject, date: parseInt(date, 10) * 1000 };
+    });
+}
+
 export async function startInteractiveRebase(repo: string, baseRef: string): Promise<void> {
   await runGit(["rebase", "-i", baseRef], {
     cwd: repo,

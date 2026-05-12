@@ -1,3 +1,6 @@
+html, body {
+  height: 100%;
+}
 body {
   font-family: var(--vscode-font-family);
   font-size: 12px;
@@ -5,6 +8,12 @@ body {
   background: var(--vscode-editor-background);
   margin: 0;
   padding: 0;
+  overflow: hidden;
+}
+#log {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .empty {
   padding: 16px;
@@ -12,6 +21,16 @@ body {
 }
 .wrapper {
   position: relative;
+}
+.spacer {
+  width: 100%;
+  pointer-events: none;
+}
+.visible {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 .graph {
   position: absolute;

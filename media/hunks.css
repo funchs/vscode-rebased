@@ -1,0 +1,102 @@
+body {
+  font-family: var(--vscode-font-family);
+  font-size: 13px;
+  color: var(--vscode-foreground);
+  background: var(--vscode-editor-background);
+  margin: 0;
+  padding: 16px 24px 64px;
+}
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--vscode-panel-border);
+}
+h1 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  font-family: var(--vscode-editor-font-family);
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+}
+button {
+  font: inherit;
+  padding: 4px 12px;
+  border-radius: 3px;
+  border: 1px solid var(--vscode-button-border, transparent);
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  cursor: pointer;
+}
+button.primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+button:hover { filter: brightness(1.1); }
+section {
+  margin-bottom: 18px;
+}
+section h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--vscode-descriptionForeground);
+  margin: 0 0 8px;
+}
+.empty {
+  color: var(--vscode-descriptionForeground);
+  font-size: 12px;
+  padding: 6px 0;
+}
+.hunk {
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--vscode-editorWidget-background);
+  font-family: var(--vscode-editor-font-family);
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+}
+.header-text {
+  color: var(--vscode-charts-purple);
+}
+.body {
+  margin: 0;
+  padding: 6px 0;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 12px;
+  line-height: 1.5;
+  background: var(--vscode-editor-background);
+  overflow-x: auto;
+  white-space: pre;
+}
+.body > div {
+  padding: 0 10px;
+}
+.added {
+  background: rgba(46, 160, 67, 0.12);
+  color: var(--vscode-charts-green);
+}
+.removed {
+  background: rgba(248, 81, 73, 0.12);
+  color: var(--vscode-charts-red);
+}
+.hunk-header {
+  color: var(--vscode-charts-purple);
+}
+.context {
+  color: var(--vscode-foreground);
+  opacity: 0.85;
+}

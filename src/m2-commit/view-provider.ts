@@ -31,6 +31,8 @@ export class CommitViewProvider implements vscode.WebviewViewProvider {
       } else if (msg.type === "diff") {
         const uri = vscode.Uri.joinPath(vscode.Uri.file(root), msg.path);
         await vscode.commands.executeCommand("git.openChange", uri);
+      } else if (msg.type === "hunks") {
+        await vscode.commands.executeCommand("rebased.hunks.open", msg.path);
       } else if (msg.type === "commit") {
         if (!msg.message?.trim()) {
           vscode.window.showWarningMessage("Commit message cannot be empty.");

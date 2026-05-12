@@ -22,6 +22,7 @@ await esbuild.build({
   entryPoints: [
     { in: resolve(repoRoot, "src/m0-rebase/rebase-todo.ts"), out: "rebase-todo" },
     { in: resolve(repoRoot, "src/m1-log/graph.ts"), out: "graph" },
+    { in: resolve(repoRoot, "src/m2-commit/hunks.ts"), out: "hunks" },
   ],
   outdir: out,
   format: "esm",
@@ -32,6 +33,7 @@ await esbuild.build({
 
 const { parseTodo, serializeTodo } = await import(`file://${out}/rebase-todo.js`);
 const { layout } = await import(`file://${out}/graph.js`);
+const { parsePatch, buildPatch } = await import(`file://${out}/hunks.js`);
 
 // ---------------------------------------------------------------------------
 // Test 1: rebase-todo round-trip
@@ -124,5 +126,37 @@ for (const l of laid.slice(0, 12)) {
   const refs = l.commit.refs.length ? ` (${l.commit.refs.join(", ")})` : "";
   console.log(cols.join("") + "  " + l.commit.subject + refs);
 }
+
+// ---------------------------------------------------------------------------
+// Test 3: hunk parser round-trip
+// ---------------------------------------------------------------------------
+const samplePatch = `diff --git a/foo.ts b/foo.ts
+index abc..def 100644
+--- a/foo.ts
++++ b/foo.ts
+@@ -1,3 +1,4 @@
+ line one
+-line two
++line two changed
++line two and a half
+ line three
+@@ -10,2 +11,3 @@
+ line ten
++inserted at 11
+ line eleven
+`;
+const parsedPatch = parsePatch(samplePatch);
+assert.strictEqual(parsedPatch.hunks.length, 2, "expected 2 hunks");
+assert.strictEqual(parsedPatch.hunks[0].oldStart, 1);
+assert.strictEqual(parsedPatch.hunks[0].newLines, 4);
+assert.strictEqual(parsedPatch.hunks[1].oldStart, 10);
+console.log("✓ parsePatch: 2 hunks recognized");
+
+const onlySecond = buildPatch(parsedPatch, [1]);
+const reparsedHunks = parsePatch(onlySecond);
+assert.strictEqual(reparsedHunks.hunks.length, 1);
+assert.strictEqual(reparsedHunks.hunks[0].oldStart, 10);
+assert.ok(onlySecond.includes("+inserted at 11"));
+console.log("✓ buildPatch: selective rebuild correct");
 
 console.log("\nAll smoke tests passed ✅");

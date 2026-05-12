@@ -8,6 +8,8 @@ import { BranchTreeProvider } from "./m3-stash/branch-tree";
 import { registerStashCommands } from "./m3-stash/commands";
 import { registerBranchCommands } from "./m3-stash/branch-commands";
 import { BranchStatusBar } from "./m4-settings/status-bar";
+import { HunkPanel } from "./m2-commit/hunk-panel";
+import { ReflogPanel } from "./m3-stash/reflog-panel";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -60,6 +62,15 @@ export function activate(ctx: vscode.ExtensionContext): void {
 
   registerStashCommands(ctx, repos);
   registerBranchCommands(ctx, repos);
+
+  ctx.subscriptions.push(
+    vscode.commands.registerCommand("rebased.hunks.open", (path: string) => {
+      HunkPanel.show(ctx, repos, path);
+    }),
+    vscode.commands.registerCommand("rebased.reflog.open", () => {
+      ReflogPanel.show(ctx, repos);
+    })
+  );
 }
 
 export function deactivate(): void {

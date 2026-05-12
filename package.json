@@ -54,7 +54,9 @@
       { "command": "rebased.rebase.interactive", "title": "Interactive Rebase from...", "category": "Rebased" },
       { "command": "rebased.branch.checkout", "title": "Checkout Branch", "category": "Rebased" },
       { "command": "rebased.branch.create", "title": "New Branch...", "category": "Rebased", "icon": "$(git-branch)" },
-      { "command": "rebased.commit.amend", "title": "Amend Last Commit", "category": "Rebased" }
+      { "command": "rebased.commit.amend", "title": "Amend Last Commit", "category": "Rebased" },
+      { "command": "rebased.reflog.open", "title": "Show Reflog", "category": "Rebased", "icon": "$(history)" },
+      { "command": "rebased.hunks.open", "title": "Stage Hunks for File...", "category": "Rebased" }
     ],
     "menus": {
       "view/title": [
@@ -62,7 +64,8 @@
         { "command": "rebased.commit.refresh",  "when": "view == rebased.commit", "group": "navigation" },
         { "command": "rebased.stash.refresh",   "when": "view == rebased.stash",  "group": "navigation" },
         { "command": "rebased.stash.create",    "when": "view == rebased.stash",  "group": "navigation" },
-        { "command": "rebased.branch.create",   "when": "view == rebased.branches","group": "navigation" }
+        { "command": "rebased.branch.create",   "when": "view == rebased.branches","group": "navigation" },
+        { "command": "rebased.reflog.open",     "when": "view == rebased.log",    "group": "navigation@9" }
       ],
       "view/item/context": [
         { "command": "rebased.stash.apply", "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@1" },

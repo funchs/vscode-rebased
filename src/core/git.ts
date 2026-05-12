@@ -83,16 +83,30 @@ function mapStatus(c: string): FileChange["status"] {
   return "M";
 }
 
+export interface LogFilter {
+  message?: string;
+  author?: string;
+  path?: string;
+  branch?: string;
+  since?: string;
+}
+
 export async function getLog(
   repo: string,
-  opts: { maxCount: number; allBranches: boolean }
+  opts: { maxCount: number; allBranches: boolean; filter?: LogFilter }
 ): Promise<CommitRef[]> {
   // -z separates commits with NUL on stdout; we keep NUL out of argv (node 24+ rejects it).
   const format = ["%H", "%P", "%an", "%ae", "%at", "%s", "%D"].join(RECORD);
   // --topo-order guarantees a child always precedes its parent — required for the
   // graph layout's invariant that parents are resolved against subsequent rows.
   const args = ["log", "-z", "--topo-order", `--pretty=format:${format}`, `--max-count=${opts.maxCount}`];
-  if (opts.allBranches) args.push("--all");
+  const f = opts.filter ?? {};
+  if (f.message) args.push(`--grep=${f.message}`, "--regexp-ignore-case");
+  if (f.author) args.push(`--author=${f.author}`, "-i");
+  if (f.since) args.push(`--since=${f.since}`);
+  if (f.branch) args.push(f.branch);
+  else if (opts.allBranches) args.push("--all");
+  if (f.path) args.push("--", f.path);
   const out = await runGit(args, { cwd: repo });
   return out.split(NUL).filter(Boolean).map((line) => {
     const [hash, parents, author, email, date, subject, refs] = line.split(RECORD);

@@ -33,7 +33,8 @@
         { "id": "rebased.log", "name": "Log", "type": "webview" },
         { "id": "rebased.commit", "name": "Commit", "type": "webview" },
         { "id": "rebased.stash", "name": "Stashes" },
-        { "id": "rebased.branches", "name": "Branches" }
+        { "id": "rebased.branches", "name": "Branches" },
+        { "id": "rebased.changelists", "name": "Changelists" }
       ]
     },
     "customEditors": [
@@ -71,7 +72,15 @@
       { "command": "rebased.blame.toggleGutter", "title": "Toggle Full-File Blame", "category": "Rebased" },
       { "command": "rebased.push", "title": "Push...", "category": "Rebased", "icon": "$(cloud-upload)" },
       { "command": "rebased.pull", "title": "Pull...", "category": "Rebased", "icon": "$(cloud-download)" },
-      { "command": "rebased.commit.search", "title": "Search Commits...", "category": "Rebased", "icon": "$(search)" }
+      { "command": "rebased.commit.search", "title": "Search Commits...", "category": "Rebased", "icon": "$(search)" },
+      { "command": "rebased.remotes.pick", "title": "Remotes...", "category": "Rebased", "icon": "$(cloud)" },
+      { "command": "rebased.changelist.create", "title": "New Changelist...", "category": "Rebased", "icon": "$(add)" },
+      { "command": "rebased.changelist.rename", "title": "Rename Changelist", "category": "Rebased" },
+      { "command": "rebased.changelist.delete", "title": "Delete Changelist", "category": "Rebased", "icon": "$(trash)" },
+      { "command": "rebased.changelist.setActive", "title": "Set as Active", "category": "Rebased" },
+      { "command": "rebased.changelist.commit", "title": "Commit Changelist...", "category": "Rebased", "icon": "$(check)" },
+      { "command": "rebased.changelist.moveFile", "title": "Move to Changelist...", "category": "Rebased" },
+      { "command": "rebased.changelist.refresh", "title": "Refresh Changelists", "category": "Rebased", "icon": "$(refresh)" }
     ],
     "menus": {
       "view/title": [
@@ -85,7 +94,9 @@
         { "command": "rebased.tags.pick",       "when": "view == rebased.branches","group": "navigation@2" },
         { "command": "rebased.commit.search",   "when": "view == rebased.log",    "group": "navigation@1" },
         { "command": "rebased.push",            "when": "view == rebased.commit", "group": "navigation@1" },
-        { "command": "rebased.pull",            "when": "view == rebased.commit", "group": "navigation@2" }
+        { "command": "rebased.pull",            "when": "view == rebased.commit", "group": "navigation@2" },
+        { "command": "rebased.changelist.create","when": "view == rebased.changelists","group": "navigation@1" },
+        { "command": "rebased.changelist.refresh","when": "view == rebased.changelists","group": "navigation@2" }
       ],
       "explorer/context": [
         { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" }
@@ -97,7 +108,12 @@
         { "command": "rebased.stash.apply", "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@1" },
         { "command": "rebased.stash.pop",   "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@2" },
         { "command": "rebased.stash.drop",  "when": "view == rebased.stash && viewItem == stash", "group": "9_danger@1" },
-        { "command": "rebased.branch.checkout", "when": "view == rebased.branches && viewItem == branch", "group": "1_actions@1" }
+        { "command": "rebased.branch.checkout", "when": "view == rebased.branches && viewItem == branch", "group": "1_actions@1" },
+        { "command": "rebased.changelist.commit",   "when": "view == rebased.changelists && viewItem =~ /changelist/", "group": "1_actions@1" },
+        { "command": "rebased.changelist.setActive","when": "view == rebased.changelists && viewItem == changelist", "group": "1_actions@2" },
+        { "command": "rebased.changelist.rename",   "when": "view == rebased.changelists && viewItem =~ /changelist/", "group": "2_edit@1" },
+        { "command": "rebased.changelist.delete",   "when": "view == rebased.changelists && viewItem == changelist", "group": "9_danger@1" },
+        { "command": "rebased.changelist.moveFile", "when": "view == rebased.changelists && viewItem == changelist-file", "group": "1_actions@1" }
       ]
     },
     "keybindings": [

@@ -20,6 +20,12 @@ import { showTagsPicker } from "./m3-stash/tags-picker";
 import { BlameGutter } from "./m4-settings/blame-gutter";
 import { showPushDialog, showPullDialog } from "./m3-stash/push-pull";
 import { showCommitSearch } from "./m1-log/commit-search";
+import { showRemotesPicker } from "./m3-stash/remotes-picker";
+import {
+  ChangelistManager,
+  ChangelistTreeProvider,
+  registerChangelistCommands,
+} from "./m2-commit/changelists";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -103,8 +109,17 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("rebased.blame.toggleGutter", () => blameGutter.toggle()),
     vscode.commands.registerCommand("rebased.push", () => showPushDialog(repos)),
     vscode.commands.registerCommand("rebased.pull", () => showPullDialog(repos)),
-    vscode.commands.registerCommand("rebased.commit.search", () => showCommitSearch(repos))
+    vscode.commands.registerCommand("rebased.commit.search", () => showCommitSearch(repos)),
+    vscode.commands.registerCommand("rebased.remotes.pick", () => showRemotesPicker(repos))
   );
+
+  // Changelists
+  const changelistMgr = new ChangelistManager(ctx, repos);
+  const changelistTree = new ChangelistTreeProvider(changelistMgr, repos);
+  ctx.subscriptions.push(
+    vscode.window.registerTreeDataProvider("rebased.changelists", changelistTree)
+  );
+  registerChangelistCommands(ctx, changelistMgr, changelistTree);
 }
 
 export function deactivate(): void {

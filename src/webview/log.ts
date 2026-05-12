@@ -16,6 +16,40 @@ interface Row {
 }
 
 const vscode = acquireVsCodeApi<unknown>();
+
+// Toolbar wiring -------------------------------------------------------------
+const qMessage = document.getElementById("q-message") as HTMLInputElement;
+const qAuthor = document.getElementById("q-author") as HTMLInputElement;
+const qPath = document.getElementById("q-path") as HTMLInputElement;
+const qBranch = document.getElementById("q-branch") as HTMLSelectElement;
+const qSince = document.getElementById("q-since") as HTMLSelectElement;
+const clearBtn = document.getElementById("clear") as HTMLButtonElement;
+const statusEl = document.getElementById("status") as HTMLDivElement;
+
+let filterTimer: number | undefined;
+function emitFilter() {
+  clearTimeout(filterTimer);
+  filterTimer = window.setTimeout(() => {
+    vscode.postMessage({
+      type: "setFilter",
+      filter: {
+        message: qMessage.value.trim() || undefined,
+        author: qAuthor.value.trim() || undefined,
+        path: qPath.value.trim() || undefined,
+        branch: qBranch.value || undefined,
+        since: qSince.value || undefined,
+      },
+    });
+  }, 220);
+}
+for (const el of [qMessage, qAuthor, qPath]) el.addEventListener("input", emitFilter);
+for (const el of [qBranch, qSince]) el.addEventListener("change", emitFilter);
+clearBtn.addEventListener("click", () => {
+  qMessage.value = qAuthor.value = qPath.value = "";
+  qBranch.value = qSince.value = "";
+  emitFilter();
+});
+
 const ROW_H = 26;
 const LANE_W = 14;
 const DOT_R = 4;
@@ -240,6 +274,10 @@ window.addEventListener("message", (event) => {
     spacer.style.height = `${rows.length * ROW_H}px`;
     spacer.style.width = `${graphWidth}px`;
     emptyEl.style.display = "none";
+    statusEl.textContent = m.filtered
+      ? `${rows.length} commit${rows.length === 1 ? "" : "s"} match · clear filters to show all`
+      : "";
+    statusEl.style.display = m.filtered ? "block" : "none";
     renderVisible();
   } else if (m.type === "empty") {
     rows = [];
@@ -247,6 +285,21 @@ window.addEventListener("message", (event) => {
     clear(svg);
     clear(visibleHost);
     emptyEl.style.display = "block";
+    statusEl.style.display = "none";
+  } else if (m.type === "branches") {
+    const cur = qBranch.value;
+    // Rebuild the select while keeping "All" + restoring selection.
+    while (qBranch.options.length > 1) qBranch.remove(1);
+    for (const b of m.branches as string[]) {
+      const opt = document.createElement("option");
+      opt.value = b;
+      opt.textContent = b;
+      qBranch.appendChild(opt);
+    }
+    qBranch.value = cur;
+  } else if (m.type === "error") {
+    statusEl.textContent = `Error: ${m.message}`;
+    statusEl.style.display = "block";
   }
 });
 

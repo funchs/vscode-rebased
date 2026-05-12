@@ -9,9 +9,56 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.toolbar {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr 24px;
+  gap: 4px;
+  padding: 6px 8px;
+  background: var(--vscode-sideBar-background);
+  border-bottom: 1px solid var(--vscode-panel-border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.toolbar input, .toolbar select {
+  font: inherit;
+  font-size: 11px;
+  padding: 3px 6px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  min-width: 0;
+}
+.toolbar input::placeholder { color: var(--vscode-input-placeholderForeground); }
+.toolbar input:focus, .toolbar select:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+.toolbar #clear {
+  background: transparent;
+  border: none;
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 3px;
+}
+.toolbar #clear:hover { background: var(--vscode-toolbar-hoverBackground); }
+.status {
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  background: var(--vscode-editorWidget-background);
+  border-bottom: 1px solid var(--vscode-panel-border);
+  display: none;
 }
 #log {
-  height: 100vh;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
 }

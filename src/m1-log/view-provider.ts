@@ -27,6 +27,8 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
         await vscode.commands.executeCommand("rebased.rebase.interactive", msg.hash);
       } else if (msg.type === "cherryPick" && msg.hash) {
         await vscode.commands.executeCommand("rebased.cherryPick", msg.hash);
+      } else if (msg.type === "showCommit" && msg.hash) {
+        await vscode.commands.executeCommand("rebased.commit.show", msg.hash);
       }
     });
   }

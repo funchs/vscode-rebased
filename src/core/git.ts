@@ -174,6 +174,104 @@ export async function cherryPick(repo: string, hash: string): Promise<void> {
   await runGit(["cherry-pick", hash], { cwd: repo });
 }
 
+export interface CommitDetail {
+  hash: string;
+  shortHash: string;
+  parents: string[];
+  author: string;
+  email: string;
+  authorDate: number;
+  committer: string;
+  committerDate: number;
+  subject: string;
+  body: string;
+  refs: string[];
+  files: Array<{ path: string; oldPath?: string; status: string; additions: number; deletions: number }>;
+}
+
+export async function getCommitDetail(repo: string, hash: string): Promise<CommitDetail> {
+  const fmt = ["%H", "%P", "%an", "%ae", "%at", "%cn", "%ct", "%s", "%b", "%D"].join(RECORD);
+  const raw = await runGit(["show", "-z", `--format=${fmt}`, "--name-status", "--numstat", hash], { cwd: repo });
+
+  // git show -z separates the commit metadata from the file list with NULs and embeds
+  // file status records too. Simpler approach: split into the format chunk + the file chunks.
+  const headerEnd = raw.indexOf(NUL);
+  const header = headerEnd === -1 ? raw : raw.slice(0, headerEnd);
+  const [hashOut, parents, author, email, authorDate, committer, committerDate, subject, body, refs] =
+    header.split(RECORD);
+
+  // After the header NUL, --name-status output follows then --numstat (or interleaved).
+  // We'll parse files via a separate, cleaner call.
+  const fileRaw = await runGit(
+    ["show", `--format=`, "--name-status", "-z", hash],
+    { cwd: repo }
+  );
+  const numRaw = await runGit(
+    ["show", `--format=`, "--numstat", "-z", hash],
+    { cwd: repo }
+  );
+
+  const statusEntries: Array<{ status: string; path: string; oldPath?: string }> = [];
+  const sParts = fileRaw.split(NUL);
+  for (let i = 0; i < sParts.length; i++) {
+    const tok = sParts[i];
+    if (!tok) continue;
+    if (/^[RC]\d+$/.test(tok) || tok === "R" || tok === "C") {
+      statusEntries.push({ status: tok[0], oldPath: sParts[++i], path: sParts[++i] });
+    } else if (/^[MADTUX?]$/.test(tok)) {
+      statusEntries.push({ status: tok, path: sParts[++i] });
+    }
+  }
+
+  const stats = new Map<string, { additions: number; deletions: number }>();
+  const nParts = numRaw.split(NUL);
+  for (let i = 0; i < nParts.length; i++) {
+    const tok = nParts[i];
+    if (!tok) continue;
+    const m = tok.match(/^(\d+|-)\t(\d+|-)\t(.*)$/);
+    if (!m) continue;
+    const additions = m[1] === "-" ? 0 : parseInt(m[1], 10);
+    const deletions = m[2] === "-" ? 0 : parseInt(m[2], 10);
+    let p = m[3];
+    if (p === "") {
+      // Renamed file: actual paths come on the next two NUL-separated tokens.
+      const oldPath = nParts[++i];
+      const newPath = nParts[++i];
+      p = newPath;
+      stats.set(oldPath + "→" + newPath, { additions, deletions });
+      stats.set(newPath, { additions, deletions });
+    } else {
+      stats.set(p, { additions, deletions });
+    }
+  }
+
+  const files = statusEntries.map((e) => {
+    const s = stats.get(e.path) ?? (e.oldPath ? stats.get(e.oldPath + "→" + e.path) : undefined);
+    return {
+      path: e.path,
+      oldPath: e.oldPath,
+      status: e.status,
+      additions: s?.additions ?? 0,
+      deletions: s?.deletions ?? 0,
+    };
+  });
+
+  return {
+    hash: hashOut,
+    shortHash: hashOut.slice(0, 7),
+    parents: parents ? parents.split(" ").filter(Boolean) : [],
+    author,
+    email,
+    authorDate: parseInt(authorDate, 10) * 1000,
+    committer,
+    committerDate: parseInt(committerDate, 10) * 1000,
+    subject,
+    body: body.trimEnd(),
+    refs: refs ? refs.split(", ").filter(Boolean) : [],
+    files,
+  };
+}
+
 export async function diffFile(repo: string, path: string, staged = false): Promise<string> {
   const args = ["diff", "--no-color", "-U3"];
   if (staged) args.push("--cached");

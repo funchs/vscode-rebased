@@ -166,6 +166,9 @@ function buildRowDom(i: number): HTMLDivElement {
   short.textContent = r.short;
   rowEl.appendChild(short);
 
+  rowEl.addEventListener("click", () => {
+    vscode.postMessage({ type: "showCommit", hash: r.hash });
+  });
   rowEl.addEventListener("contextmenu", (ev) => {
     ev.preventDefault();
     showMenu(ev.clientX, ev.clientY, r);

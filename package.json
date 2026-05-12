@@ -62,7 +62,12 @@
       { "command": "rebased.commit.amend", "title": "Amend Last Commit", "category": "Rebased" },
       { "command": "rebased.reflog.open", "title": "Show Reflog", "category": "Rebased", "icon": "$(history)" },
       { "command": "rebased.hunks.open", "title": "Stage Hunks for File...", "category": "Rebased" },
-      { "command": "rebased.conflict.show", "title": "Resolve Conflicts...", "category": "Rebased" }
+      { "command": "rebased.conflict.show", "title": "Resolve Conflicts...", "category": "Rebased" },
+      { "command": "rebased.commit.show", "title": "Show Commit Details...", "category": "Rebased" },
+      { "command": "rebased.branches.pick", "title": "Branches...", "category": "Rebased", "icon": "$(git-branch)" },
+      { "command": "rebased.file.history", "title": "Show File History", "category": "Rebased" },
+      { "command": "rebased.branch.compare", "title": "Compare Branch With Current...", "category": "Rebased" },
+      { "command": "rebased.tags.pick", "title": "Tags...", "category": "Rebased", "icon": "$(tag)" }
     ],
     "menus": {
       "view/title": [
@@ -71,7 +76,15 @@
         { "command": "rebased.stash.refresh",   "when": "view == rebased.stash",  "group": "navigation" },
         { "command": "rebased.stash.create",    "when": "view == rebased.stash",  "group": "navigation" },
         { "command": "rebased.branch.create",   "when": "view == rebased.branches","group": "navigation" },
-        { "command": "rebased.reflog.open",     "when": "view == rebased.log",    "group": "navigation@9" }
+        { "command": "rebased.reflog.open",     "when": "view == rebased.log",    "group": "navigation@9" },
+        { "command": "rebased.branches.pick",   "when": "view == rebased.branches","group": "navigation@1" },
+        { "command": "rebased.tags.pick",       "when": "view == rebased.branches","group": "navigation@2" }
+      ],
+      "explorer/context": [
+        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" }
+      ],
+      "editor/context": [
+        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" }
       ],
       "view/item/context": [
         { "command": "rebased.stash.apply", "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@1" },
@@ -81,7 +94,9 @@
       ]
     },
     "keybindings": [
-      { "command": "rebased.commit.amend", "key": "ctrl+alt+k", "mac": "cmd+alt+k" }
+      { "command": "rebased.commit.amend", "key": "ctrl+alt+k", "mac": "cmd+alt+k" },
+      { "command": "rebased.branches.pick", "key": "ctrl+shift+b", "mac": "cmd+shift+b" },
+      { "command": "rebased.file.history", "key": "ctrl+alt+h", "mac": "cmd+alt+h", "when": "editorTextFocus" }
     ],
     "configuration": {
       "title": "Rebased",

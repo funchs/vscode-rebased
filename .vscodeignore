@@ -1,6 +1,9 @@
 .vscode/**
 src/**
+scripts/**
 node_modules/**
 tsconfig.json
 esbuild.config.mjs
 .gitignore
+*.vsix
+package-lock.json

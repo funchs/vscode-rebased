@@ -8,14 +8,21 @@ import { BranchTreeProvider } from "./m3-stash/branch-tree";
 import { registerStashCommands } from "./m3-stash/commands";
 import { registerBranchCommands } from "./m3-stash/branch-commands";
 import { BranchStatusBar } from "./m4-settings/status-bar";
+import { InlineBlame } from "./m4-settings/inline-blame";
 import { HunkPanel } from "./m2-commit/hunk-panel";
 import { ReflogPanel } from "./m3-stash/reflog-panel";
+import { ConflictWatcher, showConflictResolution } from "./m3-stash/conflict-panel";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
   ctx.subscriptions.push(repos);
 
   ctx.subscriptions.push(new BranchStatusBar(repos));
+  ctx.subscriptions.push(new ConflictWatcher(repos));
+
+  if (vscode.workspace.getConfiguration("rebased").get<boolean>("blame.enabled", true)) {
+    ctx.subscriptions.push(new InlineBlame(repos));
+  }
 
   // External git operations (terminal commands, other tools) don't touch our
   // FileSystemWatcher reliably. Refresh whenever the window regains focus so
@@ -69,7 +76,8 @@ export function activate(ctx: vscode.ExtensionContext): void {
     }),
     vscode.commands.registerCommand("rebased.reflog.open", () => {
       ReflogPanel.show(ctx, repos);
-    })
+    }),
+    vscode.commands.registerCommand("rebased.conflict.show", () => showConflictResolution(repos))
   );
 }
 

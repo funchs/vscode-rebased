@@ -8,16 +8,25 @@ Inspired by [DetachHead/rebased](https://github.com/DetachHead/rebased).
 
 | Milestone | Feature | Status |
 |---|---|---|
-| M0 | Drag-and-drop interactive rebase editor (★ killer feature) | MVP |
-| M1 | Log graph with branch lanes, refs, context menu | MVP |
-| M2 | Commit view with stage/unstage, amend, commit message | MVP |
-| M3 | Stash tree (create / apply / pop / drop), cherry-pick, branch tree | MVP |
-| M4 | Settings, keybindings, theme adaptation | Done |
+| M0 | Drag-and-drop interactive rebase editor (★ killer feature) | Done |
+| M1 | Log graph with branch lanes, refs, context menu, virtual scrolling | Done |
+| M2 | Commit view with stage/unstage, amend, hunk-level staging | Done |
+| M3 | Stash tree, cherry-pick, branch tree, reflog browser, conflict panel | Done |
+| M4 | Settings, keybindings, status bar, inline blame | Done |
 
-## Quick start (development)
+## Install
+
+### From .vsix (recommended)
 
 ```bash
-cd vscode-rebased
+npm install && npm run build
+npx @vscode/vsce package --allow-missing-repository
+code --install-extension vscode-rebased-0.0.1.vsix
+```
+
+### Development (Extension Host)
+
+```bash
 npm install
 npm run build
 ```

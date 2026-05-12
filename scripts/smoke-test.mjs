@@ -159,4 +159,57 @@ assert.strictEqual(reparsedHunks.hunks[0].oldStart, 10);
 assert.ok(onlySecond.includes("+inserted at 11"));
 console.log("✓ buildPatch: selective rebuild correct");
 
+// ---------------------------------------------------------------------------
+// Test 4: blame porcelain parser (lifts parser out of the class for testing)
+// ---------------------------------------------------------------------------
+const BLAME_HEADER = /^([0-9a-f]{40})(?: \d+){2,3}$/;
+function parseBlame(raw) {
+  const lines = raw.split("\n");
+  const meta = new Map();
+  const result = [];
+  let i = 0;
+  while (i < lines.length) {
+    const m = lines[i].match(BLAME_HEADER);
+    if (!m) { i++; continue; }
+    const hash = m[1];
+    const cur = meta.get(hash) ? { ...meta.get(hash) } : {};
+    i++;
+    while (i < lines.length && !lines[i].startsWith("\t")) {
+      const line = lines[i];
+      if (line.startsWith("author ")) cur.author = line.slice(7);
+      else if (line.startsWith("author-time ")) cur.date = parseInt(line.slice(12), 10) * 1000;
+      else if (line.startsWith("summary ")) cur.summary = line.slice(8);
+      i++;
+    }
+    if (cur.author && cur.date != null && cur.summary != null) meta.set(hash, cur);
+    const m2 = meta.get(hash);
+    result.push(m2 ? { hash, ...m2 } : { hash, author: "?", date: 0, summary: "" });
+    i++;
+  }
+  return result;
+}
+
+const sampleBlame = `6f6bf31dd23d8e83a74fc5775272cf8c8ecae509 1 1 1
+author Tom Huang
+author-mail <example@example.com>
+author-time 1777363415
+author-tz +0800
+summary Refactor project name
+filename README.md
+\t# Open Design
+a98096a042388b74e422d4b1a750fce6894f9a5d 2 2 1
+author pftom
+author-time 1777350359
+summary Add initial project structure
+boundary
+filename README.md
+\t
+`;
+const blame = parseBlame(sampleBlame);
+assert.strictEqual(blame.length, 2);
+assert.strictEqual(blame[0].author, "Tom Huang");
+assert.strictEqual(blame[0].summary, "Refactor project name");
+assert.strictEqual(blame[1].author, "pftom");
+console.log("✓ parseBlame: porcelain format with metadata recovered");
+
 console.log("\nAll smoke tests passed ✅");

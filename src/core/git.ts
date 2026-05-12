@@ -189,6 +189,46 @@ export async function applyPatch(repo: string, patch: string, options: { cached?
   await runGit(args, { cwd: repo, stdin: patch });
 }
 
+export interface OperationState {
+  kind: "rebase" | "merge" | "cherry-pick" | "revert" | null;
+  conflicted: string[];
+}
+
+export async function getOperationState(repo: string): Promise<OperationState> {
+  const { existsSync } = await import("fs");
+  const path = await import("path");
+  const dir = path.join(repo, ".git");
+  let kind: OperationState["kind"] = null;
+  if (existsSync(path.join(dir, "rebase-merge")) || existsSync(path.join(dir, "rebase-apply"))) kind = "rebase";
+  else if (existsSync(path.join(dir, "MERGE_HEAD"))) kind = "merge";
+  else if (existsSync(path.join(dir, "CHERRY_PICK_HEAD"))) kind = "cherry-pick";
+  else if (existsSync(path.join(dir, "REVERT_HEAD"))) kind = "revert";
+
+  const out = await runGit(["diff", "--name-only", "--diff-filter=U", "-z"], { cwd: repo });
+  const conflicted = out.split(NUL).filter(Boolean);
+  return { kind, conflicted };
+}
+
+export async function continueOperation(repo: string, op: NonNullable<OperationState["kind"]>): Promise<void> {
+  const map: Record<NonNullable<OperationState["kind"]>, string[]> = {
+    "rebase": ["rebase", "--continue"],
+    "merge": ["commit", "--no-edit"],
+    "cherry-pick": ["cherry-pick", "--continue"],
+    "revert": ["revert", "--continue"],
+  };
+  await runGit(map[op], { cwd: repo, env: { GIT_EDITOR: "true" } });
+}
+
+export async function abortOperation(repo: string, op: NonNullable<OperationState["kind"]>): Promise<void> {
+  const map: Record<NonNullable<OperationState["kind"]>, string[]> = {
+    "rebase": ["rebase", "--abort"],
+    "merge": ["merge", "--abort"],
+    "cherry-pick": ["cherry-pick", "--abort"],
+    "revert": ["revert", "--abort"],
+  };
+  await runGit(map[op], { cwd: repo });
+}
+
 export async function getReflog(repo: string, limit = 200): Promise<Array<{ ref: string; hash: string; subject: string; date: number }>> {
   const fmt = ["%gd", "%H", "%gs", "%at"].join(RECORD);
   const out = await runGit(["reflog", "-z", `--format=${fmt}`, `--max-count=${limit}`], { cwd: repo });

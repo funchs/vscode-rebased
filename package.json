@@ -4,6 +4,11 @@
   "description": "JetBrains-style git client features for VS Code: drag-drop interactive rebase, log graph, commit view, stash/cherry-pick",
   "version": "0.0.1",
   "publisher": "rebased",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/vscode-rebased.git"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -56,7 +61,8 @@
       { "command": "rebased.branch.create", "title": "New Branch...", "category": "Rebased", "icon": "$(git-branch)" },
       { "command": "rebased.commit.amend", "title": "Amend Last Commit", "category": "Rebased" },
       { "command": "rebased.reflog.open", "title": "Show Reflog", "category": "Rebased", "icon": "$(history)" },
-      { "command": "rebased.hunks.open", "title": "Stage Hunks for File...", "category": "Rebased" }
+      { "command": "rebased.hunks.open", "title": "Stage Hunks for File...", "category": "Rebased" },
+      { "command": "rebased.conflict.show", "title": "Resolve Conflicts...", "category": "Rebased" }
     ],
     "menus": {
       "view/title": [
@@ -99,6 +105,11 @@
           "type": "string",
           "default": "git",
           "description": "Path to the git executable."
+        },
+        "rebased.blame.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline blame on the current line (author, age, subject)."
         }
       }
     }

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="280" viewBox="0 0 480 280">
+  <defs>
+    <style>
+      .sidebar { fill: #252526; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 12px; }
+      .text-sub { fill: #858585; font-family: -apple-system; font-size: 11px; }
+      .heading { fill: #cccccc; font-family: -apple-system; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      .mono { font-family: "SF Mono", Menlo, monospace; font-size: 11px; fill: #cccccc; }
+      .ok { fill: #3fb950; }
+      .warn { fill: #d29922; }
+      .err { fill: #cf222e; }
+    </style>
+  </defs>
+  <rect width="480" height="280" class="sidebar"/>
+  <text x="16" y="28" class="heading">REBASED · SUBMODULES</text>
+
+  <!-- Initialized submodule -->
+  <g transform="translate(16, 56)">
+    <text class="ok" style="font-size:14px;">▸</text>
+    <text x="22" class="mono">vendor/openapi-codegen</text>
+    <text x="240" class="text-sub">v2.4.1</text>
+  </g>
+  <g transform="translate(16, 80)">
+    <text class="ok" style="font-size:14px;">▸</text>
+    <text x="22" class="mono">vendor/protobuf</text>
+    <text x="240" class="text-sub">3.21.12</text>
+  </g>
+  <!-- Out of sync (warn) -->
+  <g transform="translate(16, 104)">
+    <text class="warn" style="font-size:14px;">⚠</text>
+    <text x="22" class="mono">vendor/grpc-tools</text>
+    <text x="240" class="text-sub">d4e2a91 (behind)</text>
+  </g>
+  <!-- Not initialized -->
+  <g transform="translate(16, 128)">
+    <text class="text-sub" style="font-size:14px;">⊘</text>
+    <text x="22" class="mono">vendor/legacy-rpc</text>
+    <text x="240" class="text-sub">not initialized</text>
+  </g>
+  <!-- Merge conflict -->
+  <g transform="translate(16, 152)">
+    <text class="err" style="font-size:14px;">✗</text>
+    <text x="22" class="mono">vendor/schema</text>
+    <text x="240" class="text-sub">merge conflict</text>
+  </g>
+
+  <!-- Toolbar legend -->
+  <rect x="0" y="200" width="480" height="80" fill="#1e1e1e"/>
+  <text x="16" y="220" class="text-sub">Toolbar:  ⊕ Init  ↻ Update  ⤺ Sync URLs</text>
+  <text x="16" y="240" class="text-sub">Status prefix mapped from <tspan font-family="SF Mono, monospace">git submodule status</tspan>:</text>
+  <text x="16" y="258" class="text-sub" style="font-family: 'SF Mono', monospace;">▸ in-sync · ⚠ out-of-sync · ⊘ not-init · ✗ conflict</text>
+</svg>

@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .title-bar { fill: #3c3c3c; }
+      .activity-bar { fill: #333333; }
+      .sidebar { fill: #252526; }
+      .editor { fill: #1e1e1e; }
+      .status-bar { fill: #007acc; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 12px; }
+      .text-sub { fill: #858585; font-family: -apple-system; font-size: 11px; }
+      .heading { fill: #cccccc; font-family: -apple-system; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      .mono { font-family: "SF Mono", Menlo, monospace; font-size: 12px; fill: #cccccc; }
+      .badge-M { fill: #d29922; font-family: monospace; font-weight: 700; font-size: 11px; }
+      .badge-A { fill: #3fb950; font-family: monospace; font-weight: 700; font-size: 11px; }
+      .badge-U { fill: #cf222e; font-family: monospace; font-weight: 700; font-size: 11px; }
+      .badge-D { fill: #f85149; font-family: monospace; font-weight: 700; font-size: 11px; }
+      .active-pill { fill: #094771; }
+      .menu-bg { fill: #252526; stroke: #454545; }
+      .menu-text { fill: #cccccc; font-family: -apple-system; font-size: 12px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="750" fill="#1e1e1e"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project</text>
+
+  <!-- Activity bar -->
+  <rect x="0" y="30" width="48" height="720" class="activity-bar"/>
+  <rect x="0" y="170" width="48" height="40" fill="#37373d"/>
+  <rect x="0" y="170" width="2" height="40" fill="#007acc"/>
+  <g transform="translate(12,178)" stroke="#cccccc" stroke-width="1.6" fill="none">
+    <circle cx="5" cy="4" r="2.4" fill="#cccccc"/>
+    <circle cx="5" cy="20" r="2.4" fill="#cccccc"/>
+    <circle cx="19" cy="12" r="2.4" fill="#cccccc"/>
+    <line x1="5" y1="6.4" x2="5" y2="17.6"/>
+    <path d="M 5 12 C 5 17 11 20 16.5 18"/>
+    <path d="M 5 12 C 5 7 11 4 16.5 6"/>
+  </g>
+
+  <!-- Sidebar (wider to focus on Changelists) -->
+  <rect x="48" y="30" width="400" height="720" class="sidebar"/>
+  <text x="64" y="55" class="heading">REBASED</text>
+
+  <!-- Collapsed sections -->
+  <text x="64" y="88" class="text">▶ Log</text>
+  <text x="64" y="113" class="text">▶ Commit</text>
+  <text x="64" y="138" class="text">▶ Stashes</text>
+  <text x="64" y="163" class="text">▶ Branches</text>
+
+  <!-- Changelists section (expanded) -->
+  <g transform="translate(64, 195)">
+    <text class="text" style="font-weight:600;">▼ Changelists</text>
+    <text x="240" y="0" class="text-sub">⊕  ↻</text>
+
+    <!-- Default (active) -->
+    <g transform="translate(0, 22)">
+      <text class="text">▼ 📋 Default</text>
+      <rect x="86" y="-12" width="44" height="18" rx="3" class="active-pill"/>
+      <text x="108" y="0" text-anchor="middle" class="text" style="font-size:10px;">active</text>
+
+      <!-- 2 files in Default -->
+      <text x="22" y="22" class="badge-M">M</text>
+      <text x="42" y="22" class="mono">apps/web/handlers.ts</text>
+
+      <text x="22" y="42" class="badge-A">A</text>
+      <text x="42" y="42" class="mono">apps/web/types.ts</text>
+    </g>
+
+    <!-- WIP: rate limiter -->
+    <g transform="translate(0, 100)">
+      <text class="text">▼ 📋 WIP: rate limiter</text>
+
+      <text x="22" y="22" class="badge-M">M</text>
+      <text x="42" y="22" class="mono">apps/api/list.ts</text>
+
+      <text x="22" y="42" class="badge-A">A</text>
+      <text x="42" y="42" class="mono">apps/api/limiter.ts</text>
+
+      <text x="22" y="62" class="badge-M">M</text>
+      <text x="42" y="62" class="mono">apps/core/index.ts</text>
+    </g>
+
+    <!-- Lint cleanup -->
+    <g transform="translate(0, 200)">
+      <text class="text">▼ 📋 Lint cleanup</text>
+
+      <text x="22" y="22" class="badge-M">M</text>
+      <text x="42" y="22" class="mono">apps/auth.ts</text>
+
+      <text x="22" y="42" class="badge-M">M</text>
+      <text x="42" y="42" class="mono">apps/core/parser.ts</text>
+
+      <text x="22" y="62" class="badge-D">D</text>
+      <text x="42" y="62" class="mono">apps/legacy/old.ts</text>
+    </g>
+
+    <text class="text" y="320">▶ Submodules</text>
+  </g>
+
+  <!-- Editor area with hint message -->
+  <rect x="448" y="30" width="752" height="35" fill="#252526"/>
+  <text x="468" y="52" class="text">📄 Welcome</text>
+
+  <rect x="448" y="65" width="752" height="660" class="editor"/>
+
+  <g transform="translate(488, 130)">
+    <text class="text" style="font-size: 22px; font-weight: 600;">Changelists</text>
+    <text y="36" class="text" style="font-size: 14px;">JetBrains-style named groups of working-tree paths.</text>
+
+    <text y="80" class="text-sub" style="font-size: 13px;">Each list is a partial commit ready to be sent on its own:</text>
+
+    <g transform="translate(0, 110)" font-family="-apple-system" font-size="13" fill="#cccccc">
+      <text>1.  Right-click a file row → <tspan fill="#6cb6ff">Move to Changelist…</tspan></text>
+      <text y="26">2.  Set a list as <tspan fill="#6cb6ff">active</tspan> — orphan changes get bucketed there automatically.</text>
+      <text y="52">3.  Right-click a list → <tspan fill="#6cb6ff">Commit Changelist…</tspan></text>
+      <text y="78">    Rebased resets the index, stages only the listed paths, runs <tspan font-family="SF Mono, monospace" fill="#dcdcaa">git commit</tspan>.</text>
+    </g>
+
+    <!-- Hint box -->
+    <rect x="0" y="240" width="600" height="80" rx="6" fill="#252526" stroke="#454545"/>
+    <text x="14" y="262" class="text" style="font-weight: 600;">💡 Why this matters</text>
+    <text x="14" y="284" class="text-sub" style="font-size: 12px;">Stop bundling unrelated edits into one commit, without juggling</text>
+    <text x="14" y="302" class="text-sub" style="font-size: 12px;">multiple stashes or branches mid-feature.</text>
+  </g>
+
+  <!-- Right-click context menu over WIP list, showing per-list actions -->
+  <g transform="translate(310, 280)">
+    <rect width="220" height="200" rx="4" class="menu-bg"/>
+    <text x="14" y="22" class="menu-text">✓ Commit Changelist…</text>
+    <line x1="0" y1="34" x2="220" y2="34" stroke="#454545"/>
+    <text x="14" y="56" class="menu-text">Set as Active</text>
+    <text x="14" y="80" class="menu-text">Rename Changelist</text>
+    <line x1="0" y1="94" x2="220" y2="94" stroke="#454545"/>
+    <text x="14" y="116" class="menu-text" fill="#f85149">Delete Changelist</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="725" width="1200" height="25" class="status-bar"/>
+  <text x="14" y="743" fill="white" font-family="-apple-system" font-size="12">⎇ main* · 8 changes across 3 changelists</text>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="160" viewBox="0 0 1200 160">
+  <defs>
+    <style>
+      .editor { fill: #1e1e1e; }
+      .status { fill: #007acc; }
+      .status-warn { fill: #d29922; }
+      .status-err { fill: #cf222e; }
+      .text { fill: white; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 12px; }
+      .label { fill: #cccccc; font-family: -apple-system; font-size: 13px; font-weight: 600; }
+      .caption { fill: #858585; font-family: -apple-system; font-size: 11px; font-style: italic; }
+    </style>
+  </defs>
+
+  <!-- 3 status bar snapshots stacked vertically -->
+
+  <!-- Clean state -->
+  <rect width="1200" height="40" fill="#252526"/>
+  <rect y="10" width="1200" height="25" class="status"/>
+  <text x="14" y="28" class="text">⎇ main</text>
+  <text x="80" y="28" class="text">$(check) 8a2c1f0 · feat(api): list endpoint</text>
+  <text x="380" y="28" class="text">↑ 1 ↓ 0</text>
+  <text x="1186" y="28" text-anchor="end" class="text">Demo Author · LF · TypeScript</text>
+
+  <!-- Dirty state -->
+  <rect y="50" width="1200" height="40" fill="#252526"/>
+  <rect y="60" width="1200" height="25" class="status"/>
+  <text x="14" y="78" class="text">⎇ main*</text>
+  <text x="80" y="78" class="text">3 changes  ·  2 staged  ·  Rebased.changelist: Default (active)</text>
+
+  <!-- Conflict state -->
+  <rect y="100" width="1200" height="40" fill="#252526"/>
+  <rect y="110" width="1200" height="25" class="status-err"/>
+  <text x="14" y="128" class="text">⚠ rebase: 2 conflicts</text>
+  <text x="220" y="128" class="text">click to resolve  ·  apps/web/server.ts, apps/web/handlers.ts</text>
+
+  <!-- Captions -->
+  <text x="14" y="155" class="caption">Clean / Dirty / Conflict — status bar adapts color and content to the current operation state.</text>
+</svg>

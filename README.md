@@ -13,7 +13,7 @@ IntelliJ git client extracted as a standalone app. This extension distills its
 best ideas into a single VS Code extension that coexists with the built-in git
 support and GitLens.
 
-![Log graph view](docs/screenshots/log-graph.png)
+![Feature tour](docs/screenshots/demo.gif)
 
 ---
 
@@ -82,6 +82,24 @@ JetBrains-style panel lists every conflicted file with per-file actions —
 
 JetBrains-style named groups of working-tree paths. Group fix-up changes,
 commit them as one without touching unrelated edits.
+
+![Changelists view](docs/screenshots/changelists.png)
+
+### Status bar that follows the operation
+
+Color and content adapt to the current state — clean (blue), dirty
+(blue with changelist label), or conflict (red with file count).
+Click to create a branch.
+
+![Status bar states](docs/screenshots/status-bar.png)
+
+### Submodule view
+
+Per-submodule status mapped from `git submodule status` prefix: in-sync,
+out-of-sync, not-initialized, merge-conflict. Title-bar actions for
+init / update / sync.
+
+![Submodule view](docs/screenshots/submodules.png)
 
 ---
 

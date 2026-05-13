@@ -35,8 +35,8 @@ async function chooseStrategy(): Promise<Strategy | undefined> {
   if (remembered === "rebase" || remembered === "merge") return remembered;
   const pick = await vscode.window.showQuickPick(
     [
-      { label: "$(git-pull-request-go-to-changes) Rebase local commits onto upstream", value: "rebase" },
-      { label: "$(git-merge) Merge upstream into local", value: "merge" },
+      { label: "$(git-pull-request-go-to-changes) " + vscode.l10n.t("Rebase local commits onto upstream"), value: "rebase" },
+      { label: "$(git-merge) " + vscode.l10n.t("Merge upstream into local"), value: "merge" },
     ],
     { placeHolder: vscode.l10n.t("Update strategy (configurable as rebased.updateProject.strategy)") }
   );
@@ -95,7 +95,7 @@ async function resolveUntrackedCollision(
 
   const preview = collisions.slice(0, 3).join(", ") + (collisions.length > 3 ? "…" : "");
   const choice = await vscode.window.showWarningMessage(
-    `Stash pop blocked: ${collisions.length} untracked file${collisions.length === 1 ? "" : "s"} from the stash already exist in the working tree (added by upstream): ${preview}`,
+    vscode.l10n.t("Stash pop blocked: {0} untracked file(s) from the stash already exist in the working tree (added by upstream): {1}", String(collisions.length), preview),
     { modal: true, detail: collisions.join("\n") },
     vscode.l10n.t("Keep upstream (drop stashed copies)"),
     vscode.l10n.t("Restore from stash (overwrite upstream)"),
@@ -107,12 +107,12 @@ async function resolveUntrackedCollision(
     if (choice === vscode.l10n.t("Keep upstream (drop stashed copies)")) {
       await runGit(["stash", "drop", "stash@{0}"], { cwd: root });
       vscode.window.showInformationMessage(
-        `Dropped stash; upstream copies of ${collisions.length} file(s) kept.`
+        vscode.l10n.t("Dropped stash; upstream copies of {0} file(s) kept.", String(collisions.length))
       );
     } else if (choice === vscode.l10n.t("Restore from stash (overwrite upstream)")) {
       // Confirm once more — this is destructive to upstream's just-pulled content.
       const ok = await vscode.window.showWarningMessage(
-        `Overwrite ${collisions.length} upstream file(s) with the stashed versions? Upstream content for these paths will be lost from the working tree.`,
+        vscode.l10n.t("Overwrite {0} upstream file(s) with the stashed versions? Upstream content for these paths will be lost from the working tree.", String(collisions.length)),
         { modal: true },
         vscode.l10n.t("Overwrite")
       );
@@ -147,7 +147,7 @@ async function resolveUntrackedCollision(
         );
       }
       vscode.window.showInformationMessage(
-        `Stash kept. After deciding, drop it manually from the Stashes view.`
+        vscode.l10n.t("Stash kept. After deciding, drop it manually from the Stashes view.")
       );
     }
     // "Do nothing" — bail out, stash stays intact.
@@ -392,6 +392,6 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
   // be glowing. Don't toast "success" in that case.
   const finalState = await getOperationState(root);
   if (!finalState.kind) {
-    vscode.window.setStatusBarMessage(`$(check) Update Project: ${branch} updated.`, 4000);
+    vscode.window.setStatusBarMessage("$(check) " + vscode.l10n.t("Update Project: {0} updated.", branch), 4000);
   }
 }

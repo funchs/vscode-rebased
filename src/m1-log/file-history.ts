@@ -63,10 +63,10 @@ export async function showFileHistory(repos: RepoManager, uri?: vscode.Uri): Pro
   // Open a one-shot QuickPick to choose action.
   const action = await vscode.window.showQuickPick(
     [
-      { label: "$(eye) Open commit details", value: "details" },
-      { label: "$(diff) Diff this file against working tree", value: "diffWorking" },
-      { label: "$(diff) Diff against previous version", value: "diffPrev" },
-      { label: "$(history) Open file at this revision", value: "openAt" },
+      { label: "$(eye) " + vscode.l10n.t("Open commit details"), value: "details" },
+      { label: "$(diff) " + vscode.l10n.t("Diff this file against working tree"), value: "diffWorking" },
+      { label: "$(diff) " + vscode.l10n.t("Diff against previous version"), value: "diffPrev" },
+      { label: "$(history) " + vscode.l10n.t("Open file at this revision"), value: "openAt" },
     ],
     { placeHolder: `${pick.hash.slice(0, 7)} on ${rel}` }
   );

@@ -46,20 +46,20 @@ async function runBranchAction(
   const actions: BranchAction[] = [];
   if (!current) {
     if (remote) {
-      actions.push({ label: "$(git-pull-request) Checkout (create local tracking)", action: "checkoutLocal" });
-      actions.push({ label: "$(eye) Checkout detached", action: "checkout" });
+      actions.push({ label: "$(git-pull-request) " + vscode.l10n.t("Checkout (create local tracking)"), action: "checkoutLocal" });
+      actions.push({ label: "$(eye) " + vscode.l10n.t("Checkout detached"), action: "checkout" });
     } else {
-      actions.push({ label: "$(check) Checkout", action: "checkout" });
+      actions.push({ label: "$(check) " + vscode.l10n.t("Checkout"), action: "checkout" });
     }
-    actions.push({ label: "$(git-merge) Merge into current", action: "merge" });
-    actions.push({ label: "$(git-pull-request-go-to-changes) Rebase current onto this", action: "rebaseOnto" });
+    actions.push({ label: "$(git-merge) " + vscode.l10n.t("Merge into current"), action: "merge" });
+    actions.push({ label: "$(git-pull-request-go-to-changes) " + vscode.l10n.t("Rebase current onto this"), action: "rebaseOnto" });
   }
-  actions.push({ label: "$(diff) Compare with current", action: "compare" });
-  actions.push({ label: "$(add) New branch from here…", action: "newFromHere" });
+  actions.push({ label: "$(diff) " + vscode.l10n.t("Compare with current"), action: "compare" });
+  actions.push({ label: "$(add) " + vscode.l10n.t("New branch from here…"), action: "newFromHere" });
   if (!remote && !current) {
-    actions.push({ label: "$(pencil) Rename…", action: "rename" });
-    actions.push({ label: "$(cloud-upload) Push (set upstream)", action: "pushSetUpstream" });
-    actions.push({ label: "$(trash) Delete", action: "delete" });
+    actions.push({ label: "$(pencil) " + vscode.l10n.t("Rename…"), action: "rename" });
+    actions.push({ label: "$(cloud-upload) " + vscode.l10n.t("Push (set upstream)"), action: "pushSetUpstream" });
+    actions.push({ label: "$(trash) " + vscode.l10n.t("Delete"), action: "delete" });
   }
 
   const choice = await vscode.window.showQuickPick(

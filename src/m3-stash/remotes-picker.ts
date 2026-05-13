@@ -29,8 +29,8 @@ export async function showRemotesPicker(repos: RepoManager): Promise<void> {
   if (!root) return;
   const remotes = await listRemotes(root);
 
-  const ADD: vscode.QuickPickItem = { label: "$(add) Add new remote…", alwaysShow: true };
-  const FETCH_ALL: vscode.QuickPickItem = { label: "$(cloud-download) Fetch all (with prune)", alwaysShow: true };
+  const ADD: vscode.QuickPickItem = { label: "$(add) " + vscode.l10n.t("Add new remote…"), alwaysShow: true };
+  const FETCH_ALL: vscode.QuickPickItem = { label: "$(cloud-download) " + vscode.l10n.t("Fetch all (with prune)"), alwaysShow: true };
   const items: vscode.QuickPickItem[] = [ADD, FETCH_ALL];
   if (remotes.length) {
     items.push({ label: vscode.l10n.t("Remotes"), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
@@ -91,11 +91,11 @@ async function fetch(repos: RepoManager, root: string, name?: string, prune = tr
 async function remoteAction(repos: RepoManager, root: string, r: RemoteInfo): Promise<void> {
   const action = await vscode.window.showQuickPick(
     [
-      { label: "$(cloud-download) Fetch", value: "fetch" },
-      { label: "$(globe) Open URL in browser", value: "open" },
-      { label: "$(pencil) Rename…", value: "rename" },
-      { label: "$(link) Change URL…", value: "url" },
-      { label: "$(trash) Remove", value: "remove" },
+      { label: "$(cloud-download) " + vscode.l10n.t("Fetch"), value: "fetch" },
+      { label: "$(globe) " + vscode.l10n.t("Open URL in browser"), value: "open" },
+      { label: "$(pencil) " + vscode.l10n.t("Rename…"), value: "rename" },
+      { label: "$(link) " + vscode.l10n.t("Change URL…"), value: "url" },
+      { label: "$(trash) " + vscode.l10n.t("Remove"), value: "remove" },
     ],
     { placeHolder: vscode.l10n.t("Action on {0}", r.name) }
   );

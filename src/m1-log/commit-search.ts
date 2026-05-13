@@ -16,11 +16,11 @@ interface SearchHit {
 type Mode = "all" | "message" | "author" | "hash" | "file" | "content";
 
 const MODES: Array<{ label: string; value: Mode; detail: string }> = [
-  { label: "$(search) Message", value: "message", detail: "git log --grep" },
-  { label: "$(person) Author", value: "author", detail: "git log --author" },
-  { label: "$(git-commit) Hash prefix", value: "hash", detail: "rev-parse" },
-  { label: "$(file-code) File path", value: "file", detail: "git log -- <path>" },
-  { label: "$(diff) Patch content (-S)", value: "content", detail: "git log -S<term> — slow but precise" },
+  { label: "$(search) " + vscode.l10n.t("Message"), value: "message", detail: "git log --grep" },
+  { label: "$(person) " + vscode.l10n.t("Author"), value: "author", detail: "git log --author" },
+  { label: "$(git-commit) " + vscode.l10n.t("Hash prefix"), value: "hash", detail: "rev-parse" },
+  { label: "$(file-code) " + vscode.l10n.t("File path"), value: "file", detail: "git log -- <path>" },
+  { label: "$(diff) " + vscode.l10n.t("Patch content (-S)"), value: "content", detail: "git log -S<term> — slow but precise" },
   { label: "$(list-flat) All (message + author)", value: "all", detail: "default" },
 ];
 

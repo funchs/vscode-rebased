@@ -37,7 +37,7 @@ export async function showTagsPicker(repos: RepoManager): Promise<void> {
   if (!root) return;
   const tags = await listTags(root);
 
-  const NEW: vscode.QuickPickItem = { label: "$(add) Create new tag…", alwaysShow: true };
+  const NEW: vscode.QuickPickItem = { label: "$(add) " + vscode.l10n.t("Create new tag…"), alwaysShow: true };
   const items: vscode.QuickPickItem[] = [NEW];
   for (const t of tags) {
     items.push({

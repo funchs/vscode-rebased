@@ -52,8 +52,8 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
   } catch {
     // miner can fail on empty repo — fine, just skip suggestions
   }
-  const NONE = { label: "$(circle-slash) (no scope)", value: "" };
-  const CUSTOM = { label: "$(edit) Custom scope…", value: "__custom__" };
+  const NONE = { label: "$(circle-slash) " + vscode.l10n.t("(no scope)"), value: "" };
+  const CUSTOM = { label: "$(edit) " + vscode.l10n.t("Custom scope…"), value: "__custom__" };
   const scopeItems = [
     NONE,
     CUSTOM,

@@ -1,6 +1,7 @@
 # Release workflow — triggered when a v*.*.* tag is pushed.
-# Builds the vsix, publishes to the VS Code Marketplace, attaches the vsix
-# to the GitHub release. No untrusted github.event.* values flow into run:.
+# Builds the vsix, optionally publishes to VS Code Marketplace and/or Open VSX
+# depending on which secrets are set, and attaches the vsix to the GitHub release.
+# No untrusted github.event.* values flow into run:.
 name: Release
 
 on:
@@ -38,13 +39,14 @@ jobs:
       - name: Package
         run: npx --yes @vscode/vsce package --no-yarn --allow-missing-repository
 
-      - name: Publish to Marketplace
+      - name: Publish to VS Code Marketplace
+        if: ${{ secrets.VSCE_PAT != '' }}
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: npx --yes @vscode/vsce publish --packagePath *.vsix --no-yarn
 
-      - name: Publish to Open VSX (optional mirror)
-        if: env.OVSX_PAT != ''
+      - name: Publish to Open VSX
+        if: ${{ secrets.OVSX_PAT != '' }}
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: npx --yes ovsx publish *.vsix

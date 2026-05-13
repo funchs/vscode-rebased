@@ -14,6 +14,19 @@ function gitPath(): string {
   return vscode.workspace.getConfiguration("rebased").get<string>("gitPath", "git");
 }
 
+// Single shared output channel — every git invocation appends its argv,
+// stdout (truncated), stderr, exit code, and elapsed ms. Surfaced via the
+// "Rebased: Show Output" command so users can inspect the raw conversation
+// with git when something baffles us.
+let outputChannel: vscode.OutputChannel | undefined;
+function getOutput(): vscode.OutputChannel {
+  if (!outputChannel) outputChannel = vscode.window.createOutputChannel("Rebased Git");
+  return outputChannel;
+}
+export function showOutput(): void {
+  getOutput().show(true);
+}
+
 export interface GitRunOptions {
   cwd: string;
   stdin?: string;
@@ -24,6 +37,13 @@ export interface GitRunOptions {
 // strings (paths, refs, messages) cannot inject commands.
 export function runGit(args: string[], opts: GitRunOptions): Promise<string> {
   return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const ch = getOutput();
+    const shellish = args
+      .map((a) => (/[ \t"'\\$`]/.test(a) ? JSON.stringify(a) : a))
+      .join(" ");
+    ch.appendLine(`$ git ${shellish}   (cwd: ${opts.cwd})`);
+
     const child = spawn(gitPath(), args, {
       cwd: opts.cwd,
       env: { ...process.env, ...opts.env },
@@ -33,8 +53,16 @@ export function runGit(args: string[], opts: GitRunOptions): Promise<string> {
     let stderr = "";
     child.stdout.on("data", (d) => (stdout += d.toString()));
     child.stderr.on("data", (d) => (stderr += d.toString()));
-    child.on("error", reject);
+    child.on("error", (err) => {
+      ch.appendLine(`  ERR: ${err.message}`);
+      reject(err);
+    });
     child.on("close", (code) => {
+      const elapsed = Date.now() - start;
+      if (stderr.trim()) {
+        for (const line of stderr.trimEnd().split("\n")) ch.appendLine(`  ! ${line}`);
+      }
+      ch.appendLine(`  → exit=${code}  ${elapsed}ms  stdout=${stdout.length}B`);
       if (code === 0) resolve(stdout);
       else reject(new Error(`git ${args.join(" ")} exited ${code}: ${stderr.trim()}`));
     });

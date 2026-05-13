@@ -47,6 +47,7 @@
   "cmd.commit.wizard": "Commit Wizard...",
   "cmd.updateProject": "Update Project (stash → fetch → pull → pop)",
   "cmd.diagnose": "Repository Diagnostic",
+  "cmd.showOutput": "Show Output (Git Log)",
   "cfg.log.maxCommits": "Maximum commits loaded in the log view per batch.",
   "cfg.log.allBranches": "Show commits from all branches in the log graph.",
   "cfg.rebase.autoStash": "Automatically stash working tree changes before starting interactive rebase.",

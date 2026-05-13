@@ -48,7 +48,7 @@
   "Wait 2s and retry": "等待 2 秒后重试",
   "Remove lock and retry": "删除锁文件后重试",
   "{0} — index could not be written": "{0} —— 无法写入索引",
-  "{0}\n\nTwo silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state.": "{0}\n\n两次静默重试均失败。可能原因：\n  • 另一个 git 进程正持有索引（终端、IDE 或 CI）\n  • .git/index 文件权限或磁盘空间问题\n  • 杀毒软件 / 备份工具锁定了文件\n\n请检查 .git/ 目录后重新尝试。",
+  "Two silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state.": "两次静默重试均失败。可能原因：\n  • 另一个 git 进程正持有索引（终端、IDE 或 CI）\n  • .git/index 文件权限或磁盘空间问题\n  • 杀毒软件 / 备份工具锁定了文件\n\n请检查 .git/ 目录后重新尝试。",
   "Details": "详情",
   "{0} — full error": "{0} —— 完整错误",
   "Failed to remove lock: {0}": "删除锁文件失败：{0}",
@@ -57,6 +57,8 @@
   "{0} min old": "{0} 分钟前",
   "{0} h old": "{0} 小时前",
   "Run diagnostic": "运行诊断",
+  "Run in terminal": "在终端中重试",
+  "Show output": "查看输出",
   "Open .git/ in Finder": "在 Finder 中打开 .git/",
   "Running repository diagnostic…": "正在运行仓库诊断…",
   "Repository diagnostic": "仓库诊断报告"

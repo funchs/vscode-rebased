@@ -8,7 +8,8 @@ import {
 import type { RepoManager } from "../core/repo";
 import { showGitError, isWorkingTreeDirtyError, maybeRecoverFromIndexLock } from "../core/notify";
 import { parseUntrackedCollisions, isStashConflictMessage, isIndexLockError } from "../core/notify-pure";
-import { showDiagnostic } from "./diagnostic";
+import { showDiagnostic, runInTerminal } from "./diagnostic";
+import { showOutput } from "../core/git";
 
 // JetBrains "Update Project" (Ctrl+T) — one command that:
 //   1. Refuses to start if a previous op (rebase/merge/cherry-pick/stash-pop)
@@ -205,9 +206,10 @@ async function tryWithLockRecovery(
       }
       if (recovery === "abort") return false;
       // No lock file present and user couldn't recover via dialog. Two silent
-      // retries already failed — likely permissions, cloud-sync, or antivirus.
-      // Use a MODAL dialog so all the recovery buttons are visible (the toast
-      // form truncates extra buttons when the title is long).
+      // retries already failed AND the diagnostic might still report a clean
+      // bill of health (we've seen that). At this point we need to see git's
+      // own raw output, not just the first stderr line. Surface both the
+      // git-conversation output channel and a "re-run in terminal" path.
       const detail =
         msg2 + "\n\n" +
         vscode.l10n.t(
@@ -216,18 +218,49 @@ async function tryWithLockRecovery(
       const pick = await vscode.window.showErrorMessage(
         vscode.l10n.t("{0} — index could not be written", scope),
         { modal: true, detail },
-        vscode.l10n.t("Run diagnostic"),
-        vscode.l10n.t("Open .git/ in Finder")
+        vscode.l10n.t("Run in terminal"),
+        vscode.l10n.t("Show output"),
+        vscode.l10n.t("Run diagnostic")
       );
       if (pick === vscode.l10n.t("Run diagnostic")) {
         await showDiagnostic(root);
-      } else if (pick === vscode.l10n.t("Open .git/ in Finder")) {
-        const fileUri = vscode.Uri.file(`${root}/.git`);
-        await vscode.commands.executeCommand("revealFileInOS", fileUri);
+      } else if (pick === vscode.l10n.t("Show output")) {
+        showOutput();
+      } else if (pick === vscode.l10n.t("Run in terminal")) {
+        // Re-run the exact failing command from the stderr summary so the user
+        // can see git's full output unfiltered.
+        const cmd = extractGitCommand(msg2) ?? ["git", "stash", "push", "-u"];
+        await runInTerminal(scope, cmd, root);
       }
       return false;
     }
   }
+}
+
+// runGit wraps errors as `git <argv> exited <code>: <stderr>`. Recover the
+// argv part so we can offer the user a verbatim terminal re-run.
+function extractGitCommand(errMsg: string): string[] | undefined {
+  const m = errMsg.match(/^git\s+(.+?)\s+exited\s+\d+:/);
+  if (!m) return undefined;
+  const rest = m[1];
+  // Split respecting quotes (good-enough — message has no embedded quotes).
+  const toks: string[] = ["git"];
+  let buf = "";
+  let inQuote: "'" | '"' | null = null;
+  for (const ch of rest) {
+    if (inQuote) {
+      if (ch === inQuote) inQuote = null;
+      else buf += ch;
+    } else if (ch === "'" || ch === '"') {
+      inQuote = ch;
+    } else if (ch === " ") {
+      if (buf) { toks.push(buf); buf = ""; }
+    } else {
+      buf += ch;
+    }
+  }
+  if (buf) toks.push(buf);
+  return toks.length > 1 ? toks : undefined;
 }
 
 export async function updateProject(repos: RepoManager, opts?: Partial<Options>): Promise<void> {

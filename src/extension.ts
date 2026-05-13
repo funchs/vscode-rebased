@@ -31,6 +31,7 @@ import { SubmoduleTreeProvider, registerSubmoduleCommands } from "./m3-stash/sub
 import { runCommitWizard } from "./m2-commit/commit-wizard";
 import { updateProject } from "./m3-stash/update-project";
 import { showDiagnostic } from "./m3-stash/diagnostic";
+import { showOutput } from "./core/git";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -149,7 +150,8 @@ export function activate(ctx: vscode.ExtensionContext): void {
       const root = repos.root;
       if (!root) return;
       await showDiagnostic(root);
-    })
+    }),
+    vscode.commands.registerCommand("rebased.showOutput", () => showOutput())
   );
 }
 

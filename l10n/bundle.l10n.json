@@ -48,7 +48,7 @@
   "Wait 2s and retry": "Wait 2s and retry",
   "Remove lock and retry": "Remove lock and retry",
   "{0} — index could not be written": "{0} — index could not be written",
-  "{0}\n\nTwo silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state.": "{0}\n\nTwo silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state.",
+  "Two silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state.": "Two silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state.",
   "Details": "Details",
   "{0} — full error": "{0} — full error",
   "Failed to remove lock: {0}": "Failed to remove lock: {0}",
@@ -57,6 +57,8 @@
   "{0} min old": "{0} min old",
   "{0} h old": "{0} h old",
   "Run diagnostic": "Run diagnostic",
+  "Run in terminal": "Run in terminal",
+  "Show output": "Show output",
   "Open .git/ in Finder": "Open .git/ in Finder",
   "Running repository diagnostic…": "Running repository diagnostic…",
   "Repository diagnostic": "Repository diagnostic"

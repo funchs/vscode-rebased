@@ -1,0 +1,15 @@
+tasks:
+  - init: |
+      npm install
+      npm run build
+    command: |
+      echo "Rebased dev environment ready."
+      echo "Press F1 → 'Rebased: …' to try any command."
+      echo "Or F5 to launch an Extension Development Host."
+
+vscode:
+  extensions:
+    - funchs.vscode-rebased
+
+# Run-time image — official Gitpod node-LTS base, no extra setup needed.
+image: gitpod/workspace-node-lts

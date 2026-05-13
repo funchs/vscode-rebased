@@ -43,12 +43,7 @@ In your GitHub repo → Settings → Secrets and variables → Actions:
 
 The release workflow (`.github/workflows/release.yml`) reads these.
 
-### 4. Update repository URLs in `package.json`
-
-Replace the placeholder `github.com/example/vscode-rebased` with your real
-GitHub repo URL in `repository.url`, `bugs.url`, and `homepage`.
-
-### 5. Capture screenshots
+### 4. Capture screenshots
 
 The README references several screenshots under `docs/screenshots/`. The
 extension can't take its own screenshots — open the Extension Development

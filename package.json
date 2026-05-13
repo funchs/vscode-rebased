@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/example/vscode-rebased.git"
+    "url": "https://github.com/funchs/vscode-rebased.git"
   },
   "bugs": {
-    "url": "https://github.com/example/vscode-rebased/issues"
+    "url": "https://github.com/funchs/vscode-rebased/issues"
   },
-  "homepage": "https://github.com/example/vscode-rebased#readme",
+  "homepage": "https://github.com/funchs/vscode-rebased#readme",
   "engines": {
     "vscode": "^1.85.0"
   },

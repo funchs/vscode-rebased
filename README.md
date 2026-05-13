@@ -122,7 +122,7 @@ Discover all of them via `Cmd+Shift+P → Rebased:`.
 ### From `.vsix`
 
 ```bash
-git clone https://github.com/example/vscode-rebased
+git clone https://github.com/funchs/vscode-rebased
 cd vscode-rebased
 npm install
 npm run build

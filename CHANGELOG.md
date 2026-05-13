@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-13
+
+### Fixed
+- View names in the activity-bar sidebar (Log / Commit / Stashes / Branches /
+  Changelists / Submodules) stayed English in Antigravity and other VS Code
+  forks that emit the BCP 47 locale tag `zh-Hans` instead of the legacy
+  VS Code tag `zh-cn`. Added `package.nls.zh-Hans.json` +
+  `l10n/bundle.l10n.zh-Hans.json` aliases so both naming conventions resolve.
+
 ## [0.1.1] - 2026-05-13
 
 First Open VSX release. Builds on 0.1.0 with i18n, more screenshots, and

@@ -206,30 +206,25 @@ async function tryWithLockRecovery(
       if (recovery === "abort") return false;
       // No lock file present and user couldn't recover via dialog. Two silent
       // retries already failed — likely permissions, cloud-sync, or antivirus.
-      // Surface inline actions so the user can self-diagnose without copying
-      // the command into a terminal manually.
-      await showGitError(
+      // Use a MODAL dialog so all the recovery buttons are visible (the toast
+      // form truncates extra buttons when the title is long).
+      const detail =
+        msg2 + "\n\n" +
+        vscode.l10n.t(
+          "Two silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state."
+        );
+      const pick = await vscode.window.showErrorMessage(
         vscode.l10n.t("{0} — index could not be written", scope),
-        new Error(
-          msg2 + "\n\n" +
-          vscode.l10n.t(
-            "Two silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state."
-          )
-        ),
-        [
-          {
-            label: vscode.l10n.t("Run diagnostic"),
-            run: () => showDiagnostic(root),
-          },
-          {
-            label: vscode.l10n.t("Open .git/ in Finder"),
-            run: async () => {
-              const fileUri = vscode.Uri.file(`${root}/.git`);
-              await vscode.commands.executeCommand("revealFileInOS", fileUri);
-            },
-          },
-        ]
+        { modal: true, detail },
+        vscode.l10n.t("Run diagnostic"),
+        vscode.l10n.t("Open .git/ in Finder")
       );
+      if (pick === vscode.l10n.t("Run diagnostic")) {
+        await showDiagnostic(root);
+      } else if (pick === vscode.l10n.t("Open .git/ in Finder")) {
+        const fileUri = vscode.Uri.file(`${root}/.git`);
+        await vscode.commands.executeCommand("revealFileInOS", fileUri);
+      }
       return false;
     }
   }

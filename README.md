@@ -1,5 +1,7 @@
 # Rebased
 
+**English** · [简体中文](README.zh-CN.md)
+
 > JetBrains-style git client features for VS Code.
 > Drag-drop interactive rebase, log graph, hunk staging, changelists, local history.
 

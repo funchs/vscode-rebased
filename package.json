@@ -4,7 +4,7 @@
   "description": "%ext.description%",
   "l10n": "./l10n",
   "version": "0.1.0",
-  "publisher": "rebased",
+  "publisher": "funchs",
   "license": "MIT",
   "icon": "media/icons/rebased.png",
   "galleryBanner": {

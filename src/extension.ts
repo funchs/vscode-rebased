@@ -11,7 +11,8 @@ import { BranchStatusBar } from "./m4-settings/status-bar";
 import { InlineBlame } from "./m4-settings/inline-blame";
 import { HunkPanel } from "./m2-commit/hunk-panel";
 import { ReflogPanel } from "./m3-stash/reflog-panel";
-import { ConflictWatcher, showConflictResolution } from "./m3-stash/conflict-panel";
+import { ConflictWatcher } from "./m3-stash/conflict-panel";
+import { ConflictResolverPanel } from "./m3-stash/conflict-resolver-panel";
 import { CommitDetailsPanel } from "./m1-log/details-panel";
 import { showBranchesPicker } from "./m3-stash/branches-picker";
 import { showFileHistory } from "./m1-log/file-history";
@@ -100,7 +101,7 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("rebased.reflog.open", () => {
       ReflogPanel.show(ctx, repos);
     }),
-    vscode.commands.registerCommand("rebased.conflict.show", () => showConflictResolution(repos)),
+    vscode.commands.registerCommand("rebased.conflict.show", () => ConflictResolverPanel.show(ctx, repos)),
     vscode.commands.registerCommand("rebased.commit.show", (hash: string) =>
       CommitDetailsPanel.show(ctx, repos, hash)
     ),

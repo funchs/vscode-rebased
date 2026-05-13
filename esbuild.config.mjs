@@ -26,6 +26,7 @@ const webviewBuilds = [
   { in: "src/webview/hunks.ts",  out: "out/webview/hunks.js" },
   { in: "src/webview/reflog.ts", out: "out/webview/reflog.js" },
   { in: "src/webview/details.ts", out: "out/webview/details.js" },
+  { in: "src/webview/conflicts.ts", out: "out/webview/conflicts.js" },
 ].map((w) => ({
   ...baseOptions,
   entryPoints: [w.in],

@@ -14,6 +14,10 @@ IntelliJ git client extracted as a standalone app. This extension distills its
 best ideas into a single VS Code extension that coexists with the built-in git
 support and GitLens.
 
+![Rebased — JetBrains-style Git client for VS Code](docs/screenshots/cover.png)
+
+## See it in action
+
 ![Feature tour](docs/screenshots/demo.gif)
 
 ---

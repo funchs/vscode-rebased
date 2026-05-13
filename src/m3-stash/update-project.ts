@@ -7,6 +7,7 @@ import {
 } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import { showGitError, isWorkingTreeDirtyError } from "../core/notify";
+import { parseUntrackedCollisions, isStashConflictMessage } from "../core/notify-pure";
 
 // JetBrains "Update Project" (Ctrl+T) — one command that:
 //   1. Refuses to start if a previous op (rebase/merge/cherry-pick/stash-pop)
@@ -47,19 +48,15 @@ async function isClean(root: string): Promise<boolean> {
 }
 
 async function popStashSafely(root: string, repos: RepoManager): Promise<void> {
-  // Resolve the most recent stash ref upfront so we can hand it to the
-  // conflict panel — `git stash pop` consumes it on success or leaves it on
-  // failure, but `git stash list` always reports the newest as stash@{0}.
   const stashRef = "stash@{0}";
   try {
     await runGit(["stash", "pop"], { cwd: root });
     repos.fire();
   } catch (e: unknown) {
     const msg = (e as Error).message;
-    // A conflict during stash pop leaves the stash entry and writes conflict
-    // markers into the affected files. Mark the session so our conflict panel
-    // shows the "Finalize: drop stash" flow.
-    if (/(CONFLICT|merge conflict|needs merge|conflict in)/i.test(msg)) {
+
+    // Case A: tracked-file conflict (3-way mergeable) → route to conflict panel.
+    if (isStashConflictMessage(msg)) {
       await markStashPopInProgress(root, stashRef);
       repos.fire();
       await routeToConflictPanel(
@@ -67,8 +64,95 @@ async function popStashSafely(root: string, repos: RepoManager): Promise<void> {
       );
       return;
     }
-    // Some other failure — preserve the stash, surface the error.
+
+    // Case B: untracked-file collision (e.g. upstream just introduced .dockerignore
+    // and the stash also carries it). git refuses the entire pop and the stash
+    // entry stays intact.
+    const collisions = parseUntrackedCollisions(msg);
+    if (collisions.length > 0) {
+      await resolveUntrackedCollision(root, repos, collisions);
+      return;
+    }
+
+    // Anything else: stash is intact, surface the error verbatim.
     await showGitError("Stash pop after update", e);
+  }
+}
+
+// 'stash@{0}^3' is the synthetic commit `git stash -u` creates to hold the
+// untracked files. We extract files from there to compare or to overwrite.
+const UNTRACKED_PARENT = "stash@{0}^3";
+
+async function resolveUntrackedCollision(
+  root: string,
+  repos: RepoManager,
+  collisions: string[]
+): Promise<void> {
+  const fs = await import("fs/promises");
+  const path = await import("path");
+
+  const preview = collisions.slice(0, 3).join(", ") + (collisions.length > 3 ? "…" : "");
+  const choice = await vscode.window.showWarningMessage(
+    `Stash pop blocked: ${collisions.length} untracked file${collisions.length === 1 ? "" : "s"} from the stash already exist in the working tree (added by upstream): ${preview}`,
+    { modal: true, detail: collisions.join("\n") },
+    "Keep upstream (drop stashed copies)",
+    "Restore from stash (overwrite upstream)",
+    "Compare per file (keep stash)",
+    "Do nothing (keep stash for later)"
+  );
+
+  try {
+    if (choice === "Keep upstream (drop stashed copies)") {
+      await runGit(["stash", "drop", "stash@{0}"], { cwd: root });
+      vscode.window.showInformationMessage(
+        `Dropped stash; upstream copies of ${collisions.length} file(s) kept.`
+      );
+    } else if (choice === "Restore from stash (overwrite upstream)") {
+      // Confirm once more — this is destructive to upstream's just-pulled content.
+      const ok = await vscode.window.showWarningMessage(
+        `Overwrite ${collisions.length} upstream file(s) with the stashed versions? Upstream content for these paths will be lost from the working tree.`,
+        { modal: true },
+        "Overwrite"
+      );
+      if (ok !== "Overwrite") return;
+      // Delete the upstream-introduced copies, then retry the pop.
+      for (const rel of collisions) {
+        await fs.rm(path.join(root, rel), { force: true });
+      }
+      try {
+        await runGit(["stash", "pop"], { cwd: root });
+        vscode.window.showInformationMessage("Restored stashed copies.");
+      } catch (e: unknown) {
+        await showGitError("Retry stash pop", e);
+      }
+    } else if (choice === "Compare per file (keep stash)") {
+      // Open a side-by-side diff per collision: stash version (rebased-stash: scheme)
+      // vs the upstream copy currently in the working tree. The stash stays in
+      // the list so the user can finalize later with their own preferred tool.
+      for (const rel of collisions) {
+        const fileUri = vscode.Uri.joinPath(vscode.Uri.file(root), rel);
+        // Use the built-in git: scheme to ask the git extension to materialize
+        // stash@{0}^3:<path>.
+        const stashUri = fileUri.with({
+          scheme: "git",
+          query: JSON.stringify({ path: fileUri.fsPath, ref: UNTRACKED_PARENT }),
+        });
+        await vscode.commands.executeCommand(
+          "vscode.diff",
+          stashUri,
+          fileUri,
+          `${rel} · stash → upstream`
+        );
+      }
+      vscode.window.showInformationMessage(
+        `Stash kept. After deciding, drop it manually from the Stashes view.`
+      );
+    }
+    // "Do nothing" — bail out, stash stays intact.
+  } catch (e: unknown) {
+    await showGitError("Resolve untracked collision", e);
+  } finally {
+    repos.fire();
   }
 }
 

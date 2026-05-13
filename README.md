@@ -13,6 +13,8 @@ IntelliJ git client extracted as a standalone app. This extension distills its
 best ideas into a single VS Code extension that coexists with the built-in git
 support and GitLens.
 
+![Log graph view](docs/screenshots/log-graph.png)
+
 ---
 
 ## Highlights
@@ -23,7 +25,7 @@ Open any `git-rebase-todo` (e.g. `GIT_SEQUENCE_EDITOR="code --wait" git rebase -
 to get a webview with drag-to-reorder rows, single-click action cycling
 (pick → reword → edit → squash → fixup → drop), and ⌘⏎ to save and continue.
 
-> _Screenshot: `docs/screenshots/rebase-editor.png` — capture from a real rebase session._
+![Interactive rebase editor](docs/screenshots/rebase-editor.png)
 
 ### Log graph with virtual scrolling
 
@@ -31,15 +33,13 @@ Branch-aware swim-lane graph, refs as colored chips, sticky filter toolbar
 (subject / author / path / branch / since). Renders 10,000 commits without
 breaking a sweat.
 
-> _Screenshot: `docs/screenshots/log-graph.png`_
-
 ### Commit details side panel
 
 Click any commit in the log to open a side panel with subject, body, refs,
 parents, and a clickable file list (+ / − stats) that diffs each file against
 its parent via VS Code's built-in diff editor.
 
-> _Screenshot: `docs/screenshots/commit-details.png`_
+![Commit details](docs/screenshots/commit-details.png)
 
 ### Hunk-level staging
 
@@ -52,11 +52,31 @@ Real-time type/scope/BREAKING chips above the commit textarea, status row
 showing ✓ valid / ⚠ warnings / ✕ format error. Or run the 5-step **Commit
 Wizard** (⌘⌥C) — scope autocomplete from your repo's history.
 
+![Commit wizard QuickPick](docs/screenshots/commit-wizard.png)
+
+### Full-file blame gutter
+
+Press <kbd>⌘⌥B</kbd> to toggle. Each line shows commit hash · author · age in a left
+gutter; runs from the same commit collapse so only the first row is annotated.
+Hover an annotation for the commit message + a one-click "Show commit" link.
+
+![Full-file blame gutter](docs/screenshots/blame-gutter.png)
+
 ### Local history
 
 Every file save auto-snapshots into `globalStorage`. Browse, diff against
 current, or restore — independent of git, so even uncommitted work is
 recoverable.
+
+![Local history QuickPick](docs/screenshots/local-history.png)
+
+### Conflict resolution panel
+
+When you hit conflicts (merge / rebase / stash-pop / orphan-unmerged), a
+JetBrains-style panel lists every conflicted file with per-file actions —
+*采用我方* (--ours), *采用对方* (--theirs), *合并…* (3-way merge editor), *重置*. Bottom bar carries a state-aware finalize button (Mark resolved / Continue rebase / Drop stash).
+
+![Conflict resolution panel](docs/screenshots/conflict-panel.png)
 
 ### Changelists
 

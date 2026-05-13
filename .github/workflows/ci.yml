@@ -18,6 +18,9 @@ jobs:
         node-version: [20.x, 22.x]
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Smoke test reads this repo's own commit history; default shallow clone gives only 1 commit.
+          fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4

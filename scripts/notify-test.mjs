@@ -93,5 +93,13 @@ test("isStashConflictMessage matches conflict phrasing", () => {
   assert.strictEqual(notify.isStashConflictMessage(".dockerignore already exists, no checkout"), false);
 });
 
+test("isIndexLockError matches common phrasings", () => {
+  assert.ok(notify.isIndexLockError("git stash push -u -m foo exited 1: error: could not write index"));
+  assert.ok(notify.isIndexLockError("Unable to create '.git/index.lock': File exists."));
+  assert.ok(notify.isIndexLockError("fatal: Unable to create '/path/.git/HEAD.lock': File exists."));
+  assert.strictEqual(notify.isIndexLockError("CONFLICT (content): merge conflict"), false);
+  assert.strictEqual(notify.isIndexLockError(".dockerignore already exists, no checkout"), false);
+});
+
 console.log("Notify (toast helper) tests:");
 await runAll();

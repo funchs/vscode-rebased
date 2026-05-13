@@ -357,6 +357,23 @@ export async function clearStashPopInProgress(repo: string): Promise<void> {
   } catch { /* already cleared */ }
 }
 
+export async function getIndexLockInfo(repo: string): Promise<{ exists: boolean; mtimeMs?: number }> {
+  const fs = await import("fs/promises");
+  const path = await import("path");
+  try {
+    const stat = await fs.stat(path.join(repo, ".git", "index.lock"));
+    return { exists: true, mtimeMs: stat.mtimeMs };
+  } catch {
+    return { exists: false };
+  }
+}
+
+export async function removeIndexLock(repo: string): Promise<void> {
+  const fs = await import("fs/promises");
+  const path = await import("path");
+  await fs.unlink(path.join(repo, ".git", "index.lock"));
+}
+
 // "stash-pop" is a pseudo-op resolved by the conflict panel, not by these
 // generic helpers — exclude it from the union here.
 export type GitOp = Exclude<NonNullable<OperationState["kind"]>, "stash-pop">;

@@ -39,3 +39,10 @@ export function parseUntrackedCollisions(message: string): string[] {
 export function isStashConflictMessage(message: string): boolean {
   return /(CONFLICT|merge conflict|needs merge|conflict in)/i.test(message);
 }
+
+// Git refuses to write the index when another process (or a stale interrupted
+// op) holds .git/index.lock. The exact phrases vary slightly across git
+// versions / OSes.
+export function isIndexLockError(message: string): boolean {
+  return /could not write index|index\.lock|Unable to create.*index\.lock|fatal:.*\.lock/i.test(message);
+}

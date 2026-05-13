@@ -6,7 +6,7 @@ import {
   markStashPopInProgress,
 } from "../core/git";
 import type { RepoManager } from "../core/repo";
-import { showGitError, isWorkingTreeDirtyError } from "../core/notify";
+import { showGitError, isWorkingTreeDirtyError, maybeRecoverFromIndexLock } from "../core/notify";
 import { parseUntrackedCollisions, isStashConflictMessage } from "../core/notify-pure";
 
 // JetBrains "Update Project" (Ctrl+T) — one command that:
@@ -163,6 +163,35 @@ async function routeToConflictPanel(message: string): Promise<void> {
   }
 }
 
+// Try a git operation, transparently retrying once if the failure was an
+// index.lock collision (after offering the user the recovery dialog). Returns
+// true on success, false on abort.
+async function tryWithLockRecovery(
+  root: string,
+  scope: string,
+  op: () => Promise<unknown>
+): Promise<boolean> {
+  try {
+    await op();
+    return true;
+  } catch (e: unknown) {
+    const msg = (e as Error).message;
+    const recovery = await maybeRecoverFromIndexLock(root, msg);
+    if (recovery === "retry") {
+      try {
+        await op();
+        return true;
+      } catch (e2: unknown) {
+        await showGitError(`${scope} (after lock cleared)`, e2);
+        return false;
+      }
+    }
+    if (recovery === "abort") return false;
+    await showGitError(scope, e);
+    return false;
+  }
+}
+
 export async function updateProject(repos: RepoManager, opts?: Partial<Options>): Promise<void> {
   const root = repos.root;
   if (!root) return;
@@ -211,28 +240,23 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
     async (progress) => {
       const dirty = !(await isClean(root));
       let didStash = false;
+      const stashMsg = `rebased: auto before update ${new Date().toISOString()}`;
 
       if (dirty) {
         progress.report({ message: "stashing uncommitted changes…", increment: 10 });
-        try {
-          await runGit(
-            ["stash", "push", "-u", "-m", `rebased: auto before update ${new Date().toISOString()}`],
-            { cwd: root }
-          );
-          didStash = true;
-        } catch (e: unknown) {
-          await showGitError("Auto-stash", e);
-          return;
-        }
+        const stashOk = await tryWithLockRecovery(root, "Auto-stash", () =>
+          runGit(["stash", "push", "-u", "-m", stashMsg], { cwd: root })
+        );
+        if (!stashOk) return;
+        didStash = true;
       }
 
       progress.report({ message: "fetching all remotes…", increment: 20 });
-      try {
-        await runGit(["fetch", "--all", "--prune"], { cwd: root });
-      } catch (e: unknown) {
-        // Fetch failure: try to pop and bail.
+      const fetchOk = await tryWithLockRecovery(root, "Fetch", () =>
+        runGit(["fetch", "--all", "--prune"], { cwd: root })
+      );
+      if (!fetchOk) {
         if (didStash) await runGit(["stash", "pop"], { cwd: root }).catch(() => undefined);
-        await showGitError("Fetch", e);
         return;
       }
 
@@ -245,21 +269,29 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
       } catch (e: unknown) {
         const msg = (e as Error).message;
         if (/CONFLICT|merge conflict|could not apply/i.test(msg)) {
-          // Don't auto-pop now — the stash stays safe; user finishes the
-          // rebase/merge first, after which they (or we) pop manually. The
-          // conflict watcher status bar is already lit.
           repos.fire();
           await routeToConflictPanel(
             `${strategy} hit conflicts. Resolve them, then run Update Project again — your stash is still safe.`
           );
           return;
         }
-        if (didStash && isWorkingTreeDirtyError(msg)) {
-          // Theoretically unreachable since we just stashed, but defensive.
-          await runGit(["stash", "pop"], { cwd: root }).catch(() => undefined);
+        const recovery = await maybeRecoverFromIndexLock(root, msg);
+        if (recovery === "retry") {
+          try {
+            await runGit(["pull", strategy === "rebase" ? "--rebase" : "--no-rebase"], { cwd: root });
+          } catch (e2: unknown) {
+            await showGitError("Pull (after lock cleared)", e2);
+            return;
+          }
+        } else if (recovery === "not-applicable") {
+          if (didStash && isWorkingTreeDirtyError(msg)) {
+            await runGit(["stash", "pop"], { cwd: root }).catch(() => undefined);
+          }
+          await showGitError("Pull", e);
+          return;
+        } else {
+          return; // user aborted
         }
-        await showGitError("Pull", e);
-        return;
       }
 
       if (didStash) {

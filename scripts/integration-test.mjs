@@ -215,5 +215,102 @@ test("detached HEAD: branch operations gracefully degrade", async () => {
 });
 
 // ---------------------------------------------------------------------------
+// Update Project end-to-end simulation
+// ---------------------------------------------------------------------------
+test("update project: dirty + diverged upstream stashes, rebases, pops cleanly when no overlap", async () => {
+  // Build "remote" as a bare repo, two clones — one acts as "their" pushes,
+  // one is the user. User dirties a file that the remote DIDN'T touch.
+  const remote = mkRepo();
+  remote.git(["config", "receive.denyCurrentBranch", "ignore"]); // allow pushes to the working repo
+  remote.write("a.txt", "shared\n");
+  remote.write("b.txt", "user-area\n");
+  remote.commit("initial");
+
+  const them = mkRepo();
+  them.git(["remote", "add", "origin", remote.dir]);
+  them.git(["fetch", "origin"]);
+  them.git(["checkout", "-b", "main", "origin/main"]);
+  them.write("a.txt", "shared + their change\n");
+  them.commit("their work");
+  them.git(["push", "origin", "main"]);
+
+  const user = mkRepo();
+  try {
+    user.git(["remote", "add", "origin", remote.dir]);
+    user.git(["fetch", "origin"]);
+    user.git(["checkout", "-b", "main", "origin/main"]);
+    // User has dirty work on a DIFFERENT file → pop will not conflict.
+    user.write("b.txt", "user-area + uncommitted edit\n");
+
+    // Manually run the orchestration steps (we can't import vscode in tests).
+    user.git(["stash", "push", "-u", "-m", "test auto"]);
+    user.git(["fetch", "--all", "--prune"]);
+    user.git(["pull", "--rebase"]);
+    user.git(["stash", "pop"]);
+
+    // After: user should have their dirty edit back AND the upstream change.
+    const a = (await runGit(["show", "HEAD:a.txt"], { cwd: user.dir })).trim();
+    assert.match(a, /their change/, "upstream change merged into HEAD");
+    const status = (await runGit(["status", "--porcelain"], { cwd: user.dir })).trim();
+    assert.match(status, /b\.txt/, "user's uncommitted edit restored");
+    const stashList = (await runGit(["stash", "list"], { cwd: user.dir })).trim();
+    assert.strictEqual(stashList, "", "stash entry consumed on success");
+  } finally {
+    user.cleanup();
+    them.cleanup();
+    remote.cleanup();
+  }
+});
+
+test("update project: stash pop conflict leaves stash + UU files for our 'stash-pop' state", async () => {
+  // Order matters: user must clone BEFORE 'them' pushes the divergent commit,
+  // otherwise user starts at the same SHA as the upstream and there's nothing
+  // to conflict against.
+  const remote = mkRepo();
+  remote.git(["config", "receive.denyCurrentBranch", "ignore"]);
+  const baseLines = Array.from({ length: 20 }, (_, i) => `line ${i}`);
+  remote.write("a.txt", baseLines.join("\n") + "\n");
+  remote.commit("initial");
+
+  const user = mkRepo();
+  user.git(["remote", "add", "origin", remote.dir]);
+  user.git(["fetch", "origin"]);
+  user.git(["checkout", "-b", "main", "origin/main"]);
+
+  const them = mkRepo();
+  try {
+    them.git(["remote", "add", "origin", remote.dir]);
+    them.git(["fetch", "origin"]);
+    them.git(["checkout", "-b", "main", "origin/main"]);
+    const theirLines = [...baseLines];
+    theirLines[5] = "line 5 THEIR";
+    them.write("a.txt", theirLines.join("\n") + "\n");
+    them.commit("their edit on line 5");
+    them.git(["push", "origin", "main"]);
+
+    // User still at the initial commit — now dirty the SAME line they touched.
+    const userLines = [...baseLines];
+    userLines[5] = "line 5 USER";
+    user.write("a.txt", userLines.join("\n") + "\n");
+
+    user.git(["stash", "push", "-u", "-m", "test auto"]);
+    user.git(["fetch", "--all", "--prune"]);
+    user.git(["pull", "--rebase"]);
+    const pop = user.git(["stash", "pop"], { tolerate: true });
+    assert.notStrictEqual(pop.status, 0, "pop should report conflict");
+
+    const stashList = (await runGit(["stash", "list"], { cwd: user.dir })).trim();
+    assert.ok(stashList.length > 0, "stash entry survives conflict");
+
+    const status = await runGit(["status", "--porcelain", "-z"], { cwd: user.dir });
+    assert.match(status, /^UU\s+a\.txt\x00/, "a.txt unmerged");
+  } finally {
+    user.cleanup();
+    them.cleanup();
+    remote.cleanup();
+  }
+});
+
+// ---------------------------------------------------------------------------
 console.log("Integration tests:");
 await runAll();

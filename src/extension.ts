@@ -29,6 +29,7 @@ import {
 import { LocalHistory } from "./m4-settings/local-history";
 import { SubmoduleTreeProvider, registerSubmoduleCommands } from "./m3-stash/submodules";
 import { runCommitWizard } from "./m2-commit/commit-wizard";
+import { updateProject } from "./m3-stash/update-project";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -141,7 +142,8 @@ export function activate(ctx: vscode.ExtensionContext): void {
   registerSubmoduleCommands(ctx, repos);
 
   ctx.subscriptions.push(
-    vscode.commands.registerCommand("rebased.commit.wizard", () => runCommitWizard(repos))
+    vscode.commands.registerCommand("rebased.commit.wizard", () => runCommitWizard(repos)),
+    vscode.commands.registerCommand("rebased.updateProject", () => updateProject(repos))
   );
 }
 

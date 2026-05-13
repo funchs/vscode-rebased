@@ -304,8 +304,9 @@ export async function applyPatch(repo: string, patch: string, options: { cached?
 }
 
 export interface OperationState {
-  kind: "rebase" | "merge" | "cherry-pick" | "revert" | null;
+  kind: "rebase" | "merge" | "cherry-pick" | "revert" | "stash-pop" | null;
   conflicted: string[];
+  stashRef?: string; // when kind === "stash-pop": which stash to drop after resolve
 }
 
 export async function getOperationState(repo: string): Promise<OperationState> {
@@ -320,11 +321,48 @@ export async function getOperationState(repo: string): Promise<OperationState> {
 
   const out = await runGit(["diff", "--name-only", "--diff-filter=U", "-z"], { cwd: repo });
   const conflicted = out.split(NUL).filter(Boolean);
+
+  // Stash-pop pseudo-state: no formal git operation, but UU files are sitting
+  // in the working tree AND we just attempted a pop (sentinel file we drop).
+  // The sentinel makes the detection deterministic — checking just "UU + no
+  // op" would false-positive on hand-edited conflict markers.
+  if (!kind && conflicted.length) {
+    const sentinel = path.join(dir, "rebased-stash-pop-in-progress");
+    if (existsSync(sentinel)) {
+      const { readFileSync } = await import("fs");
+      let stashRef: string | undefined;
+      try {
+        stashRef = readFileSync(sentinel, "utf8").trim();
+      } catch { /* ignore */ }
+      kind = "stash-pop";
+      return { kind, conflicted, stashRef };
+    }
+  }
+
   return { kind, conflicted };
 }
 
-export async function continueOperation(repo: string, op: NonNullable<OperationState["kind"]>): Promise<void> {
-  const map: Record<NonNullable<OperationState["kind"]>, string[]> = {
+// Writes the sentinel; called by update-project after stash pop reports conflicts.
+export async function markStashPopInProgress(repo: string, stashRef: string): Promise<void> {
+  const fs = await import("fs/promises");
+  const path = await import("path");
+  await fs.writeFile(path.join(repo, ".git", "rebased-stash-pop-in-progress"), stashRef, "utf8");
+}
+
+export async function clearStashPopInProgress(repo: string): Promise<void> {
+  const fs = await import("fs/promises");
+  const path = await import("path");
+  try {
+    await fs.unlink(path.join(repo, ".git", "rebased-stash-pop-in-progress"));
+  } catch { /* already cleared */ }
+}
+
+// "stash-pop" is a pseudo-op resolved by the conflict panel, not by these
+// generic helpers — exclude it from the union here.
+export type GitOp = Exclude<NonNullable<OperationState["kind"]>, "stash-pop">;
+
+export async function continueOperation(repo: string, op: GitOp): Promise<void> {
+  const map: Record<GitOp, string[]> = {
     "rebase": ["rebase", "--continue"],
     "merge": ["commit", "--no-edit"],
     "cherry-pick": ["cherry-pick", "--continue"],
@@ -333,8 +371,8 @@ export async function continueOperation(repo: string, op: NonNullable<OperationS
   await runGit(map[op], { cwd: repo, env: { GIT_EDITOR: "true" } });
 }
 
-export async function abortOperation(repo: string, op: NonNullable<OperationState["kind"]>): Promise<void> {
-  const map: Record<NonNullable<OperationState["kind"]>, string[]> = {
+export async function abortOperation(repo: string, op: GitOp): Promise<void> {
+  const map: Record<GitOp, string[]> = {
     "rebase": ["rebase", "--abort"],
     "merge": ["merge", "--abort"],
     "cherry-pick": ["cherry-pick", "--abort"],

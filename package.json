@@ -108,7 +108,8 @@
       { "command": "rebased.submodule.update", "title": "Update Submodules", "category": "Rebased" },
       { "command": "rebased.submodule.sync", "title": "Sync Submodule URLs", "category": "Rebased" },
       { "command": "rebased.submodule.refresh", "title": "Refresh Submodules", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.commit.wizard", "title": "Commit Wizard...", "category": "Rebased", "icon": "$(edit)" }
+      { "command": "rebased.commit.wizard", "title": "Commit Wizard...", "category": "Rebased", "icon": "$(edit)" },
+      { "command": "rebased.updateProject", "title": "Update Project (stash → fetch → pull → pop)", "category": "Rebased", "icon": "$(sync)" }
     ],
     "menus": {
       "view/title": [
@@ -121,6 +122,7 @@
         { "command": "rebased.branches.pick",   "when": "view == rebased.branches","group": "navigation@1" },
         { "command": "rebased.tags.pick",       "when": "view == rebased.branches","group": "navigation@2" },
         { "command": "rebased.commit.search",   "when": "view == rebased.log",    "group": "navigation@1" },
+        { "command": "rebased.updateProject",   "when": "view == rebased.commit", "group": "navigation@0" },
         { "command": "rebased.push",            "when": "view == rebased.commit", "group": "navigation@1" },
         { "command": "rebased.pull",            "when": "view == rebased.commit", "group": "navigation@2" },
         { "command": "rebased.changelist.create","when": "view == rebased.changelists","group": "navigation@1" },
@@ -155,7 +157,8 @@
       { "command": "rebased.file.history", "key": "ctrl+alt+h", "mac": "cmd+alt+h", "when": "editorTextFocus" },
       { "command": "rebased.blame.toggleGutter", "key": "ctrl+alt+b", "mac": "cmd+alt+b", "when": "editorTextFocus" },
       { "command": "rebased.commit.search", "key": "ctrl+alt+f", "mac": "cmd+alt+f" },
-      { "command": "rebased.commit.wizard", "key": "ctrl+alt+c", "mac": "cmd+alt+c" }
+      { "command": "rebased.commit.wizard", "key": "ctrl+alt+c", "mac": "cmd+alt+c" },
+      { "command": "rebased.updateProject", "key": "ctrl+alt+t", "mac": "cmd+alt+t" }
     ],
     "configuration": {
       "title": "Rebased",
@@ -194,6 +197,17 @@
           "type": "number",
           "default": 1048576,
           "description": "Skip local-history snapshots for files larger than this many bytes."
+        },
+        "rebased.updateProject.strategy": {
+          "type": "string",
+          "enum": ["ask", "rebase", "merge"],
+          "enumDescriptions": [
+            "Prompt every time",
+            "Replay local commits on top of upstream",
+            "Merge upstream into local"
+          ],
+          "default": "ask",
+          "description": "Default integration strategy for the Update Project command."
         }
       }
     }

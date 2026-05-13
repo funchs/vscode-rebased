@@ -6,7 +6,7 @@ you're on and what kind of fidelity you want.
 
 | Path | Where it runs | What it produces | Fidelity |
 |---|---|---|---|
-| **A. SVG mockup re-render** | Anywhere (macOS / Linux / Gitpod / CI) | PNGs + GIF | Illustrative — looks like VS Code, isn't VS Code |
+| **A. SVG mockup re-render** | Anywhere (macOS / Linux / CI) | PNGs + GIF | Illustrative — looks like VS Code, isn't VS Code |
 | **B. macOS `screencapture`** | macOS only | PNGs from a real VS Code window | Real |
 | **C. (future) Playwright + openvscode-server** | Headless on any Linux | PNGs from a real browser-VS-Code | Real, fully automated |
 
@@ -27,7 +27,7 @@ the mockups and re-render.
 # macOS
 brew install librsvg ffmpeg
 
-# Debian / Ubuntu / Gitpod
+# Debian / Ubuntu
 sudo apt-get install -y librsvg2-bin ffmpeg
 ```
 
@@ -37,9 +37,6 @@ sudo apt-get install -y librsvg2-bin ffmpeg
 bash scripts/render-from-svg.sh     # 10 PNGs
 bash scripts/build-demo-gif.sh      #  1 GIF (depends on the PNGs)
 ```
-
-`.gitpod.yml` auto-installs the tools on workspace boot, so opening the
-repo in Gitpod gives you a ready-to-render environment.
 
 ---
 
@@ -81,7 +78,7 @@ Playwright. A future `scripts/take-screenshots-headless.mjs` could:
 4. Save to `docs/screenshots/`.
 
 This would give photo-real screenshots without manual intervention, and
-would run on Gitpod / Codespaces / CI. Contributions welcome — the
+would run on Codespaces / CI. Contributions welcome — the
 groundwork (deterministic fixture + per-screenshot prep instructions)
 is already in `scripts/setup-screenshot-fixture.sh` and
 `scripts/take-screenshots.sh`.

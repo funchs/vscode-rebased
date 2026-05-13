@@ -8,7 +8,6 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 [![Open VSX Version](https://img.shields.io/open-vsx/v/funchs/vscode-rebased)](https://open-vsx.org/extension/funchs/vscode-rebased)
-[![Open in Gitpod](https://img.shields.io/badge/Try%20in%20browser-Gitpod-FFAE33)](https://gitpod.io/#https://github.com/funchs/vscode-rebased)
 
 Inspired by [DetachHead/rebased](https://github.com/DetachHead/rebased) — the
 IntelliJ git client extracted as a standalone app. This extension distills its

@@ -1,7 +1,8 @@
 {
   "name": "vscode-rebased",
-  "displayName": "Rebased — JetBrains-style Git Client",
-  "description": "Drag-drop interactive rebase, log graph, hunk staging, changelists, local history, commit wizard. The git features of an IntelliJ IDE, distilled into a single VS Code extension.",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "l10n": "./l10n",
   "version": "0.1.0",
   "publisher": "rebased",
   "license": "MIT",
@@ -51,18 +52,18 @@
     },
     "views": {
       "rebased": [
-        { "id": "rebased.log", "name": "Log", "type": "webview" },
-        { "id": "rebased.commit", "name": "Commit", "type": "webview" },
-        { "id": "rebased.stash", "name": "Stashes" },
-        { "id": "rebased.branches", "name": "Branches" },
-        { "id": "rebased.changelists", "name": "Changelists" },
-        { "id": "rebased.submodules", "name": "Submodules" }
+        { "id": "rebased.log", "name": "%view.log%", "type": "webview" },
+        { "id": "rebased.commit", "name": "%view.commit%", "type": "webview" },
+        { "id": "rebased.stash", "name": "%view.stashes%" },
+        { "id": "rebased.branches", "name": "%view.branches%" },
+        { "id": "rebased.changelists", "name": "%view.changelists%" },
+        { "id": "rebased.submodules", "name": "%view.submodules%" }
       ]
     },
     "customEditors": [
       {
         "viewType": "rebased.rebaseTodo",
-        "displayName": "Rebased: Interactive Rebase",
+        "displayName": "%cmd.rebase.interactive%",
         "selector": [
           { "filenamePattern": "**/.git/rebase-merge/git-rebase-todo" },
           { "filenamePattern": "**/git-rebase-todo" }
@@ -71,45 +72,45 @@
       }
     ],
     "commands": [
-      { "command": "rebased.log.refresh", "title": "Refresh Log", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.commit.refresh", "title": "Refresh Commit View", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.stash.refresh", "title": "Refresh Stashes", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.stash.create", "title": "Stash Changes...", "category": "Rebased", "icon": "$(add)" },
-      { "command": "rebased.stash.apply", "title": "Apply Stash", "category": "Rebased" },
-      { "command": "rebased.stash.pop", "title": "Pop Stash", "category": "Rebased" },
-      { "command": "rebased.stash.drop", "title": "Drop Stash", "category": "Rebased", "icon": "$(trash)" },
-      { "command": "rebased.cherryPick", "title": "Cherry-pick Commit...", "category": "Rebased" },
-      { "command": "rebased.rebase.interactive", "title": "Interactive Rebase from...", "category": "Rebased" },
-      { "command": "rebased.branch.checkout", "title": "Checkout Branch", "category": "Rebased" },
-      { "command": "rebased.branch.create", "title": "New Branch...", "category": "Rebased", "icon": "$(git-branch)" },
-      { "command": "rebased.commit.amend", "title": "Amend Last Commit", "category": "Rebased" },
-      { "command": "rebased.reflog.open", "title": "Show Reflog", "category": "Rebased", "icon": "$(history)" },
-      { "command": "rebased.hunks.open", "title": "Stage Hunks for File...", "category": "Rebased" },
-      { "command": "rebased.conflict.show", "title": "Resolve Conflicts...", "category": "Rebased" },
-      { "command": "rebased.commit.show", "title": "Show Commit Details...", "category": "Rebased" },
-      { "command": "rebased.branches.pick", "title": "Branches...", "category": "Rebased", "icon": "$(git-branch)" },
-      { "command": "rebased.file.history", "title": "Show File History", "category": "Rebased" },
-      { "command": "rebased.branch.compare", "title": "Compare Branch With Current...", "category": "Rebased" },
-      { "command": "rebased.tags.pick", "title": "Tags...", "category": "Rebased", "icon": "$(tag)" },
-      { "command": "rebased.blame.toggleGutter", "title": "Toggle Full-File Blame", "category": "Rebased" },
-      { "command": "rebased.push", "title": "Push...", "category": "Rebased", "icon": "$(cloud-upload)" },
-      { "command": "rebased.pull", "title": "Pull...", "category": "Rebased", "icon": "$(cloud-download)" },
-      { "command": "rebased.commit.search", "title": "Search Commits...", "category": "Rebased", "icon": "$(search)" },
-      { "command": "rebased.remotes.pick", "title": "Remotes...", "category": "Rebased", "icon": "$(cloud)" },
-      { "command": "rebased.changelist.create", "title": "New Changelist...", "category": "Rebased", "icon": "$(add)" },
-      { "command": "rebased.changelist.rename", "title": "Rename Changelist", "category": "Rebased" },
-      { "command": "rebased.changelist.delete", "title": "Delete Changelist", "category": "Rebased", "icon": "$(trash)" },
-      { "command": "rebased.changelist.setActive", "title": "Set as Active", "category": "Rebased" },
-      { "command": "rebased.changelist.commit", "title": "Commit Changelist...", "category": "Rebased", "icon": "$(check)" },
-      { "command": "rebased.changelist.moveFile", "title": "Move to Changelist...", "category": "Rebased" },
-      { "command": "rebased.changelist.refresh", "title": "Refresh Changelists", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.localHistory.show", "title": "Show Local History", "category": "Rebased" },
-      { "command": "rebased.submodule.init", "title": "Init Submodules", "category": "Rebased" },
-      { "command": "rebased.submodule.update", "title": "Update Submodules", "category": "Rebased" },
-      { "command": "rebased.submodule.sync", "title": "Sync Submodule URLs", "category": "Rebased" },
-      { "command": "rebased.submodule.refresh", "title": "Refresh Submodules", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.commit.wizard", "title": "Commit Wizard...", "category": "Rebased", "icon": "$(edit)" },
-      { "command": "rebased.updateProject", "title": "Update Project (stash → fetch → pull → pop)", "category": "Rebased", "icon": "$(sync)" }
+      { "command": "rebased.log.refresh", "title": "%cmd.log.refresh%", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.commit.refresh", "title": "%cmd.commit.refresh%", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.stash.refresh", "title": "%cmd.stash.refresh%", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.stash.create", "title": "%cmd.stash.create%", "category": "Rebased", "icon": "$(add)" },
+      { "command": "rebased.stash.apply", "title": "%cmd.stash.apply%", "category": "Rebased" },
+      { "command": "rebased.stash.pop", "title": "%cmd.stash.pop%", "category": "Rebased" },
+      { "command": "rebased.stash.drop", "title": "%cmd.stash.drop%", "category": "Rebased", "icon": "$(trash)" },
+      { "command": "rebased.cherryPick", "title": "%cmd.cherryPick%", "category": "Rebased" },
+      { "command": "rebased.rebase.interactive", "title": "%cmd.rebase.interactive%", "category": "Rebased" },
+      { "command": "rebased.branch.checkout", "title": "%cmd.branch.checkout%", "category": "Rebased" },
+      { "command": "rebased.branch.create", "title": "%cmd.branch.create%", "category": "Rebased", "icon": "$(git-branch)" },
+      { "command": "rebased.commit.amend", "title": "%cmd.commit.amend%", "category": "Rebased" },
+      { "command": "rebased.reflog.open", "title": "%cmd.reflog.open%", "category": "Rebased", "icon": "$(history)" },
+      { "command": "rebased.hunks.open", "title": "%cmd.hunks.open%", "category": "Rebased" },
+      { "command": "rebased.conflict.show", "title": "%cmd.conflict.show%", "category": "Rebased" },
+      { "command": "rebased.commit.show", "title": "%cmd.commit.show%", "category": "Rebased" },
+      { "command": "rebased.branches.pick", "title": "%cmd.branches.pick%", "category": "Rebased", "icon": "$(git-branch)" },
+      { "command": "rebased.file.history", "title": "%cmd.file.history%", "category": "Rebased" },
+      { "command": "rebased.branch.compare", "title": "%cmd.branch.compare%", "category": "Rebased" },
+      { "command": "rebased.tags.pick", "title": "%cmd.tags.pick%", "category": "Rebased", "icon": "$(tag)" },
+      { "command": "rebased.blame.toggleGutter", "title": "%cmd.blame.toggleGutter%", "category": "Rebased" },
+      { "command": "rebased.push", "title": "%cmd.push%", "category": "Rebased", "icon": "$(cloud-upload)" },
+      { "command": "rebased.pull", "title": "%cmd.pull%", "category": "Rebased", "icon": "$(cloud-download)" },
+      { "command": "rebased.commit.search", "title": "%cmd.commit.search%", "category": "Rebased", "icon": "$(search)" },
+      { "command": "rebased.remotes.pick", "title": "%cmd.remotes.pick%", "category": "Rebased", "icon": "$(cloud)" },
+      { "command": "rebased.changelist.create", "title": "%cmd.changelist.create%", "category": "Rebased", "icon": "$(add)" },
+      { "command": "rebased.changelist.rename", "title": "%cmd.changelist.rename%", "category": "Rebased" },
+      { "command": "rebased.changelist.delete", "title": "%cmd.changelist.delete%", "category": "Rebased", "icon": "$(trash)" },
+      { "command": "rebased.changelist.setActive", "title": "%cmd.changelist.setActive%", "category": "Rebased" },
+      { "command": "rebased.changelist.commit", "title": "%cmd.changelist.commit%", "category": "Rebased", "icon": "$(check)" },
+      { "command": "rebased.changelist.moveFile", "title": "%cmd.changelist.moveFile%", "category": "Rebased" },
+      { "command": "rebased.changelist.refresh", "title": "%cmd.changelist.refresh%", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.localHistory.show", "title": "%cmd.localHistory.show%", "category": "Rebased" },
+      { "command": "rebased.submodule.init", "title": "%cmd.submodule.init%", "category": "Rebased" },
+      { "command": "rebased.submodule.update", "title": "%cmd.submodule.update%", "category": "Rebased" },
+      { "command": "rebased.submodule.sync", "title": "%cmd.submodule.sync%", "category": "Rebased" },
+      { "command": "rebased.submodule.refresh", "title": "%cmd.submodule.refresh%", "category": "Rebased", "icon": "$(refresh)" },
+      { "command": "rebased.commit.wizard", "title": "%cmd.commit.wizard%", "category": "Rebased", "icon": "$(edit)" },
+      { "command": "rebased.updateProject", "title": "%cmd.updateProject%", "category": "Rebased", "icon": "$(sync)" }
     ],
     "menus": {
       "view/title": [
@@ -166,48 +167,48 @@
         "rebased.log.maxCommits": {
           "type": "number",
           "default": 2000,
-          "description": "Maximum commits loaded in the log view per batch."
+          "description": "%cfg.log.maxCommits%"
         },
         "rebased.log.allBranches": {
           "type": "boolean",
           "default": true,
-          "description": "Show commits from all branches in the log graph."
+          "description": "%cfg.log.allBranches%"
         },
         "rebased.rebase.autoStash": {
           "type": "boolean",
           "default": true,
-          "description": "Automatically stash working tree changes before starting interactive rebase."
+          "description": "%cfg.rebase.autoStash%"
         },
         "rebased.gitPath": {
           "type": "string",
           "default": "git",
-          "description": "Path to the git executable."
+          "description": "%cfg.gitPath%"
         },
         "rebased.blame.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Show inline blame on the current line (author, age, subject)."
+          "description": "%cfg.blame.enabled%"
         },
         "rebased.localHistory.maxPerFile": {
           "type": "number",
           "default": 50,
-          "description": "Maximum number of local-history snapshots to keep per file."
+          "description": "%cfg.localHistory.maxPerFile%"
         },
         "rebased.localHistory.maxBytes": {
           "type": "number",
           "default": 1048576,
-          "description": "Skip local-history snapshots for files larger than this many bytes."
+          "description": "%cfg.localHistory.maxBytes%"
         },
         "rebased.updateProject.strategy": {
           "type": "string",
           "enum": ["ask", "rebase", "merge"],
           "enumDescriptions": [
-            "Prompt every time",
-            "Replay local commits on top of upstream",
-            "Merge upstream into local"
+            "%cfg.updateProject.strategy.ask%",
+            "%cfg.updateProject.strategy.rebase%",
+            "%cfg.updateProject.strategy.merge%"
           ],
           "default": "ask",
-          "description": "Default integration strategy for the Update Project command."
+          "description": "%cfg.updateProject.strategy%"
         }
       }
     }

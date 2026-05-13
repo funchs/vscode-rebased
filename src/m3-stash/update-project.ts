@@ -7,7 +7,7 @@ import {
 } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import { showGitError, isWorkingTreeDirtyError, maybeRecoverFromIndexLock } from "../core/notify";
-import { parseUntrackedCollisions, isStashConflictMessage } from "../core/notify-pure";
+import { parseUntrackedCollisions, isStashConflictMessage, isIndexLockError } from "../core/notify-pure";
 
 // JetBrains "Update Project" (Ctrl+T) — one command that:
 //   1. Refuses to start if a previous op (rebase/merge/cherry-pick/stash-pop)
@@ -36,7 +36,7 @@ async function chooseStrategy(): Promise<Strategy | undefined> {
       { label: "$(git-pull-request-go-to-changes) Rebase local commits onto upstream", value: "rebase" },
       { label: "$(git-merge) Merge upstream into local", value: "merge" },
     ],
-    { placeHolder: "Update strategy (configurable as rebased.updateProject.strategy)" }
+    { placeHolder: vscode.l10n.t("Update strategy (configurable as rebased.updateProject.strategy)") }
   );
   if (!pick) return undefined;
   return pick.value as Strategy;
@@ -60,7 +60,7 @@ async function popStashSafely(root: string, repos: RepoManager): Promise<void> {
       await markStashPopInProgress(root, stashRef);
       repos.fire();
       await routeToConflictPanel(
-        `Update Project — stash pop produced conflicts. Resolve in the 3-way merge editor, then finalize.`
+        vscode.l10n.t("Update Project — stash pop produced conflicts. Resolve in the 3-way merge editor, then finalize.")
       );
       return;
     }
@@ -95,37 +95,37 @@ async function resolveUntrackedCollision(
   const choice = await vscode.window.showWarningMessage(
     `Stash pop blocked: ${collisions.length} untracked file${collisions.length === 1 ? "" : "s"} from the stash already exist in the working tree (added by upstream): ${preview}`,
     { modal: true, detail: collisions.join("\n") },
-    "Keep upstream (drop stashed copies)",
-    "Restore from stash (overwrite upstream)",
-    "Compare per file (keep stash)",
-    "Do nothing (keep stash for later)"
+    vscode.l10n.t("Keep upstream (drop stashed copies)"),
+    vscode.l10n.t("Restore from stash (overwrite upstream)"),
+    vscode.l10n.t("Compare per file (keep stash)"),
+    vscode.l10n.t("Do nothing (keep stash for later)")
   );
 
   try {
-    if (choice === "Keep upstream (drop stashed copies)") {
+    if (choice === vscode.l10n.t("Keep upstream (drop stashed copies)")) {
       await runGit(["stash", "drop", "stash@{0}"], { cwd: root });
       vscode.window.showInformationMessage(
         `Dropped stash; upstream copies of ${collisions.length} file(s) kept.`
       );
-    } else if (choice === "Restore from stash (overwrite upstream)") {
+    } else if (choice === vscode.l10n.t("Restore from stash (overwrite upstream)")) {
       // Confirm once more — this is destructive to upstream's just-pulled content.
       const ok = await vscode.window.showWarningMessage(
         `Overwrite ${collisions.length} upstream file(s) with the stashed versions? Upstream content for these paths will be lost from the working tree.`,
         { modal: true },
-        "Overwrite"
+        vscode.l10n.t("Overwrite")
       );
-      if (ok !== "Overwrite") return;
+      if (ok !== vscode.l10n.t("Overwrite")) return;
       // Delete the upstream-introduced copies, then retry the pop.
       for (const rel of collisions) {
         await fs.rm(path.join(root, rel), { force: true });
       }
       try {
         await runGit(["stash", "pop"], { cwd: root });
-        vscode.window.showInformationMessage("Restored stashed copies.");
+        vscode.window.showInformationMessage(vscode.l10n.t("Restored stashed copies."));
       } catch (e: unknown) {
         await showGitError("Retry stash pop", e);
       }
-    } else if (choice === "Compare per file (keep stash)") {
+    } else if (choice === vscode.l10n.t("Compare per file (keep stash)")) {
       // Open a side-by-side diff per collision: stash version (rebased-stash: scheme)
       // vs the upstream copy currently in the working tree. The stash stays in
       // the list so the user can finalize later with their own preferred tool.
@@ -157,15 +157,20 @@ async function resolveUntrackedCollision(
 }
 
 async function routeToConflictPanel(message: string): Promise<void> {
-  const pick = await vscode.window.showWarningMessage(message, "Open conflict panel", "Later");
-  if (pick === "Open conflict panel") {
+  const pick = await vscode.window.showWarningMessage(message, vscode.l10n.t("Open conflict panel"), vscode.l10n.t("Later"));
+  if (pick === vscode.l10n.t("Open conflict panel")) {
     await vscode.commands.executeCommand("rebased.conflict.show");
   }
 }
 
-// Try a git operation, transparently retrying once if the failure was an
-// index.lock collision (after offering the user the recovery dialog). Returns
-// true on success, false on abort.
+// Try a git operation with graceful index-lock recovery:
+//   1. First attempt.
+//   2. On any "could not write index"-class error, silently wait 600ms and retry —
+//      handles transient races with VS Code's built-in git extension which also
+//      pokes the index periodically.
+//   3. If the retry still fails, show the recovery dialog (which prompts to
+//      remove the lock file if one is present, or to retry).
+//   4. After a user-approved retry, surface enriched errors verbatim.
 async function tryWithLockRecovery(
   root: string,
   scope: string,
@@ -176,19 +181,42 @@ async function tryWithLockRecovery(
     return true;
   } catch (e: unknown) {
     const msg = (e as Error).message;
-    const recovery = await maybeRecoverFromIndexLock(root, msg);
-    if (recovery === "retry") {
-      try {
-        await op();
-        return true;
-      } catch (e2: unknown) {
-        await showGitError(`${scope} (after lock cleared)`, e2);
-        return false;
-      }
+    if (!isIndexLockError(msg)) {
+      await showGitError(scope, e);
+      return false;
     }
-    if (recovery === "abort") return false;
-    await showGitError(scope, e);
-    return false;
+    // Silent retry — typical transient race resolves in <100ms.
+    await new Promise((r) => setTimeout(r, 600));
+    try {
+      await op();
+      return true;
+    } catch (e2: unknown) {
+      const msg2 = (e2 as Error).message;
+      const recovery = await maybeRecoverFromIndexLock(root, msg2);
+      if (recovery === "retry") {
+        try {
+          await op();
+          return true;
+        } catch (e3: unknown) {
+          await showGitError(`${scope} (after lock cleared)`, e3);
+          return false;
+        }
+      }
+      if (recovery === "abort") return false;
+      // No lock file present and user couldn't recover via dialog.
+      // Surface a richer message hinting at the likely cause.
+      await showGitError(
+        `${scope} — index could not be written`,
+        new Error(
+          `${msg2}\n\nTwo silent retries failed. Likely causes:\n` +
+          `  • Another git process is holding the index (terminal, IDE, or CI)\n` +
+          `  • .git/index permissions or disk space\n` +
+          `  • Antivirus / backup software locking the file\n\n` +
+          `Inspect .git/ and try again from a clean state.`
+        )
+      );
+      return false;
+    }
   }
 }
 
@@ -201,7 +229,7 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
   const opState = await getOperationState(root);
   if (opState.kind) {
     await routeToConflictPanel(
-      `A ${opState.kind} is already in progress. Resolve it before running Update Project.`
+      vscode.l10n.t("A {0} is already in progress. Resolve it before running Update Project.", opState.kind!)
     );
     return;
   }
@@ -211,7 +239,7 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
   try {
     branch = (await runGit(["symbolic-ref", "--short", "HEAD"], { cwd: root })).trim();
   } catch {
-    vscode.window.showWarningMessage("Update Project requires a branch (detached HEAD).");
+    vscode.window.showWarningMessage(vscode.l10n.t("Update Project requires a branch (detached HEAD)."));
     return;
   }
   try {
@@ -219,10 +247,10 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
   } catch {
     const pick = await vscode.window.showWarningMessage(
       `${branch} has no upstream. Set one with 'push --set-upstream' first.`,
-      "Push and set upstream",
-      "Cancel"
+      vscode.l10n.t("Push and set upstream"),
+      vscode.l10n.t("Cancel")
     );
-    if (pick === "Push and set upstream") {
+    if (pick === vscode.l10n.t("Push and set upstream")) {
       await vscode.commands.executeCommand("rebased.push");
     }
     return;
@@ -234,7 +262,7 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: `Update Project: ${branch}`,
+      title: vscode.l10n.t("Update Project: {0}", branch),
       cancellable: false,
     },
     async (progress) => {
@@ -243,16 +271,16 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
       const stashMsg = `rebased: auto before update ${new Date().toISOString()}`;
 
       if (dirty) {
-        progress.report({ message: "stashing uncommitted changes…", increment: 10 });
-        const stashOk = await tryWithLockRecovery(root, "Auto-stash", () =>
+        progress.report({ message: vscode.l10n.t("stashing uncommitted changes…"), increment: 10 });
+        const stashOk = await tryWithLockRecovery(root, vscode.l10n.t("Auto-stash"), () =>
           runGit(["stash", "push", "-u", "-m", stashMsg], { cwd: root })
         );
         if (!stashOk) return;
         didStash = true;
       }
 
-      progress.report({ message: "fetching all remotes…", increment: 20 });
-      const fetchOk = await tryWithLockRecovery(root, "Fetch", () =>
+      progress.report({ message: vscode.l10n.t("fetching all remotes…"), increment: 20 });
+      const fetchOk = await tryWithLockRecovery(root, vscode.l10n.t("Fetch"), () =>
         runGit(["fetch", "--all", "--prune"], { cwd: root })
       );
       if (!fetchOk) {
@@ -261,7 +289,7 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
       }
 
       progress.report({
-        message: strategy === "rebase" ? "pull --rebase…" : "pull --no-rebase…",
+        message: strategy === "rebase" ? vscode.l10n.t("pull --rebase…") : vscode.l10n.t("pull --no-rebase…"),
         increment: 30,
       });
       try {
@@ -271,7 +299,7 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
         if (/CONFLICT|merge conflict|could not apply/i.test(msg)) {
           repos.fire();
           await routeToConflictPanel(
-            `${strategy} hit conflicts. Resolve them, then run Update Project again — your stash is still safe.`
+            vscode.l10n.t("{0} hit conflicts. Resolve them, then run Update Project again — your stash is still safe.", strategy)
           );
           return;
         }
@@ -287,7 +315,7 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
           if (didStash && isWorkingTreeDirtyError(msg)) {
             await runGit(["stash", "pop"], { cwd: root }).catch(() => undefined);
           }
-          await showGitError("Pull", e);
+          await showGitError(vscode.l10n.t("Pull"), e);
           return;
         } else {
           return; // user aborted
@@ -295,12 +323,12 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
       }
 
       if (didStash) {
-        progress.report({ message: "restoring stashed changes…", increment: 30 });
+        progress.report({ message: vscode.l10n.t("restoring stashed changes…"), increment: 30 });
         await popStashSafely(root, repos);
       }
 
       repos.fire();
-      progress.report({ message: "done", increment: 10 });
+      progress.report({ message: vscode.l10n.t("done"), increment: 10 });
     }
   );
 

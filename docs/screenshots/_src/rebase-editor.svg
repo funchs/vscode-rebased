@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .bg { fill: #1e1e1e; }
+      .title-bar { fill: #3c3c3c; }
+      .activity-bar { fill: #333333; }
+      .sidebar { fill: #252526; }
+      .status-bar { fill: #007acc; }
+      .editor { fill: #1e1e1e; }
+      .tab-active { fill: #1e1e1e; }
+      .tab-inactive { fill: #2d2d30; }
+      .row { fill: #2a2d2e; }
+      .row-hover { fill: #094771; }
+      .row-dragging { fill: #133a5e; opacity: 0.6; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; font-size: 13px; }
+      .text-secondary { fill: #858585; font-family: -apple-system, sans-serif; font-size: 12px; }
+      .text-mono { font-family: "SF Mono", Menlo, monospace; font-size: 12px; fill: #cccccc; }
+      .text-orange { fill: #d18616; }
+      .text-strikethrough { text-decoration: line-through; opacity: 0.5; }
+      .chip { font-family: "SF Mono", Menlo, monospace; font-size: 10px; font-weight: 700; fill: white; }
+      .pick { fill: #2ea043; }
+      .reword { fill: #0969da; }
+      .edit { fill: #d1ad06; }
+      .squash { fill: #8957e5; }
+      .fixup { fill: #8957e5; }
+      .drop { fill: #cf222e; }
+      .border { fill: #2d2d30; }
+      .handle { fill: #858585; font-family: monospace; font-size: 14px; }
+    </style>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="750" class="bg"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-secondary">demo-project — git-rebase-todo</text>
+
+  <!-- Activity bar -->
+  <rect x="0" y="30" width="48" height="720" class="activity-bar"/>
+  <g transform="translate(12,50)">
+    <!-- Explorer -->
+    <rect x="0" y="0" width="24" height="24" rx="2" fill="none"/>
+    <path d="M 4 4 L 12 4 L 14 6 L 20 6 L 20 20 L 4 20 Z" fill="none" stroke="#858585" stroke-width="1.4"/>
+  </g>
+  <g transform="translate(12,90)">
+    <path d="M 4 6 L 20 6 M 4 12 L 20 12 M 4 18 L 20 18" stroke="#858585" stroke-width="1.4" fill="none"/>
+  </g>
+  <!-- Source Control / GitLens -->
+  <g transform="translate(12,130)">
+    <circle cx="8" cy="6" r="3" stroke="#858585" stroke-width="1.4" fill="none"/>
+    <circle cx="16" cy="18" r="3" stroke="#858585" stroke-width="1.4" fill="none"/>
+    <line x1="8" y1="9" x2="8" y2="15" stroke="#858585" stroke-width="1.4"/>
+    <path d="M 11 17 L 13 17" stroke="#858585" stroke-width="1.4"/>
+  </g>
+  <!-- Rebased (active) -->
+  <rect x="0" y="170" width="48" height="40" fill="#37373d"/>
+  <rect x="0" y="170" width="2" height="40" fill="#007acc"/>
+  <g transform="translate(12,178)" stroke="#cccccc" stroke-width="1.6" fill="none">
+    <circle cx="5" cy="4" r="2.4" fill="#cccccc"/>
+    <circle cx="5" cy="20" r="2.4" fill="#cccccc"/>
+    <circle cx="19" cy="12" r="2.4" fill="#cccccc"/>
+    <line x1="5" y1="6.4" x2="5" y2="17.6"/>
+    <path d="M 5 12 C 5 17 11 20 16.5 18"/>
+    <path d="M 5 12 C 5 7 11 4 16.5 6"/>
+  </g>
+
+  <!-- Title bar within editor for tab -->
+  <rect x="48" y="30" width="1152" height="35" fill="#252526"/>
+  <rect x="48" y="30" width="240" height="35" fill="#1e1e1e"/>
+  <text x="68" y="52" class="text">⇄ Interactive Rebase</text>
+  <text x="262" y="50" class="text-secondary">×</text>
+
+  <!-- Webview content area -->
+  <rect x="48" y="65" width="1152" height="660" class="editor"/>
+
+  <!-- Webview header -->
+  <text x="72" y="105" class="text" style="font-size: 18px; font-weight: 600;">Interactive Rebase</text>
+  <text x="72" y="125" class="text-secondary">Drag rows to reorder. Click action label to change. Save to continue rebase.</text>
+
+  <!-- Toolbar -->
+  <rect x="72" y="145" width="160" height="30" rx="4" fill="#0e639c"/>
+  <text x="152" y="165" class="text" text-anchor="middle" style="font-weight: 500;">Start Rebase  (⌘⏎)</text>
+  <rect x="242" y="145" width="80" height="30" rx="4" fill="#3a3d41"/>
+  <text x="282" y="165" class="text" text-anchor="middle">Abort</text>
+
+  <!-- Rows -->
+  <g transform="translate(72, 210)">
+    <!-- Row 1: pick -->
+    <rect x="0" y="0" width="1056" height="44" rx="6" class="row"/>
+    <text x="14" y="28" class="handle">⋮⋮</text>
+    <rect x="40" y="10" width="70" height="24" rx="3" class="pick"/>
+    <text x="75" y="26" class="chip" text-anchor="middle">PICK</text>
+    <text x="130" y="28" class="text-mono text-orange">5193e9d</text>
+    <text x="220" y="28" class="text">feat(api): pagination</text>
+
+    <!-- Row 2: reword (highlighted, mid-drag) -->
+    <rect x="0" y="56" width="1056" height="44" rx="6" class="row-hover"/>
+    <text x="14" y="84" class="handle">⋮⋮</text>
+    <rect x="40" y="66" width="70" height="24" rx="3" class="reword"/>
+    <text x="75" y="82" class="chip" text-anchor="middle">REWORD</text>
+    <text x="130" y="84" class="text-mono text-orange">8a2c1f0</text>
+    <text x="220" y="84" class="text">feat(api): list endpoint</text>
+
+    <!-- Row 3: squash -->
+    <rect x="0" y="112" width="1056" height="44" rx="6" class="row"/>
+    <text x="14" y="140" class="handle">⋮⋮</text>
+    <rect x="40" y="122" width="70" height="24" rx="3" class="squash"/>
+    <text x="75" y="138" class="chip" text-anchor="middle">SQUASH</text>
+    <text x="130" y="140" class="text-mono text-orange">cb71e30</text>
+    <text x="220" y="140" class="text">perf(parser): batch reads</text>
+
+    <!-- Row 4: edit -->
+    <rect x="0" y="168" width="1056" height="44" rx="6" class="row"/>
+    <text x="14" y="196" class="handle">⋮⋮</text>
+    <rect x="40" y="178" width="70" height="24" rx="3" class="edit"/>
+    <text x="75" y="194" class="chip" text-anchor="middle">EDIT</text>
+    <text x="130" y="196" class="text-mono text-orange">f234bb8</text>
+    <text x="220" y="196" class="text">perf(parser): inline hot path</text>
+
+    <!-- Row 5: drop -->
+    <rect x="0" y="224" width="1056" height="44" rx="6" class="row"/>
+    <text x="14" y="252" class="handle">⋮⋮</text>
+    <rect x="40" y="234" width="70" height="24" rx="3" class="drop"/>
+    <text x="75" y="250" class="chip" text-anchor="middle">DROP</text>
+    <text x="130" y="252" class="text-mono text-orange text-strikethrough">d8f0c2e</text>
+    <text x="220" y="252" class="text text-strikethrough">chore: deprecated migration</text>
+
+    <!-- Row 6: fixup -->
+    <rect x="0" y="280" width="1056" height="44" rx="6" class="row"/>
+    <text x="14" y="308" class="handle">⋮⋮</text>
+    <rect x="40" y="290" width="70" height="24" rx="3" class="fixup"/>
+    <text x="75" y="306" class="chip" text-anchor="middle">FIXUP</text>
+    <text x="130" y="308" class="text-mono text-orange">0d44a91</text>
+    <text x="220" y="308" class="text">fix(auth): rotate tokens</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="725" width="1200" height="25" class="status-bar"/>
+  <text x="14" y="743" fill="white" font-family="-apple-system" font-size="12">⎇ main · 1 ahead · 6 commits in rebase plan</text>
+  <text x="1186" y="743" fill="white" font-family="-apple-system" font-size="12" text-anchor="end">UTF-8  TypeScript</text>
+</svg>

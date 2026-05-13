@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .bg { fill: #1e1e1e; opacity: 0.45; }
+      .title-bar { fill: #3c3c3c; }
+      .status-bar { fill: #007acc; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 13px; }
+      .text-sub { fill: #858585; font-family: -apple-system; font-size: 11px; }
+      .quickpick-bg { fill: #252526; stroke: #454545; stroke-width: 1; }
+      .quickpick-input { fill: #3c3c3c; }
+      .quickpick-selected { fill: #094771; }
+      .quickpick-item { fill: transparent; }
+      .qp-text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 13px; }
+      .qp-desc { fill: #858585; font-family: -apple-system; font-size: 12px; }
+      .qp-codicon { fill: #6cb6ff; font-family: monospace; font-size: 13px; }
+    </style>
+  </defs>
+
+  <!-- Dimmed editor background -->
+  <rect width="1200" height="750" fill="#1e1e1e"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project</text>
+
+  <!-- Backdrop blur effect via low-opacity overlay -->
+  <rect y="30" width="1200" height="695" fill="#000000" opacity="0.4"/>
+
+  <!-- QuickPick container -->
+  <g transform="translate(280, 50)">
+    <!-- Background card -->
+    <rect width="640" height="490" rx="6" class="quickpick-bg"/>
+
+    <!-- Search input -->
+    <rect x="14" y="14" width="612" height="34" rx="3" class="quickpick-input"/>
+    <text x="26" y="36" class="qp-text">Commit type</text>
+
+    <!-- Items -->
+    <g transform="translate(0, 60)">
+      <!-- selected: feat -->
+      <rect width="640" height="36" class="quickpick-selected"/>
+      <text x="14" y="22" class="qp-text">feat</text>
+      <text x="180" y="22" class="qp-desc">A new feature</text>
+
+      <!-- fix -->
+      <text x="14" y="58" class="qp-text">fix</text>
+      <text x="180" y="58" class="qp-desc">A bug fix</text>
+
+      <text x="14" y="94" class="qp-text">docs</text>
+      <text x="180" y="94" class="qp-desc">Documentation only</text>
+
+      <text x="14" y="130" class="qp-text">style</text>
+      <text x="180" y="130" class="qp-desc">Whitespace/formatting (no logic)</text>
+
+      <text x="14" y="166" class="qp-text">refactor</text>
+      <text x="180" y="166" class="qp-desc">Code change that neither fixes nor adds features</text>
+
+      <text x="14" y="202" class="qp-text">perf</text>
+      <text x="180" y="202" class="qp-desc">Performance improvement</text>
+
+      <text x="14" y="238" class="qp-text">test</text>
+      <text x="180" y="238" class="qp-desc">Tests only</text>
+
+      <text x="14" y="274" class="qp-text">build</text>
+      <text x="180" y="274" class="qp-desc">Build system or dependencies</text>
+
+      <text x="14" y="310" class="qp-text">ci</text>
+      <text x="180" y="310" class="qp-desc">CI configuration</text>
+
+      <text x="14" y="346" class="qp-text">chore</text>
+      <text x="180" y="346" class="qp-desc">Other changes — maintenance, tooling</text>
+
+      <text x="14" y="382" class="qp-text">revert</text>
+      <text x="180" y="382" class="qp-desc">Reverts a previous commit</text>
+    </g>
+
+    <!-- Hint at bottom -->
+    <rect x="0" y="460" width="640" height="30" fill="#1e1e1e"/>
+    <text x="14" y="478" class="qp-desc">Step 1 of 5 · Pick a type to continue. Esc to cancel.</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="725" width="1200" height="25" class="status-bar"/>
+  <text x="14" y="743" fill="white" font-family="-apple-system" font-size="12">⎇ main* · 3 changes</text>
+</svg>

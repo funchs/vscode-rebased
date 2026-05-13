@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .bg { fill: #1e1e1e; }
+      .title-bar { fill: #3c3c3c; }
+      .activity-bar { fill: #333333; }
+      .sidebar { fill: #252526; }
+      .status-bar { fill: #007acc; }
+      .editor { fill: #1e1e1e; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; font-size: 12px; }
+      .text-sub { fill: #858585; font-family: -apple-system, sans-serif; font-size: 11px; }
+      .text-mono { font-family: "SF Mono", Menlo, monospace; font-size: 11px; fill: #d18616; }
+      .heading { fill: #cccccc; font-family: -apple-system; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      .ref-head { fill: #2ea043; }
+      .ref-remote { fill: #0969da; }
+      .ref { fill: #5a5d5e; }
+      .ref-text { fill: white; font-family: -apple-system; font-size: 10px; font-weight: 600; }
+      .input-bg { fill: #3c3c3c; stroke: #2d2d30; }
+      .input-placeholder { fill: #6c6c6c; font-family: -apple-system; font-size: 11px; }
+    </style>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="750" class="bg"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project</text>
+
+  <!-- Activity bar -->
+  <rect x="0" y="30" width="48" height="720" class="activity-bar"/>
+  <rect x="0" y="170" width="48" height="40" fill="#37373d"/>
+  <rect x="0" y="170" width="2" height="40" fill="#007acc"/>
+  <g transform="translate(12,178)" stroke="#cccccc" stroke-width="1.6" fill="none">
+    <circle cx="5" cy="4" r="2.4" fill="#cccccc"/>
+    <circle cx="5" cy="20" r="2.4" fill="#cccccc"/>
+    <circle cx="19" cy="12" r="2.4" fill="#cccccc"/>
+    <line x1="5" y1="6.4" x2="5" y2="17.6"/>
+    <path d="M 5 12 C 5 17 11 20 16.5 18"/>
+    <path d="M 5 12 C 5 7 11 4 16.5 6"/>
+  </g>
+
+  <!-- Sidebar (Rebased panels) -->
+  <rect x="48" y="30" width="300" height="720" class="sidebar"/>
+  <text x="64" y="55" class="heading">REBASED</text>
+
+  <!-- Log section -->
+  <text x="64" y="90" class="text" style="font-weight: 600;">▼ Log</text>
+
+  <!-- Log lines in sidebar (mini graph) -->
+  <g transform="translate(64, 110)" font-family="SF Mono, Menlo, monospace" font-size="10" fill="#cccccc">
+    <text y="14">● feat(api): pagination</text>
+    <text y="32">● feat(api): list endpoint</text>
+    <text y="50">│ ● perf(parser): batch reads</text>
+    <text y="68">│ ● perf(parser): inline hot path</text>
+    <text y="86">●─┘ fix(auth): rotate tokens</text>
+    <text y="104">● refactor(core): extract helper</text>
+    <text y="122">● docs: add architecture</text>
+    <text y="140">● chore: bump deps</text>
+    <text y="158">● feat(core): bootstrap</text>
+  </g>
+
+  <!-- Bottom collapsed sections -->
+  <text x="64" y="320" class="text">▶ Commit</text>
+  <text x="64" y="345" class="text">▶ Stashes</text>
+  <text x="64" y="370" class="text">▶ Branches</text>
+  <text x="64" y="395" class="text">▶ Changelists</text>
+
+  <!-- Main editor area = Log webview -->
+  <rect x="348" y="30" width="852" height="35" fill="#252526"/>
+  <rect x="348" y="30" width="200" height="35" fill="#1e1e1e"/>
+  <text x="368" y="52" class="text">📜 Log</text>
+
+  <rect x="348" y="65" width="852" height="660" class="editor"/>
+
+  <!-- Filter toolbar -->
+  <g transform="translate(348, 65)">
+    <rect width="852" height="44" fill="#252526" stroke="#2d2d30" stroke-width="1"/>
+    <rect x="12" y="10" width="200" height="24" rx="3" class="input-bg"/>
+    <text x="20" y="26" class="input-placeholder">Subject…</text>
+    <rect x="220" y="10" width="120" height="24" rx="3" class="input-bg"/>
+    <text x="228" y="26" class="input-placeholder">Author</text>
+    <rect x="348" y="10" width="160" height="24" rx="3" class="input-bg"/>
+    <text x="356" y="26" class="input-placeholder">Path</text>
+    <rect x="516" y="10" width="140" height="24" rx="3" class="input-bg"/>
+    <text x="524" y="26" class="text-sub">All branches ▾</text>
+    <rect x="664" y="10" width="140" height="24" rx="3" class="input-bg"/>
+    <text x="672" y="26" class="text-sub">Any time ▾</text>
+  </g>
+
+  <!-- Graph + commits -->
+  <g transform="translate(348, 130)">
+    <!-- Lane colors -->
+    <!-- Lane 0: blue, Lane 1: red, Lane 2: green -->
+
+    <!-- Row 1: feat(api): pagination on lane 1 (feature/api) -->
+    <line x1="20" y1="0" x2="20" y2="26" stroke="#6cb6ff" stroke-width="1.5"/>
+    <line x1="40" y1="0" x2="40" y2="26" stroke="#f47067" stroke-width="1.5"/>
+    <circle cx="40" cy="13" r="4" fill="#f47067" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="80" y="17" class="text-mono">5193e9d</text>
+    <rect x="150" y="5" width="80" height="16" rx="2" class="ref-remote"/>
+    <text x="190" y="17" text-anchor="middle" class="ref-text">feature/api</text>
+    <text x="245" y="17" class="text">feat(api): pagination</text>
+    <text x="660" y="17" class="text-sub">Demo Author</text>
+    <text x="800" y="17" class="text-sub">2025-10-27</text>
+
+    <!-- Row 2: feat(api): list endpoint -->
+    <line x1="20" y1="26" x2="20" y2="52" stroke="#6cb6ff" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="40" y2="52" stroke="#f47067" stroke-width="1.5"/>
+    <circle cx="40" cy="39" r="4" fill="#f47067" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="80" y="43" class="text-mono">8a2c1f0</text>
+    <text x="150" y="43" class="text">feat(api): list endpoint</text>
+    <text x="660" y="43" class="text-sub">Demo Author</text>
+    <text x="800" y="43" class="text-sub">2025-10-27</text>
+
+    <!-- Row 3: perf(parser): batch reads on lane 2 (feature/perf) -->
+    <line x1="20" y1="52" x2="20" y2="78" stroke="#6cb6ff" stroke-width="1.5"/>
+    <line x1="40" y1="52" x2="40" y2="78" stroke="#f47067" stroke-width="1.5"/>
+    <line x1="60" y1="52" x2="60" y2="78" stroke="#7ee787" stroke-width="1.5"/>
+    <circle cx="60" cy="65" r="4" fill="#7ee787" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="100" y="69" class="text-mono">cb71e30</text>
+    <rect x="170" y="57" width="86" height="16" rx="2" class="ref-remote"/>
+    <text x="213" y="69" text-anchor="middle" class="ref-text">feature/perf</text>
+    <text x="270" y="69" class="text">perf(parser): batch reads</text>
+    <text x="660" y="69" class="text-sub">Demo Author</text>
+    <text x="800" y="69" class="text-sub">2025-10-28</text>
+
+    <!-- Row 4: perf(parser): inline hot path -->
+    <line x1="20" y1="78" x2="20" y2="104" stroke="#6cb6ff" stroke-width="1.5"/>
+    <line x1="40" y1="78" x2="40" y2="104" stroke="#f47067" stroke-width="1.5"/>
+    <line x1="60" y1="78" x2="60" y2="104" stroke="#7ee787" stroke-width="1.5"/>
+    <circle cx="60" cy="91" r="4" fill="#7ee787" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="100" y="95" class="text-mono">f234bb8</text>
+    <text x="170" y="95" class="text">perf(parser): inline hot path</text>
+    <text x="660" y="95" class="text-sub">Demo Author</text>
+    <text x="800" y="95" class="text-sub">2025-10-28</text>
+
+    <!-- Row 5: fix(auth): rotate tokens — merge point — back to lane 0 -->
+    <line x1="20" y1="104" x2="20" y2="130" stroke="#6cb6ff" stroke-width="1.5"/>
+    <path d="M 40 104 C 40 117 30 122 22 130" stroke="#f47067" stroke-width="1.5" fill="none"/>
+    <path d="M 60 104 C 60 117 35 122 22 130" stroke="#7ee787" stroke-width="1.5" fill="none"/>
+    <circle cx="20" cy="117" r="4" fill="#6cb6ff" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="80" y="121" class="text-mono">0d44a91</text>
+    <rect x="150" y="109" width="90" height="16" rx="2" class="ref-head"/>
+    <text x="195" y="121" text-anchor="middle" class="ref-text">HEAD → main</text>
+    <text x="252" y="121" class="text">fix(auth): rotate tokens</text>
+    <text x="660" y="121" class="text-sub">Demo Author</text>
+    <text x="800" y="121" class="text-sub">2025-10-29</text>
+
+    <!-- Row 6 -->
+    <line x1="20" y1="130" x2="20" y2="156" stroke="#6cb6ff" stroke-width="1.5"/>
+    <circle cx="20" cy="143" r="4" fill="#6cb6ff" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="80" y="147" class="text-mono">d8f0c2e</text>
+    <text x="150" y="147" class="text">refactor(core): extract helper</text>
+    <text x="660" y="147" class="text-sub">Demo Author</text>
+    <text x="800" y="147" class="text-sub">2025-10-29</text>
+
+    <!-- Row 7 -->
+    <line x1="20" y1="156" x2="20" y2="182" stroke="#6cb6ff" stroke-width="1.5"/>
+    <circle cx="20" cy="169" r="4" fill="#6cb6ff" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="80" y="173" class="text-mono">3e88a14</text>
+    <text x="150" y="173" class="text">docs: add architecture diagram</text>
+    <text x="660" y="173" class="text-sub">Demo Author</text>
+    <text x="800" y="173" class="text-sub">2025-10-30</text>
+
+    <!-- Row 8 -->
+    <line x1="20" y1="182" x2="20" y2="208" stroke="#6cb6ff" stroke-width="1.5"/>
+    <circle cx="20" cy="195" r="4" fill="#6cb6ff" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="80" y="199" class="text-mono">9c1de37</text>
+    <text x="150" y="199" class="text">chore: bump deps</text>
+    <text x="660" y="199" class="text-sub">Demo Author</text>
+    <text x="800" y="199" class="text-sub">2025-10-30</text>
+
+    <!-- Row 9 -->
+    <circle cx="20" cy="221" r="4" fill="#6cb6ff" stroke="#1e1e1e" stroke-width="1.5"/>
+    <text x="80" y="225" class="text-mono">7771bbb</text>
+    <text x="150" y="225" class="text">feat(core): bootstrap</text>
+    <text x="660" y="225" class="text-sub">Demo Author</text>
+    <text x="800" y="225" class="text-sub">2025-10-31</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="725" width="1200" height="25" class="status-bar"/>
+  <text x="14" y="743" fill="white" font-family="-apple-system" font-size="12">⎇ main · ↑1 ↓0 · 9 commits</text>
+</svg>

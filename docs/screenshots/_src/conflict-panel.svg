@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .title-bar { fill: #3c3c3c; }
+      .activity-bar { fill: #333333; }
+      .status-bar { fill: #007acc; }
+      .editor { fill: #1e1e1e; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 13px; }
+      .text-sub { fill: #858585; font-family: -apple-system; font-size: 11px; }
+      .heading { fill: #cccccc; font-family: -apple-system; font-size: 17px; font-weight: 600; }
+      .banner { fill: #858585; font-family: "SF Mono", Menlo, monospace; font-size: 12px; }
+      .row { fill: transparent; stroke: #2d2d30; stroke-width: 0; }
+      .row-hover { fill: #2a2d2e; }
+      .badge { font-family: "SF Mono", Menlo, monospace; font-size: 11px; font-weight: 700; fill: white; }
+      .path { fill: #cccccc; font-family: "SF Mono", Menlo, monospace; font-size: 12px; }
+      .btn-bg { fill: #3a3d41; stroke: transparent; }
+      .btn-primary { fill: #0e639c; }
+      .btn-text { fill: #cccccc; font-family: -apple-system; font-size: 11px; }
+      .btn-ghost { fill: transparent; stroke: transparent; }
+      .footer-bg { fill: #252526; }
+    </style>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="750" fill="#1e1e1e"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project — Conflicts</text>
+
+  <!-- Activity bar -->
+  <rect x="0" y="30" width="48" height="720" class="activity-bar"/>
+  <rect x="0" y="170" width="48" height="40" fill="#37373d"/>
+  <rect x="0" y="170" width="2" height="40" fill="#007acc"/>
+  <g transform="translate(12,178)" stroke="#cccccc" stroke-width="1.6" fill="none">
+    <circle cx="5" cy="4" r="2.4" fill="#cccccc"/>
+    <circle cx="5" cy="20" r="2.4" fill="#cccccc"/>
+    <circle cx="19" cy="12" r="2.4" fill="#cccccc"/>
+    <line x1="5" y1="6.4" x2="5" y2="17.6"/>
+    <path d="M 5 12 C 5 17 11 20 16.5 18"/>
+    <path d="M 5 12 C 5 7 11 4 16.5 6"/>
+  </g>
+
+  <!-- Tab -->
+  <rect x="48" y="30" width="1152" height="35" fill="#252526"/>
+  <rect x="48" y="30" width="200" height="35" fill="#1e1e1e"/>
+  <text x="68" y="52" class="text">⚠ Conflicts</text>
+
+  <!-- Editor area = webview -->
+  <rect x="48" y="65" width="1152" height="660" class="editor"/>
+
+  <!-- Header -->
+  <text x="72" y="105" class="heading">Conflicts</text>
+  <text x="72" y="125" class="banner">Stash pop · 3 conflicts</text>
+
+  <!-- File rows -->
+  <g transform="translate(72, 150)">
+
+    <!-- Row 1: server.ts -->
+    <rect x="0" y="0" width="1056" height="56" rx="4" class="row-hover"/>
+    <rect x="0" y="14" width="34" height="28" rx="3" fill="#cf222e"/>
+    <text x="17" y="33" class="badge" text-anchor="middle">UU</text>
+    <text x="50" y="33" class="path">apps/web/server.ts</text>
+
+    <!-- Actions -->
+    <g transform="translate(620, 14)">
+      <rect width="92" height="28" rx="3" class="btn-bg"/>
+      <text x="46" y="19" class="btn-text" text-anchor="middle">采用我方</text>
+
+      <rect x="100" y="0" width="92" height="28" rx="3" class="btn-bg"/>
+      <text x="146" y="19" class="btn-text" text-anchor="middle">采用对方</text>
+
+      <rect x="200" y="0" width="92" height="28" rx="3" class="btn-primary"/>
+      <text x="246" y="19" class="btn-text" text-anchor="middle">合并…</text>
+
+      <rect x="300" y="0" width="36" height="28" rx="3" class="btn-ghost"/>
+      <text x="318" y="20" class="btn-text" text-anchor="middle" style="font-size: 14px;">↺</text>
+    </g>
+
+    <!-- Row 2: handlers.ts -->
+    <rect x="0" y="64" width="1056" height="56" rx="4" class="row-hover"/>
+    <rect x="0" y="78" width="34" height="28" rx="3" fill="#cf222e"/>
+    <text x="17" y="97" class="badge" text-anchor="middle">UU</text>
+    <text x="50" y="97" class="path">apps/web/handlers.ts</text>
+    <g transform="translate(620, 78)">
+      <rect width="92" height="28" rx="3" class="btn-bg"/>
+      <text x="46" y="19" class="btn-text" text-anchor="middle">采用我方</text>
+      <rect x="100" y="0" width="92" height="28" rx="3" class="btn-bg"/>
+      <text x="146" y="19" class="btn-text" text-anchor="middle">采用对方</text>
+      <rect x="200" y="0" width="92" height="28" rx="3" class="btn-primary"/>
+      <text x="246" y="19" class="btn-text" text-anchor="middle">合并…</text>
+      <text x="318" y="20" class="btn-text" text-anchor="middle" style="font-size: 14px;">↺</text>
+    </g>
+
+    <!-- Row 3: docker-compose.yml (AA) -->
+    <rect x="0" y="128" width="1056" height="56" rx="4" class="row-hover"/>
+    <rect x="0" y="142" width="34" height="28" rx="3" fill="#d18616"/>
+    <text x="17" y="161" class="badge" text-anchor="middle">AA</text>
+    <text x="50" y="161" class="path">docker-compose.yml</text>
+    <g transform="translate(620, 142)">
+      <rect width="92" height="28" rx="3" class="btn-bg"/>
+      <text x="46" y="19" class="btn-text" text-anchor="middle">采用我方</text>
+      <rect x="100" y="0" width="92" height="28" rx="3" class="btn-bg"/>
+      <text x="146" y="19" class="btn-text" text-anchor="middle">采用对方</text>
+      <rect x="200" y="0" width="92" height="28" rx="3" class="btn-primary"/>
+      <text x="246" y="19" class="btn-text" text-anchor="middle">合并…</text>
+      <text x="318" y="20" class="btn-text" text-anchor="middle" style="font-size: 14px;">↺</text>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <rect x="48" y="680" width="1152" height="45" class="footer-bg"/>
+  <line x1="48" y1="680" x2="1200" y2="680" stroke="#2d2d30"/>
+  <rect x="72" y="690" width="220" height="28" rx="3" class="btn-bg"/>
+  <text x="182" y="709" class="btn-text" text-anchor="middle">依次在三路合并编辑器中打开</text>
+
+  <rect x="1010" y="690" width="60" height="28" rx="3" class="btn-bg"/>
+  <text x="1040" y="709" class="btn-text" text-anchor="middle">中止</text>
+
+  <rect x="1080" y="690" width="100" height="28" rx="3" fill="#3a3d41" opacity="0.45"/>
+  <text x="1130" y="709" class="btn-text" text-anchor="middle" opacity="0.5">完成收尾</text>
+
+  <!-- Status bar -->
+  <rect x="0" y="725" width="1200" height="25" fill="#cf222e"/>
+  <text x="14" y="743" fill="white" font-family="-apple-system" font-size="12">⚠ stash-pop · 3 conflicts — click to resolve</text>
+</svg>

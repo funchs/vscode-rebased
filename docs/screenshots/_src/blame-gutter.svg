@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .bg { fill: #1e1e1e; }
+      .title-bar { fill: #3c3c3c; }
+      .activity-bar { fill: #333333; }
+      .status-bar { fill: #007acc; }
+      .editor { fill: #1e1e1e; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 12px; }
+      .text-sub { fill: #858585; font-family: -apple-system; font-size: 11px; }
+      .line-no { fill: #6c6c6c; font-family: "SF Mono", Menlo, monospace; font-size: 12px; text-anchor: end; }
+      .gutter { fill: #858585; font-family: "SF Mono", Menlo, monospace; font-size: 11px; font-style: italic; opacity: 0.85; }
+      .hash { fill: #d18616; font-family: "SF Mono", Menlo, monospace; font-size: 11px; font-style: italic; }
+      .code { font-family: "SF Mono", Menlo, monospace; font-size: 13px; }
+      .keyword { fill: #c586c0; }
+      .keyword2 { fill: #569cd6; }
+      .type { fill: #4ec9b0; }
+      .string { fill: #ce9178; }
+      .comment { fill: #6a9955; }
+      .func { fill: #dcdcaa; }
+      .ident { fill: #9cdcfe; }
+      .number { fill: #b5cea8; }
+      .punct { fill: #cccccc; }
+      .active-line { fill: #2d2d30; }
+    </style>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="750" class="bg"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project — apps/api/list.ts</text>
+
+  <!-- Activity bar -->
+  <rect x="0" y="30" width="48" height="720" class="activity-bar"/>
+  <rect x="0" y="50" width="48" height="40" fill="#37373d"/>
+  <rect x="0" y="50" width="2" height="40" fill="#007acc"/>
+  <g transform="translate(12,58)" stroke="#cccccc" stroke-width="1.4" fill="none">
+    <path d="M 4 4 L 12 4 L 14 6 L 20 6 L 20 20 L 4 20 Z"/>
+  </g>
+
+  <!-- Tab strip -->
+  <rect x="48" y="30" width="1152" height="35" fill="#252526"/>
+  <rect x="48" y="30" width="240" height="35" fill="#1e1e1e"/>
+  <text x="68" y="52" class="text">📄 list.ts</text>
+
+  <!-- Editor -->
+  <rect x="48" y="65" width="1152" height="660" class="editor"/>
+
+  <!-- Line numbers (column at right edge of gutter zone)
+       Gutter width: blame text ~22ch wide -->
+
+  <!-- For each line we draw: line number | blame (codiconless: hash short_author age) | code
+       Block lines 1-3: same commit (collapsed under first) -->
+
+  <g transform="translate(48, 90)">
+
+    <!-- Line 1 -->
+    <text x="44" y="0" class="line-no">1</text>
+    <text x="60" y="0" class="hash">8a2c1f0</text>
+    <text x="124" y="0" class="gutter">Demo Author  7d</text>
+    <text x="280" y="0" class="code"><tspan class="keyword2">import</tspan> <tspan class="punct">{</tspan> <tspan class="ident">rotate</tspan> <tspan class="punct">}</tspan> <tspan class="keyword2">from</tspan> <tspan class="string">'../auth'</tspan><tspan class="punct">;</tspan></text>
+
+    <!-- Line 2 (collapsed — same commit, blame empty) -->
+    <text x="44" y="22" class="line-no">2</text>
+    <text x="280" y="22" class="code"></text>
+
+    <!-- Line 3 -->
+    <text x="44" y="44" class="line-no">3</text>
+    <text x="280" y="44" class="code"><tspan class="comment">// GET /api/items — returns a paginated list.</tspan></text>
+
+    <!-- Line 4 — new blame block (function declaration) -->
+    <text x="44" y="66" class="line-no">4</text>
+    <text x="60" y="66" class="hash">5193e9d</text>
+    <text x="124" y="66" class="gutter">Demo Author  2d</text>
+    <text x="280" y="66" class="code"><tspan class="keyword">export</tspan> <tspan class="keyword">async</tspan> <tspan class="keyword">function</tspan> <tspan class="func">listItems</tspan><tspan class="punct">(</tspan><tspan class="ident">req</tspan><tspan class="punct">:</tspan> <tspan class="type">Request</tspan><tspan class="punct">,</tspan> <tspan class="ident">page</tspan> <tspan class="punct">=</tspan> <tspan class="number">1</tspan><tspan class="punct">)</tspan> <tspan class="punct">{</tspan></text>
+
+    <!-- Line 5 — active line highlighted -->
+    <rect x="0" y="76" width="1150" height="22" class="active-line"/>
+    <text x="44" y="88" class="line-no">5</text>
+    <text x="280" y="88" class="code">  <tspan class="keyword">const</tspan> <tspan class="ident">items</tspan> <tspan class="punct">=</tspan> <tspan class="keyword">await</tspan> <tspan class="func">db</tspan><tspan class="punct">.</tspan><tspan class="func">list</tspan><tspan class="punct">(</tspan><tspan class="punct">{</tspan> <tspan class="ident">page</tspan><tspan class="punct">,</tspan> <tspan class="ident">limit</tspan><tspan class="punct">:</tspan> <tspan class="number">20</tspan> <tspan class="punct">}</tspan><tspan class="punct">)</tspan><tspan class="punct">;</tspan>      <tspan style="fill:#858585; font-style:italic; font-size:11px;">Demo Author · 2d ago · feat(api): pagination</tspan></text>
+
+    <!-- Line 6 -->
+    <text x="44" y="110" class="line-no">6</text>
+    <text x="280" y="110" class="code">  <tspan class="keyword">const</tspan> <tspan class="ident">token</tspan> <tspan class="punct">=</tspan> <tspan class="func">rotate</tspan><tspan class="punct">(</tspan><tspan class="string">'list'</tspan><tspan class="punct">)</tspan><tspan class="punct">;</tspan></text>
+
+    <!-- Line 7 -->
+    <text x="44" y="132" class="line-no">7</text>
+    <text x="280" y="132" class="code">  <tspan class="keyword">return</tspan> <tspan class="type">Response</tspan><tspan class="punct">.</tspan><tspan class="func">json</tspan><tspan class="punct">(</tspan><tspan class="punct">{</tspan> <tspan class="ident">items</tspan><tspan class="punct">,</tspan> <tspan class="ident">token</tspan><tspan class="punct">,</tspan> <tspan class="ident">page</tspan> <tspan class="punct">}</tspan><tspan class="punct">)</tspan><tspan class="punct">;</tspan></text>
+
+    <!-- Line 8 -->
+    <text x="44" y="154" class="line-no">8</text>
+    <text x="280" y="154" class="code"><tspan class="punct">}</tspan></text>
+
+    <!-- Line 9 blank -->
+    <text x="44" y="176" class="line-no">9</text>
+
+    <!-- Line 10 new block (paginated function) -->
+    <text x="44" y="198" class="line-no">10</text>
+    <text x="60" y="198" class="hash">5193e9d</text>
+    <text x="124" y="198" class="gutter">Demo Author  2d</text>
+    <text x="280" y="198" class="code"><tspan class="keyword">export</tspan> <tspan class="keyword">async</tspan> <tspan class="keyword">function</tspan> <tspan class="func">listItemsPaginated</tspan><tspan class="punct">(</tspan><tspan class="ident">req</tspan><tspan class="punct">:</tspan> <tspan class="type">Request</tspan><tspan class="punct">,</tspan> <tspan class="ident">page</tspan> <tspan class="punct">=</tspan> <tspan class="number">1</tspan><tspan class="punct">)</tspan> <tspan class="punct">{</tspan></text>
+
+    <!-- Line 11 -->
+    <text x="44" y="220" class="line-no">11</text>
+    <text x="280" y="220" class="code">  <tspan class="keyword">return</tspan> <tspan class="type">Response</tspan><tspan class="punct">.</tspan><tspan class="func">json</tspan><tspan class="punct">(</tspan><tspan class="punct">{</tspan> <tspan class="ident">items</tspan><tspan class="punct">:</tspan> <tspan class="punct">[</tspan><tspan class="punct">]</tspan><tspan class="punct">,</tspan> <tspan class="ident">page</tspan> <tspan class="punct">}</tspan><tspan class="punct">)</tspan><tspan class="punct">;</tspan></text>
+
+    <!-- Line 12 -->
+    <text x="44" y="242" class="line-no">12</text>
+    <text x="280" y="242" class="code"><tspan class="punct">}</tspan></text>
+
+    <!-- Line 13 blank -->
+    <text x="44" y="264" class="line-no">13</text>
+
+    <!-- Line 14 - older commit -->
+    <text x="44" y="286" class="line-no">14</text>
+    <text x="60" y="286" class="hash">0d44a91</text>
+    <text x="124" y="286" class="gutter">Demo Author  3d</text>
+    <text x="280" y="286" class="code"><tspan class="comment">// TODO: replace with cursor-based pagination once token rotation lands.</tspan></text>
+
+  </g>
+
+  <!-- Inline blame label on active line (added inside main g already above) -->
+
+  <!-- Hover annotation card (commit details for line 5) -->
+  <g transform="translate(680, 130)">
+    <rect width="380" height="120" rx="6" fill="#252526" stroke="#454545" stroke-width="1"/>
+    <text x="14" y="22" class="text" style="font-weight: 600;">feat(api): pagination</text>
+    <text x="14" y="42" class="text-sub">5193e9d · Demo Author · 2025-10-27 14:23</text>
+    <line x1="14" y1="54" x2="366" y2="54" stroke="#454545"/>
+    <text x="14" y="74" class="text" style="font-family: 'SF Mono', monospace; font-size: 12px;">Adds GET /api/items returning paginated</text>
+    <text x="14" y="92" class="text" style="font-family: 'SF Mono', monospace; font-size: 12px;">results.</text>
+    <text x="14" y="112" class="text" style="fill: #6cb6ff; font-size: 11px;">[Show commit]</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="725" width="1200" height="25" class="status-bar"/>
+  <text x="14" y="743" fill="white" font-family="-apple-system" font-size="12">⎇ feature/api · blame: on · Ln 5, Col 18</text>
+</svg>

@@ -78,6 +78,12 @@ export class ReflogPanel {
     const n = nonce();
     const script = asset(this.panel.webview, this.ctx, "out", "webview", "reflog.js");
     const style = asset(this.panel.webview, this.ctx, "media", "reflog.css");
+    const T = vscode.l10n.t;
+    const l10n = {
+      menuCheckout: T("Checkout {0}"),
+      menuReset: T("Reset HEAD to {0}…"),
+      menuCherryPick: T("Cherry-pick {0}"),
+    };
     return /* html */ `<!DOCTYPE html>
 <html><head>
 <meta charset="UTF-8" />
@@ -89,6 +95,7 @@ export class ReflogPanel {
   <p class="hint">${vscode.l10n.t("Right-click an entry for actions. Reflog stays for ~90 days — recover lost commits here.")}</p>
 </header>
 <div id="list"></div>
+<script nonce="${n}">window.__rebasedL10n=${JSON.stringify(l10n)};</script>
 <script nonce="${n}" src="${script}"></script>
 </body></html>`;
   }

@@ -2,6 +2,17 @@ export {};
 declare const acquireVsCodeApi: <T>() => {
   postMessage: (msg: unknown) => void;
 };
+declare global {
+  interface Window {
+    __rebasedL10n?: Record<string, string>;
+  }
+}
+const L = window.__rebasedL10n ?? {};
+const t = (key: string, fallback: string, ...args: string[]): string => {
+  let s = L[key] ?? fallback;
+  args.forEach((a, i) => { s = s.replace(`{${i}}`, a); });
+  return s;
+};
 
 interface CommitFile {
   path: string;
@@ -70,7 +81,7 @@ function render(d: CommitDetail) {
   const meta = el("div", "meta");
   const hashLink = el("code", "hash-link");
   hashLink.textContent = d.hash;
-  hashLink.title = "Click to copy";
+  hashLink.title = t("copyHashTooltip", "Click to copy");
   hashLink.onclick = () => vscode.postMessage({ type: "copyHash" });
   meta.appendChild(hashLink);
   meta.appendChild(el("span", "dot", "·"));
@@ -79,7 +90,8 @@ function render(d: CommitDetail) {
   meta.appendChild(el("span", "date", new Date(d.authorDate).toLocaleString()));
   if (d.parents.length > 0) {
     meta.appendChild(el("span", "dot", "·"));
-    const parents = el("span", "parents", `parents: ${d.parents.map((p) => p.slice(0, 7)).join(", ")}`);
+    const parentsLabel = t("parents", "parents:");
+    const parents = el("span", "parents", `${parentsLabel} ${d.parents.map((p) => p.slice(0, 7)).join(", ")}`);
     meta.appendChild(parents);
   }
   header.appendChild(meta);
@@ -90,9 +102,9 @@ function render(d: CommitDetail) {
     b.onclick = () => vscode.postMessage({ type });
     return b;
   };
-  actions.appendChild(mkBtn("Cherry-pick", "cherryPick"));
-  actions.appendChild(mkBtn("Interactive rebase here", "interactiveRebase"));
-  actions.appendChild(mkBtn("Checkout (detached)", "checkout"));
+  actions.appendChild(mkBtn(t("cherryPick", "Cherry-pick"), "cherryPick"));
+  actions.appendChild(mkBtn(t("interactiveRebaseHere", "Interactive rebase here"), "interactiveRebase"));
+  actions.appendChild(mkBtn(t("checkoutDetached", "Checkout (detached)"), "checkout"));
   header.appendChild(actions);
 
   root.appendChild(header);
@@ -105,7 +117,7 @@ function render(d: CommitDetail) {
 
   // Files
   const filesSection = el("section", "files");
-  const h2 = el("h2", undefined, `Files (${d.files.length})`);
+  const h2 = el("h2", undefined, t("filesCount", "Files ({0})", String(d.files.length)));
   const stats = el("span", "stats");
   const totalAdd = d.files.reduce((s, f) => s + f.additions, 0);
   const totalDel = d.files.reduce((s, f) => s + f.deletions, 0);

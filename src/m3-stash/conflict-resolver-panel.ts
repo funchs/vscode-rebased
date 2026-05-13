@@ -248,6 +248,22 @@ export class ConflictResolverPanel {
     const n = nonce();
     const script = asset(this.panel.webview, this.ctx, "out", "webview", "conflicts.js");
     const style = asset(this.panel.webview, this.ctx, "media", "conflicts.css");
+    const T = vscode.l10n.t;
+    const l10n = {
+      kindRebase: T("Rebase"),
+      kindMerge: T("Merge"),
+      kindCherryPick: T("Cherry-pick"),
+      kindRevert: T("Revert"),
+      kindStashPop: T("Stash pop"),
+      kindOrphan: T("Orphan unmerged"),
+      readyToFinalize: T("ready to finalize"),
+      bannerConflicts: T("{0} conflict(s)"),
+      bannerSep: " · ",
+      flippedOursTitle: T("git checkout --theirs (rebase flips the semantics; this is YOUR branch's version)"),
+      flippedTheirsTitle: T("git checkout --ours (rebase flips the semantics; this is the upstream version)"),
+      oursTitle: "git checkout --ours",
+      theirsTitle: "git checkout --theirs",
+    };
     return /* html */ `<!DOCTYPE html>
 <html><head>
 <meta charset="UTF-8" />
@@ -278,6 +294,7 @@ export class ConflictResolverPanel {
     </span>
   </li>
 </template>
+<script nonce="${n}">window.__rebasedL10n=${JSON.stringify(l10n)};</script>
 <script nonce="${n}" src="${script}"></script>
 </body></html>`;
   }

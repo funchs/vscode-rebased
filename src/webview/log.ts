@@ -2,6 +2,17 @@ export {};
 declare const acquireVsCodeApi: <T>() => {
   postMessage: (msg: unknown) => void;
 };
+declare global {
+  interface Window {
+    __rebasedL10n?: Record<string, string>;
+  }
+}
+const L = window.__rebasedL10n ?? {};
+const t = (key: string, fallback: string, ...args: string[]): string => {
+  let s = L[key] ?? fallback;
+  args.forEach((a, i) => { s = s.replace(`{${i}}`, a); });
+  return s;
+};
 
 interface Row {
   hash: string;
@@ -239,12 +250,12 @@ function showMenu(x: number, y: number, row: Row) {
   menu.style.left = `${x}px`;
   menu.style.top = `${y}px`;
   const items: Array<[string, () => void]> = [
-    ["Interactive rebase from here", () => vscode.postMessage({ type: "interactiveRebase", hash: row.hash })],
-    ["Cherry-pick this commit", () => vscode.postMessage({ type: "cherryPick", hash: row.hash })],
+    [t("menuInteractiveRebase", "Interactive rebase from here"), () => vscode.postMessage({ type: "interactiveRebase", hash: row.hash })],
+    [t("menuCherryPick", "Cherry-pick this commit"), () => vscode.postMessage({ type: "cherryPick", hash: row.hash })],
   ];
   for (const ref of row.refs) {
     if (ref.startsWith("HEAD")) continue;
-    items.push([`Checkout ${ref}`, () => vscode.postMessage({ type: "checkout", ref })]);
+    items.push([t("menuCheckout", "Checkout {0}", ref), () => vscode.postMessage({ type: "checkout", ref })]);
   }
   for (const [label, fn] of items) {
     const it = document.createElement("div");
@@ -275,7 +286,7 @@ window.addEventListener("message", (event) => {
     spacer.style.width = `${graphWidth}px`;
     emptyEl.style.display = "none";
     statusEl.textContent = m.filtered
-      ? `${rows.length} commit${rows.length === 1 ? "" : "s"} match · clear filters to show all`
+      ? t("statusFiltered", "{0} commit{1} match · clear filters to show all", String(rows.length), rows.length === 1 ? "" : "s")
       : "";
     statusEl.style.display = m.filtered ? "block" : "none";
     renderVisible();
@@ -298,7 +309,7 @@ window.addEventListener("message", (event) => {
     }
     qBranch.value = cur;
   } else if (m.type === "error") {
-    statusEl.textContent = `Error: ${m.message}`;
+    statusEl.textContent = t("errorPrefix", "Error: {0}", m.message);
     statusEl.style.display = "block";
   }
 });

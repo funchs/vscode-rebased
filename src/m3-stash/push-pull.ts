@@ -78,23 +78,23 @@ export async function showPushDialog(repos: RepoManager): Promise<void> {
   const items: vscode.QuickPickItem[] = [];
   if (noUpstream) {
     items.push({
-      label: "$(cloud-upload) Push and set upstream to origin",
+      label: "$(cloud-upload) " + vscode.l10n.t("Push and set upstream to origin"),
       description: `${snap.branch} → origin/${snap.branch}`,
-      detail: "First push of this branch — no commits to preview yet (whole branch is new).",
+      detail: vscode.l10n.t("First push of this branch — no commits to preview yet (whole branch is new)."),
     });
   } else {
-    items.push({ label: `Will push ${snap.ahead.length} commit(s) to ${snap.upstream}`, kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
+    items.push({ label: vscode.l10n.t("Will push {0} commit(s) to {1}", String(snap.ahead.length), snap.upstream!), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
     for (const c of snap.ahead) {
       items.push({
-        label: `$(arrow-up) ${c.subject}`,
+        label: "$(arrow-up) " + c.subject,
         description: `${c.shortHash} · ${c.author}`,
       });
     }
     items.push({ label: vscode.l10n.t("Actions"), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
-    items.push({ label: "$(cloud-upload) Push", alwaysShow: true });
+    items.push({ label: "$(cloud-upload) " + vscode.l10n.t("Push"), alwaysShow: true });
     items.push({
-      label: "$(warning) Force push with lease",
-      description: "Safer than --force; refuses if upstream moved since fetch",
+      label: "$(warning) " + vscode.l10n.t("Force push with lease"),
+      description: vscode.l10n.t("Safer than --force; refuses if upstream moved since fetch"),
       alwaysShow: true,
     });
   }
@@ -105,11 +105,11 @@ export async function showPushDialog(repos: RepoManager): Promise<void> {
   try {
     if (noUpstream) {
       await runGit(["push", "--set-upstream", "origin", snap.branch], { cwd: root });
-    } else if (pick.label.startsWith("$(cloud-upload) Push")) {
+    } else if (pick.label.startsWith("$(cloud-upload) ")) {
       await runGit(["push"], { cwd: root });
-    } else if (pick.label.startsWith("$(warning) Force push")) {
+    } else if (pick.label.startsWith("$(warning) ")) {
       const ok = await vscode.window.showWarningMessage(
-        `Force-push-with-lease ${snap.branch} to ${snap.upstream}?`,
+        vscode.l10n.t("Force-push-with-lease {0} to {1}?", snap.branch, snap.upstream!),
         { modal: true },
         vscode.l10n.t("Force push")
       );
@@ -143,21 +143,21 @@ export async function showPullDialog(repos: RepoManager): Promise<void> {
   }
 
   const items: vscode.QuickPickItem[] = [];
-  items.push({ label: `Will integrate ${snap.behind.length} commit(s) from ${snap.upstream}`, kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
+  items.push({ label: vscode.l10n.t("Will integrate {0} commit(s) from {1}", String(snap.behind.length), snap.upstream!), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
   for (const c of snap.behind) {
     items.push({
-      label: `$(arrow-down) ${c.subject}`,
+      label: "$(arrow-down) " + c.subject,
       description: `${c.shortHash} · ${c.author}`,
     });
   }
   if (snap.ahead.length) {
     items.push({
-      label: `$(info) ${snap.ahead.length} local commit(s) ahead — rebase will replay them on top`,
+      label: "$(info) " + vscode.l10n.t("{0} local commit(s) ahead — rebase will replay them on top", String(snap.ahead.length)),
       kind: vscode.QuickPickItemKind.Separator,
     } as vscode.QuickPickItem);
   }
   items.push({ label: vscode.l10n.t("Actions"), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
-  items.push({ label: "$(git-merge) Pull (merge)", alwaysShow: true });
+  items.push({ label: "$(git-merge) " + vscode.l10n.t("Pull (merge)"), alwaysShow: true });
   items.push({ label: "$(git-pull-request-go-to-changes) " + vscode.l10n.t("Pull --rebase"), description: vscode.l10n.t("Replay your commits on top of remote"), alwaysShow: true });
   items.push({ label: "$(cloud-download) " + vscode.l10n.t("Fetch only"), description: vscode.l10n.t("Update refs without changing working tree"), alwaysShow: true });
 
@@ -181,7 +181,7 @@ export async function showPullDialog(repos: RepoManager): Promise<void> {
     const actions: Array<{ label: string; run: () => Promise<void> }> = [];
     if (isWorkingTreeDirtyError(msg)) {
       actions.push({
-        label: "Stash and retry pull --rebase",
+        label: vscode.l10n.t("Stash and retry pull --rebase"),
         run: async () => {
           try {
             await runGit(["stash", "push", "-u", "-m", "rebased: auto before pull"], { cwd: root });

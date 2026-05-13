@@ -2,6 +2,17 @@ export {};
 declare const acquireVsCodeApi: <T>() => {
   postMessage: (msg: unknown) => void;
 };
+declare global {
+  interface Window {
+    __rebasedL10n?: Record<string, string>;
+  }
+}
+const L = window.__rebasedL10n ?? {};
+const t = (key: string, fallback: string, ...args: string[]): string => {
+  let s = L[key] ?? fallback;
+  args.forEach((a, i) => { s = s.replace(`{${i}}`, a); });
+  return s;
+};
 
 interface File {
   path: string;
@@ -23,12 +34,12 @@ function clearList(el: HTMLElement) {
 
 function kindLabel(kind: string | null): string {
   switch (kind) {
-    case "rebase": return "Rebase";
-    case "merge": return "Merge";
-    case "cherry-pick": return "Cherry-pick";
-    case "revert": return "Revert";
-    case "stash-pop": return "Stash pop";
-    case "orphan-unmerged": return "Orphan unmerged";
+    case "rebase": return t("kindRebase", "Rebase");
+    case "merge": return t("kindMerge", "Merge");
+    case "cherry-pick": return t("kindCherryPick", "Cherry-pick");
+    case "revert": return t("kindRevert", "Revert");
+    case "stash-pop": return t("kindStashPop", "Stash pop");
+    case "orphan-unmerged": return t("kindOrphan", "Orphan unmerged");
     default: return "—";
   }
 }
@@ -38,13 +49,12 @@ function render(state: { kind: string | null; files: File[]; flippedOurs: boolea
   if (!state.files.length) {
     emptyEl.style.display = "block";
     filesEl.style.display = "none";
-    banner.textContent = `${kindLabel(state.kind)} · ready to finalize`;
-    finalizeBtn.disabled = !state.kind && true;
-    finalizeBtn.disabled = state.kind ? false : true;
+    banner.textContent = `${kindLabel(state.kind)} · ${t("readyToFinalize", "ready to finalize")}`;
+    finalizeBtn.disabled = !state.kind;
   } else {
     emptyEl.style.display = "none";
     filesEl.style.display = "";
-    banner.textContent = `${kindLabel(state.kind)} · ${state.files.length} conflict${state.files.length === 1 ? "" : "s"}`;
+    banner.textContent = `${kindLabel(state.kind)} · ${t("bannerConflicts", "{0} conflict(s)", String(state.files.length))}`;
     finalizeBtn.disabled = true;
   }
 
@@ -63,11 +73,11 @@ function render(state: { kind: string | null; files: File[]; flippedOurs: boolea
     path.title = f.path;
     // Hover tooltip clarifies which side is which when rebase flips them.
     if (state.flippedOurs) {
-      ours.title = "git checkout --theirs (rebase flips the semantics; this is YOUR branch's version)";
-      theirs.title = "git checkout --ours (rebase flips the semantics; this is the upstream version)";
+      ours.title = t("flippedOursTitle", "git checkout --theirs (rebase flips the semantics; this is YOUR branch's version)");
+      theirs.title = t("flippedTheirsTitle", "git checkout --ours (rebase flips the semantics; this is the upstream version)");
     } else {
-      ours.title = "git checkout --ours";
-      theirs.title = "git checkout --theirs";
+      ours.title = t("oursTitle", "git checkout --ours");
+      theirs.title = t("theirsTitle", "git checkout --theirs");
     }
     ours.onclick = () => vscode.postMessage({ type: "useOurs", path: f.path });
     theirs.onclick = () => vscode.postMessage({ type: "useTheirs", path: f.path });

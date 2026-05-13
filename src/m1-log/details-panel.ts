@@ -93,6 +93,15 @@ export class CommitDetailsPanel {
     const n = nonce();
     const script = asset(this.panel.webview, this.ctx, "out", "webview", "details.js");
     const style = asset(this.panel.webview, this.ctx, "media", "details.css");
+    const T = vscode.l10n.t;
+    const l10n = {
+      copyHashTooltip: T("Click to copy"),
+      cherryPick: T("Cherry-pick"),
+      interactiveRebaseHere: T("Interactive rebase here"),
+      checkoutDetached: T("Checkout (detached)"),
+      parents: T("parents:"),
+      filesCount: T("Files ({0})"),
+    };
     return /* html */ `<!DOCTYPE html>
 <html><head>
 <meta charset="UTF-8" />
@@ -100,6 +109,7 @@ export class CommitDetailsPanel {
 <link rel="stylesheet" href="${style}" />
 </head><body>
 <div id="root"></div>
+<script nonce="${n}">window.__rebasedL10n=${JSON.stringify(l10n)};</script>
 <script nonce="${n}" src="${script}"></script>
 </body></html>`;
   }

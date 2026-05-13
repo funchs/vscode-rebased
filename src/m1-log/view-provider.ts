@@ -19,7 +19,15 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.joinPath(this.ctx.extensionUri, "out"), vscode.Uri.joinPath(this.ctx.extensionUri, "media")],
     };
-    view.webview.html = this.html(view.webview);
+    const T = vscode.l10n.t;
+    const l10n = {
+      menuInteractiveRebase: T("Interactive rebase from here"),
+      menuCherryPick: T("Cherry-pick this commit"),
+      menuCheckout: T("Checkout {0}"),
+      statusFiltered: T("{0} commit{1} match · clear filters to show all"),
+      errorPrefix: T("Error: {0}"),
+    };
+    view.webview.html = this.html(view.webview, l10n);
     view.webview.onDidReceiveMessage(async (msg) => {
       if (msg.type === "ready") {
         await this.sendBranches();
@@ -88,7 +96,7 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  private html(webview: vscode.Webview): string {
+  private html(webview: vscode.Webview, l10n: Record<string, string>): string {
     const n = nonce();
     const script = asset(webview, this.ctx, "out", "webview", "log.js");
     const style = asset(webview, this.ctx, "media", "log.css");
@@ -118,6 +126,7 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
 </form>
 <div id="status" class="status"></div>
 <div id="log"></div>
+<script nonce="${n}">window.__rebasedL10n=${JSON.stringify(l10n)};</script>
 <script nonce="${n}" src="${script}"></script>
 </body></html>`;
   }

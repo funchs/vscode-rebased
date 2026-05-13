@@ -2,6 +2,17 @@ export {};
 declare const acquireVsCodeApi: <T>() => {
   postMessage: (msg: unknown) => void;
 };
+declare global {
+  interface Window {
+    __rebasedL10n?: Record<string, string>;
+  }
+}
+const L = window.__rebasedL10n ?? {};
+const t = (key: string, fallback: string, ...args: string[]): string => {
+  let s = L[key] ?? fallback;
+  args.forEach((a, i) => { s = s.replace(`{${i}}`, a); });
+  return s;
+};
 
 interface Entry {
   ref: string;
@@ -25,9 +36,9 @@ function showMenu(x: number, y: number, e: Entry) {
   menu.style.left = `${x}px`;
   menu.style.top = `${y}px`;
   const items: Array<[string, () => void]> = [
-    [`Checkout ${e.hash.slice(0, 7)}`, () => vscode.postMessage({ type: "checkout", hash: e.hash })],
-    [`Reset HEAD to ${e.hash.slice(0, 7)}…`, () => vscode.postMessage({ type: "reset", hash: e.hash })],
-    [`Cherry-pick ${e.hash.slice(0, 7)}`, () => vscode.postMessage({ type: "cherryPick", hash: e.hash })],
+    [t("menuCheckout", "Checkout {0}", e.hash.slice(0, 7)), () => vscode.postMessage({ type: "checkout", hash: e.hash })],
+    [t("menuReset", "Reset HEAD to {0}…", e.hash.slice(0, 7)), () => vscode.postMessage({ type: "reset", hash: e.hash })],
+    [t("menuCherryPick", "Cherry-pick {0}", e.hash.slice(0, 7)), () => vscode.postMessage({ type: "cherryPick", hash: e.hash })],
   ];
   for (const [label, fn] of items) {
     const it = document.createElement("div");

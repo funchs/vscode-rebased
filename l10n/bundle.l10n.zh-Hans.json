@@ -320,5 +320,6 @@
   "Rebase current onto this": "把当前分支变基到这里",
   "Rename…": "重命名…",
   "Update Project: {0} updated.": "更新项目：{0} 已更新。",
-  "(no scope)": "(无范围)"
+  "(no scope)": "(无范围)",
+  "**Rebased Log**\n\nBranch: `{0}`\n\nStashes: {1}\n\nClick to open the Log panel.": "**Rebased 日志**\n\n分支：`{0}`\n\n贮藏数：{1}\n\n点击打开日志面板。"
 }

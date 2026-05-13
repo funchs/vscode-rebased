@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-05-13
+
+### Changed
+- **Status bar Log entry shrunk to an icon.** User feedback: the
+  `⎇ develop_v0.2*` chip duplicated VS Code's built-in git item right
+  next to it. Replaced the branch-name text with just `$(history)` (or
+  `$(history) N` when there are N stashes — a count the built-in chip
+  doesn't surface). Tooltip now uses a MarkdownString with branch +
+  stash count + click hint, so the info is one hover away without
+  taking horizontal real estate.
+
 ## [0.1.3] - 2026-05-13
 
 ### Changed

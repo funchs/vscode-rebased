@@ -320,5 +320,6 @@
   "Rebase current onto this": "Rebase current onto this",
   "Rename…": "Rename…",
   "Update Project: {0} updated.": "Update Project: {0} updated.",
-  "(no scope)": "(no scope)"
+  "(no scope)": "(no scope)",
+  "**Rebased Log**\n\nBranch: `{0}`\n\nStashes: {1}\n\nClick to open the Log panel.": "**Rebased Log**\n\nBranch: `{0}`\n\nStashes: {1}\n\nClick to open the Log panel."
 }

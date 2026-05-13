@@ -1,9 +1,51 @@
 # Screenshots
 
-The README references 7 screenshots under `docs/screenshots/`. This doc
-walks you through capturing them — guided (recommended) or manually.
+The README references 10 images and a hero GIF under `docs/screenshots/`.
+There are **three** ways to (re)produce them, depending on what platform
+you're on and what kind of fidelity you want.
 
-## Guided
+| Path | Where it runs | What it produces | Fidelity |
+|---|---|---|---|
+| **A. SVG mockup re-render** | Anywhere (macOS / Linux / Gitpod / CI) | PNGs + GIF | Illustrative — looks like VS Code, isn't VS Code |
+| **B. macOS `screencapture`** | macOS only | PNGs from a real VS Code window | Real |
+| **C. (future) Playwright + openvscode-server** | Headless on any Linux | PNGs from a real browser-VS-Code | Real, fully automated |
+
+Path A is what's currently committed. B is the recommended upgrade if you
+want photo-real captures. C isn't implemented yet but the door is open.
+
+---
+
+## A. SVG mockup re-render (cross-platform)
+
+This is the default path — everything in `docs/screenshots/_src/*.svg` is the
+source of truth, and the PNGs + GIF are generated from them. Anyone can edit
+the mockups and re-render.
+
+**Install prerequisites** (one-time):
+
+```bash
+# macOS
+brew install librsvg ffmpeg
+
+# Debian / Ubuntu / Gitpod
+sudo apt-get install -y librsvg2-bin ffmpeg
+```
+
+**Render** (idempotent — rewrites every output every run):
+
+```bash
+bash scripts/render-from-svg.sh     # 10 PNGs
+bash scripts/build-demo-gif.sh      #  1 GIF (depends on the PNGs)
+```
+
+`.gitpod.yml` auto-installs the tools on workspace boot, so opening the
+repo in Gitpod gives you a ready-to-render environment.
+
+---
+
+## B. macOS `screencapture` (real captures, manual)
+
+For photo-real screenshots from an actual VS Code session, **macOS only**:
 
 ```bash
 bash scripts/take-screenshots.sh           # all 7
@@ -14,91 +56,62 @@ The script:
 
 1. Builds an ephemeral demo repo at `$TMPDIR/rebased-screenshot-fixture`
    with 3 branches, 9 CC-style commits, a UU conflict file, and a dirty
-   file with two distinct hunks (full topology in
-   `scripts/setup-screenshot-fixture.sh`).
+   file with two distinct hunks.
 2. Opens VS Code at the fixture.
-3. For each screenshot, prints what to set up, waits for you to press
-   `<Enter>`, then runs `screencapture -W -o` so you click the target
-   window to grab it.
-4. Saves to `docs/screenshots/<name>.png`.
+3. For each screenshot, prints what to set up, waits for `<Enter>`, then
+   runs `screencapture -W -o` so you click the target window.
+4. Saves to `docs/screenshots/<name>.png` (overwrites the SVG-rendered
+   mockup with a real capture).
 
-After all 7 are captured, commit and push:
+**Permission**: Screen Recording must be granted to Terminal.app — see
+System Settings → Privacy & Security → Screen Recording. Without it
+`screencapture` fails silently with "could not create image from display".
 
-```bash
-git add docs/screenshots/*.png
-git commit -m "docs: add README screenshots"
-git push
-```
+---
 
-## Manual fallback
+## C. Playwright-driven (planned)
 
-If the guided script misbehaves, set up the fixture and capture by hand:
+Browser-based VS Code (`openvscode-server`) can be driven headless via
+Playwright. A future `scripts/take-screenshots-headless.mjs` could:
 
-```bash
-bash scripts/setup-screenshot-fixture.sh
-code "$TMPDIR/rebased-screenshot-fixture"
-```
+1. Start `openvscode-server` with the extension preloaded.
+2. Launch a headless Chromium pointing at the local URL.
+3. For each scenario, trigger VS Code commands via the `command:` URL
+   scheme, wait for the resulting UI, snap with `page.screenshot()`.
+4. Save to `docs/screenshots/`.
 
-Then for each screenshot:
+This would give photo-real screenshots without manual intervention, and
+would run on Gitpod / Codespaces / CI. Contributions welcome — the
+groundwork (deterministic fixture + per-screenshot prep instructions)
+is already in `scripts/setup-screenshot-fixture.sh` and
+`scripts/take-screenshots.sh`.
 
-### `rebase-editor.png`
+---
 
-In the integrated terminal:
-```bash
-GIT_SEQUENCE_EDITOR='code --wait' git rebase -i HEAD~5
-```
-A drag-drop rebase editor opens. Capture it (⌘⇧4 → space → click).
+## Per-shot fidelity notes
 
-### `log-graph.png`
+| Name | Path A (SVG mockup) | Path B (real capture) |
+|---|---|---|
+| `rebase-editor.png` | ✓ | recommended (shows real drag) |
+| `log-graph.png` | ✓ | recommended (real swim-lane on real branches) |
+| `commit-details.png` | ✓ | nice-to-have |
+| `commit-wizard.png` | ✓ | photo-real adds nothing (QuickPick is identical) |
+| `blame-gutter.png` | ✓ | recommended (real code wraps differently) |
+| `local-history.png` | ✓ | nice-to-have |
+| `conflict-panel.png` | ✓ | nice-to-have |
+| `status-bar.png` | ✓ | trivial, mockup is fine |
+| `changelists.png` | ✓ | recommended (interactions are richer) |
+| `submodules.png` | ✓ | trivial |
+| `demo.gif` | ✓ | auto-rebuilt from the PNGs above |
 
-Click the Rebased activity-bar icon → Log panel. The swim-lane graph
-shows `main` / `feature/api` / `feature/perf` diverging.
+---
 
-### `commit-details.png`
+## Compression (optional)
 
-Click `feat(api): pagination` in the log. The commit details side
-panel opens — refs, parents, file list with +/− stats. Capture both
-panels.
-
-### `commit-wizard.png`
-
-Press <kbd>⌘⌥C</kbd>. The 11-type QuickPick appears. Capture just the
-QuickPick (⌘⇧4 → space → click QuickPick).
-
-### `blame-gutter.png`
-
-Open `apps/api/list.ts` → press <kbd>⌘⌥B</kbd>. Gutter annotations
-(hash · author · age) appear next to every line. Capture the editor.
-
-### `local-history.png`
-
-Open `apps/web/handlers.ts` → modify and save 3-4 times → right-click
-the file → "Show Local History". A QuickPick lists timestamps. Capture
-the QuickPick.
-
-### `conflict-panel.png`
-
-Command Palette → "Rebased: Resolve Conflicts…". The webview opens
-with `apps/web/server.ts` row showing the 4 per-file action buttons
-(Accept yours / Accept theirs / Merge / Reset). Capture the panel.
-
-## Trimming and compressing (optional)
-
-PNG screenshots from `screencapture` are often 1–3 MB. Compress before
-committing:
+PNGs out of `rsvg-convert` are already ~40-100 KB each, no compression
+needed. Real `screencapture` shots can be 1-3 MB — compress with:
 
 ```bash
-brew install pngquant   # one-time
+brew install pngquant     # one-time
 pngquant --ext .png --force --quality=70-90 docs/screenshots/*.png
 ```
-
-Typical reduction: 70-80%.
-
-## Notes
-
-- The fixture uses deterministic timestamps (epoch 1730000000 + offsets)
-  so the dates in your screenshots stay stable across re-captures.
-- The fixture is ephemeral — wiping `$TMPDIR/rebased-screenshot-fixture`
-  and re-running the setup gives an identical state.
-- Window rendering on macOS retina captures at 2× scale automatically.
-  The README references these as regular images; GitHub auto-scales.

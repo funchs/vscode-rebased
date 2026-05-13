@@ -1,15 +1,33 @@
 tasks:
   - init: |
+      # Tools that let users re-render screenshots and the demo GIF from the
+      # version-controlled SVG sources, in the same way they would locally.
+      sudo apt-get update -qq
+      sudo apt-get install -y -qq librsvg2-bin ffmpeg
       npm install
       npm run build
     command: |
-      echo "Rebased dev environment ready."
-      echo "Press F1 → 'Rebased: …' to try any command."
-      echo "Or F5 to launch an Extension Development Host."
+      cat <<'EOF'
+
+      ═══════════════════════════════════════════════════════════
+        Rebased dev environment ready.
+      ═══════════════════════════════════════════════════════════
+
+        ▸  Press F1 → 'Rebased: …'    try a command
+        ▸  Press F5                   launch Extension Development Host
+        ▸  npm test                   run the 47-test suite
+        ▸  bash scripts/render-from-svg.sh    re-render mockup screenshots
+        ▸  bash scripts/build-demo-gif.sh     rebuild the demo GIF
+
+      Linux/Gitpod can do everything except the macOS-only screencapture
+      flow in scripts/take-screenshots.sh — but the SVG re-render path
+      above covers the same outputs.
+
+      EOF
 
 vscode:
   extensions:
     - funchs.vscode-rebased
 
-# Run-time image — official Gitpod node-LTS base, no extra setup needed.
+# Run-time image — official Gitpod node-LTS base, includes git + npm + bash.
 image: gitpod/workspace-node-lts

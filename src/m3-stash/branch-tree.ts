@@ -22,7 +22,10 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<BranchItem | 
     if (!element) {
       const local = all.filter((b) => !b.remote);
       const remote = all.filter((b) => b.remote);
-      return [new GroupItem("Local", local), new GroupItem("Remote", remote)];
+      return [
+        new GroupItem(vscode.l10n.t("Local"), local),
+        new GroupItem(vscode.l10n.t("Remote"), remote),
+      ];
     }
     if (element instanceof GroupItem) {
       return element.branches.map((b) => new BranchItem(b));

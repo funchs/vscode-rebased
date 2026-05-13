@@ -2,6 +2,17 @@ export {};
 declare const acquireVsCodeApi: <T>() => {
   postMessage: (msg: unknown) => void;
 };
+declare global {
+  interface Window {
+    __rebasedL10n?: Record<string, string>;
+  }
+}
+const L = window.__rebasedL10n ?? {};
+const t = (key: string, fallback: string, ...args: string[]): string => {
+  let s = L[key] ?? fallback;
+  args.forEach((a, i) => { s = s.replace(`{${i}}`, a); });
+  return s;
+};
 
 interface FileChange {
   path: string;
@@ -22,21 +33,21 @@ function validateCC(text: string): { type?: string; scope?: string; bang?: boole
   const first = text.split("\n", 1)[0];
   const m = first.match(HEADER_RE);
   if (!m) {
-    issues.push({ sev: "error", msg: "Header must be type(scope)?[!]: subject" });
+    issues.push({ sev: "error", msg: t("ccHeaderFormat", "Header must be type(scope)?[!]: subject") });
     return { issues };
   }
   const [, type, scope, bang, subject] = m;
   const out = { type, scope, bang: !!bang, subject, issues };
   if (!CC_TYPES.includes(type.toLowerCase())) {
-    issues.push({ sev: "warn", msg: `Unknown type "${type}"` });
+    issues.push({ sev: "warn", msg: `${t("ccUnknownType", "Unknown type")} "${type}"` });
   }
-  if (type !== type.toLowerCase()) issues.push({ sev: "warn", msg: "Type should be lowercase" });
-  if (first.length > 72) issues.push({ sev: "warn", msg: `${first.length} chars (recommended ≤ 72)` });
-  if (/\.\s*$/.test(subject)) issues.push({ sev: "warn", msg: "No period at end" });
-  if (subject[0] && subject[0] !== subject[0].toLowerCase()) issues.push({ sev: "warn", msg: "Lowercase subject" });
+  if (type !== type.toLowerCase()) issues.push({ sev: "warn", msg: t("ccLowercaseType", "Type should be lowercase") });
+  if (first.length > 72) issues.push({ sev: "warn", msg: t("ccCharCount", "{0} chars (recommended ≤ 72)", String(first.length)) });
+  if (/\.\s*$/.test(subject)) issues.push({ sev: "warn", msg: t("ccNoPeriod", "No period at end") });
+  if (subject[0] && subject[0] !== subject[0].toLowerCase()) issues.push({ sev: "warn", msg: t("ccLowercaseSubject", "Lowercase subject") });
   const lines = text.split("\n");
   if (lines.length > 1 && lines[1].trim() !== "") {
-    issues.push({ sev: "warn", msg: "Blank line after header" });
+    issues.push({ sev: "warn", msg: t("ccBlankLineAfterHeader", "Blank line after header") });
   }
   return out;
 }
@@ -93,7 +104,7 @@ function row(f: FileChange, action: "stage" | "unstage"): HTMLLIElement {
   const hunks = document.createElement("button");
   hunks.className = "ghost";
   hunks.textContent = "↹";
-  hunks.title = "Stage individual hunks";
+  hunks.title = t("hunksTitle", "Stage individual hunks");
   hunks.onclick = (e) => {
     e.stopPropagation();
     vscode.postMessage({ type: "hunks", path: f.path });
@@ -102,7 +113,7 @@ function row(f: FileChange, action: "stage" | "unstage"): HTMLLIElement {
   const btn = document.createElement("button");
   btn.className = "ghost";
   btn.textContent = action === "stage" ? "+" : "−";
-  btn.title = action === "stage" ? "Stage" : "Unstage";
+  btn.title = action === "stage" ? t("stageTitle", "Stage") : t("unstageTitle", "Unstage");
   btn.onclick = (e) => {
     e.stopPropagation();
     vscode.postMessage({ type: action, paths: [f.path] });
@@ -140,7 +151,6 @@ amendEl.addEventListener("change", () => {
 const badgesEl = document.getElementById("cc-badges") as HTMLSpanElement;
 const ccStatus = document.getElementById("cc-status") as HTMLDivElement;
 const wizardBtn = document.getElementById("wizard") as HTMLButtonElement;
-wizardBtn.textContent = "Wizard…";
 wizardBtn.addEventListener("click", () => vscode.postMessage({ type: "wizard" }));
 
 function clearChildren(el: HTMLElement) { while (el.firstChild) el.removeChild(el.firstChild); }
@@ -163,7 +173,7 @@ function updateCC() {
   if (r.bang) {
     const chip = document.createElement("span");
     chip.className = "cc-chip cc-breaking";
-    chip.textContent = "BREAKING";
+    chip.textContent = t("breakingChip", "BREAKING");
     badgesEl.appendChild(chip);
   }
   clearChildren(ccStatus);
@@ -171,7 +181,7 @@ function updateCC() {
   ccStatus.style.display = "block";
   if (!r.issues.length) {
     ccStatus.className = "cc-status ok";
-    ccStatus.textContent = "✓ Conventional Commit";
+    ccStatus.textContent = t("ccValid", "✓ Conventional Commit");
     return;
   }
   const hasError = r.issues.some((i) => i.sev === "error");

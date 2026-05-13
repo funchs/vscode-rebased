@@ -98,23 +98,23 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
 <meta http-equiv="Content-Security-Policy" content="${csp(webview, n)}" />
 <link rel="stylesheet" href="${style}" />
 </head><body>
-<div id="empty" class="empty">No git repository in the current workspace.</div>
+<div id="empty" class="empty">${vscode.l10n.t("No git repository in the current workspace.")}</div>
 <form id="toolbar" class="toolbar" autocomplete="off">
-  <input id="q-message" placeholder="Subject…" type="search" />
-  <input id="q-author" placeholder="Author" type="search" />
-  <input id="q-path" placeholder="Path" type="search" />
+  <input id="q-message" placeholder="${vscode.l10n.t("Subject…")}" type="search" />
+  <input id="q-author" placeholder="${vscode.l10n.t("Author")}" type="search" />
+  <input id="q-path" placeholder="${vscode.l10n.t("Path")}" type="search" />
   <select id="q-branch">
-    <option value="">All branches</option>
+    <option value="">${vscode.l10n.t("All branches")}</option>
   </select>
   <select id="q-since">
-    <option value="">Any time</option>
-    <option value="1.day.ago">Last 24h</option>
-    <option value="1.week.ago">Last week</option>
-    <option value="1.month.ago">Last month</option>
-    <option value="3.months.ago">Last 3 months</option>
-    <option value="1.year.ago">Last year</option>
+    <option value="">${vscode.l10n.t("Any time")}</option>
+    <option value="1.day.ago">${vscode.l10n.t("Last 24h")}</option>
+    <option value="1.week.ago">${vscode.l10n.t("Last week")}</option>
+    <option value="1.month.ago">${vscode.l10n.t("Last month")}</option>
+    <option value="3.months.ago">${vscode.l10n.t("Last 3 months")}</option>
+    <option value="1.year.ago">${vscode.l10n.t("Last year")}</option>
   </select>
-  <button type="button" id="clear" title="Clear filters">×</button>
+  <button type="button" id="clear" title="${vscode.l10n.t("Clear filters")}">×</button>
 </form>
 <div id="status" class="status"></div>
 <div id="log"></div>

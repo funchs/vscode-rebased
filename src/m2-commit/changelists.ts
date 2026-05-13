@@ -132,7 +132,7 @@ export class ChangelistTreeProvider implements vscode.TreeDataProvider<Node> {
       const item = new vscode.TreeItem(n.name, vscode.TreeItemCollapsibleState.Expanded);
       item.contextValue = n.active ? "changelist-active" : "changelist";
       item.iconPath = new vscode.ThemeIcon(n.active ? "list-tree" : "list-flat");
-      if (n.active) item.description = "active";
+      if (n.active) item.description = vscode.l10n.t("active");
       return item;
     }
     const item = new vscode.TreeItem(n.path, vscode.TreeItemCollapsibleState.None);

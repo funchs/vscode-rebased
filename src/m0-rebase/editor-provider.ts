@@ -56,15 +56,15 @@ export class RebaseEditorProvider implements vscode.CustomTextEditorProvider {
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="${csp(webview, n)}" />
 <link rel="stylesheet" href="${styleUri}" />
-<title>Interactive Rebase</title>
+<title>${vscode.l10n.t("Interactive Rebase")}</title>
 </head>
 <body>
 <header>
-  <h1>Interactive Rebase</h1>
-  <div class="hint">Drag rows to reorder. Click action label to change. Save to continue rebase.</div>
+  <h1>${vscode.l10n.t("Interactive Rebase")}</h1>
+  <div class="hint">${vscode.l10n.t("Drag rows to reorder. Click action label to change. Save to continue rebase.")}</div>
   <div class="toolbar">
-    <button id="save" class="primary">Start Rebase (⌘⏎)</button>
-    <button id="abort">Abort</button>
+    <button id="save" class="primary">${vscode.l10n.t("Start Rebase (⌘⏎)")}</button>
+    <button id="abort">${vscode.l10n.t("Abort")}</button>
   </div>
 </header>
 <ul id="list" aria-label="Rebase plan"></ul>

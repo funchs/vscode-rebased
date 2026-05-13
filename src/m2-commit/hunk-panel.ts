@@ -29,7 +29,7 @@ export class HunkPanel {
   ) {
     this.panel = vscode.window.createWebviewPanel(
       "rebased.hunks",
-      `Hunks · ${path}`,
+      vscode.l10n.t("Hunks · {0}", path),
       vscode.ViewColumn.Active,
       {
         enableScripts: true,
@@ -99,12 +99,12 @@ export class HunkPanel {
 <header>
   <h1 id="title">${escape(this.path)}</h1>
   <div class="toolbar">
-    <button id="stage-selected" class="primary">Stage selected</button>
-    <button id="unstage-selected">Unstage selected</button>
+    <button id="stage-selected" class="primary">${vscode.l10n.t("Stage selected")}</button>
+    <button id="unstage-selected">${vscode.l10n.t("Unstage selected")}</button>
   </div>
 </header>
-<section><h2>Unstaged hunks</h2><div id="unstaged"></div></section>
-<section><h2>Staged hunks</h2><div id="staged"></div></section>
+<section><h2>${vscode.l10n.t("Unstaged hunks")}</h2><div id="unstaged"></div></section>
+<section><h2>${vscode.l10n.t("Staged hunks")}</h2><div id="staged"></div></section>
 <script nonce="${n}" src="${script}"></script>
 </body></html>`;
   }

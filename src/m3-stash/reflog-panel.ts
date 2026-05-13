@@ -24,7 +24,7 @@ export class ReflogPanel {
   private constructor(private ctx: vscode.ExtensionContext, private repos: RepoManager) {
     this.panel = vscode.window.createWebviewPanel(
       "rebased.reflog",
-      "Reflog",
+      vscode.l10n.t("Reflog"),
       vscode.ViewColumn.Active,
       {
         enableScripts: true,
@@ -85,8 +85,8 @@ export class ReflogPanel {
 <link rel="stylesheet" href="${style}" />
 </head><body>
 <header>
-  <h1>Reflog</h1>
-  <p class="hint">Right-click an entry for actions. Reflog stays for ~90 days — recover lost commits here.</p>
+  <h1>${vscode.l10n.t("Reflog")}</h1>
+  <p class="hint">${vscode.l10n.t("Right-click an entry for actions. Reflog stays for ~90 days — recover lost commits here.")}</p>
 </header>
 <div id="list"></div>
 <script nonce="${n}" src="${script}"></script>

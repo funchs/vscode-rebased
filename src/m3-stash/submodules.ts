@@ -42,13 +42,13 @@ export class SubmoduleTreeProvider implements vscode.TreeDataProvider<Submodule>
     item.description = sm.describe || sm.hash.slice(0, 7);
     if (sm.prefix === "-") {
       item.iconPath = new vscode.ThemeIcon("circle-slash");
-      item.tooltip = "Not initialized";
+      item.tooltip = vscode.l10n.t("Not initialized");
     } else if (sm.prefix === "+") {
       item.iconPath = new vscode.ThemeIcon("warning");
-      item.tooltip = "Out of sync with the recorded commit";
+      item.tooltip = vscode.l10n.t("Out of sync with the recorded commit");
     } else if (sm.prefix === "U") {
       item.iconPath = new vscode.ThemeIcon("error");
-      item.tooltip = "Merge conflict in submodule";
+      item.tooltip = vscode.l10n.t("Merge conflict in submodule");
     } else {
       item.iconPath = new vscode.ThemeIcon("file-submodule");
     }

@@ -8,6 +8,7 @@ import {
 import type { RepoManager } from "../core/repo";
 import { showGitError, isWorkingTreeDirtyError, maybeRecoverFromIndexLock } from "../core/notify";
 import { parseUntrackedCollisions, isStashConflictMessage, isIndexLockError } from "../core/notify-pure";
+import { showDiagnostic } from "./diagnostic";
 
 // JetBrains "Update Project" (Ctrl+T) — one command that:
 //   1. Refuses to start if a previous op (rebase/merge/cherry-pick/stash-pop)
@@ -203,17 +204,31 @@ async function tryWithLockRecovery(
         }
       }
       if (recovery === "abort") return false;
-      // No lock file present and user couldn't recover via dialog.
-      // Surface a richer message hinting at the likely cause.
+      // No lock file present and user couldn't recover via dialog. Two silent
+      // retries already failed — likely permissions, cloud-sync, or antivirus.
+      // Surface inline actions so the user can self-diagnose without copying
+      // the command into a terminal manually.
       await showGitError(
-        `${scope} — index could not be written`,
+        vscode.l10n.t("{0} — index could not be written", scope),
         new Error(
-          `${msg2}\n\nTwo silent retries failed. Likely causes:\n` +
-          `  • Another git process is holding the index (terminal, IDE, or CI)\n` +
-          `  • .git/index permissions or disk space\n` +
-          `  • Antivirus / backup software locking the file\n\n` +
-          `Inspect .git/ and try again from a clean state.`
-        )
+          msg2 + "\n\n" +
+          vscode.l10n.t(
+            "Two silent retries failed. Likely causes:\n  • Another git process is holding the index (terminal, IDE, or CI)\n  • .git/index permissions or disk space\n  • Antivirus / backup software locking the file\n\nInspect .git/ and try again from a clean state."
+          )
+        ),
+        [
+          {
+            label: vscode.l10n.t("Run diagnostic"),
+            run: () => showDiagnostic(root),
+          },
+          {
+            label: vscode.l10n.t("Open .git/ in Finder"),
+            run: async () => {
+              const fileUri = vscode.Uri.file(`${root}/.git`);
+              await vscode.commands.executeCommand("revealFileInOS", fileUri);
+            },
+          },
+        ]
       );
       return false;
     }

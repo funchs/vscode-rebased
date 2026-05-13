@@ -30,6 +30,7 @@ import { LocalHistory } from "./m4-settings/local-history";
 import { SubmoduleTreeProvider, registerSubmoduleCommands } from "./m3-stash/submodules";
 import { runCommitWizard } from "./m2-commit/commit-wizard";
 import { updateProject } from "./m3-stash/update-project";
+import { showDiagnostic } from "./m3-stash/diagnostic";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -143,7 +144,12 @@ export function activate(ctx: vscode.ExtensionContext): void {
 
   ctx.subscriptions.push(
     vscode.commands.registerCommand("rebased.commit.wizard", () => runCommitWizard(repos)),
-    vscode.commands.registerCommand("rebased.updateProject", () => updateProject(repos))
+    vscode.commands.registerCommand("rebased.updateProject", () => updateProject(repos)),
+    vscode.commands.registerCommand("rebased.diagnose", async () => {
+      const root = repos.root;
+      if (!root) return;
+      await showDiagnostic(root);
+    })
   );
 }
 

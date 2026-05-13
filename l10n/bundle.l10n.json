@@ -55,5 +55,9 @@
   "{0} ({1})": "{0} ({1})",
   "{0}s old": "{0}s old",
   "{0} min old": "{0} min old",
-  "{0} h old": "{0} h old"
+  "{0} h old": "{0} h old",
+  "Run diagnostic": "Run diagnostic",
+  "Open .git/ in Finder": "Open .git/ in Finder",
+  "Running repository diagnostic…": "Running repository diagnostic…",
+  "Repository diagnostic": "Repository diagnostic"
 }

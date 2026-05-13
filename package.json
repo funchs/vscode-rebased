@@ -110,7 +110,8 @@
       { "command": "rebased.submodule.sync", "title": "%cmd.submodule.sync%", "category": "Rebased" },
       { "command": "rebased.submodule.refresh", "title": "%cmd.submodule.refresh%", "category": "Rebased", "icon": "$(refresh)" },
       { "command": "rebased.commit.wizard", "title": "%cmd.commit.wizard%", "category": "Rebased", "icon": "$(edit)" },
-      { "command": "rebased.updateProject", "title": "%cmd.updateProject%", "category": "Rebased", "icon": "$(sync)" }
+      { "command": "rebased.updateProject", "title": "%cmd.updateProject%", "category": "Rebased", "icon": "$(sync)" },
+      { "command": "rebased.diagnose", "title": "%cmd.diagnose%", "category": "Rebased", "icon": "$(pulse)" }
     ],
     "menus": {
       "view/title": [

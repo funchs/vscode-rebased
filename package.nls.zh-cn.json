@@ -46,6 +46,7 @@
   "cmd.submodule.refresh": "刷新子模块",
   "cmd.commit.wizard": "提交向导…",
   "cmd.updateProject": "更新项目（贮藏 → 获取 → 拉取 → 弹出）",
+  "cmd.diagnose": "仓库诊断",
   "cfg.log.maxCommits": "日志视图每次加载的最大提交数。",
   "cfg.log.allBranches": "日志图中显示所有分支的提交。",
   "cfg.rebase.autoStash": "开始交互式变基前自动贮藏工作区改动。",

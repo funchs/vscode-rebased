@@ -18,7 +18,7 @@ export async function showFileHistory(repos: RepoManager, uri?: vscode.Uri): Pro
   if (!root) return;
   const target = uri ?? vscode.window.activeTextEditor?.document.uri;
   if (!target) {
-    vscode.window.showInformationMessage("Open a file or right-click one in the explorer.");
+    vscode.window.showInformationMessage(vscode.l10n.t("Open a file or right-click one in the explorer."));
     return;
   }
   const rel = vscode.workspace.asRelativePath(target, false);
@@ -44,7 +44,7 @@ export async function showFileHistory(repos: RepoManager, uri?: vscode.Uri): Pro
     });
 
   if (!commits.length) {
-    vscode.window.showInformationMessage(`No history found for ${rel}.`);
+    vscode.window.showInformationMessage(vscode.l10n.t("No history found for {0}.", rel));
     return;
   }
 
@@ -55,7 +55,7 @@ export async function showFileHistory(repos: RepoManager, uri?: vscode.Uri): Pro
   }));
 
   const pick = await vscode.window.showQuickPick(items, {
-    placeHolder: `${commits.length} commit(s) touched ${rel}`,
+    placeHolder: vscode.l10n.t("{0} commit(s) touched {1}", String(commits.length), rel),
     matchOnDescription: true,
   });
   if (!pick) return;

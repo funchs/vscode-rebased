@@ -18,7 +18,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
         const actions: Array<{ label: string; run: () => Promise<void> }> = [];
         if (isWorkingTreeDirtyError(msg)) {
           actions.push({
-            label: "Stash and retry",
+            label: vscode.l10n.t("Stash and retry"),
             run: async () => {
               try {
                 await runGit(["stash", "push", "-u", "-m", `rebased: auto before checkout ${name}`], { cwd: root });
@@ -37,7 +37,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
     vscode.commands.registerCommand("rebased.branch.create", async () => {
       const root = repos.root;
       if (!root) return;
-      const name = await vscode.window.showInputBox({ prompt: "New branch name" });
+      const name = await vscode.window.showInputBox({ prompt: vscode.l10n.t("New branch name") });
       if (!name) return;
       try {
         await runGit(["checkout", "-b", name], { cwd: root });
@@ -49,7 +49,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
     vscode.commands.registerCommand("rebased.cherryPick", async (hash: string | undefined) => {
       const root = repos.root;
       if (!root) return;
-      const h = hash ?? (await vscode.window.showInputBox({ prompt: "Commit hash to cherry-pick" }));
+      const h = hash ?? (await vscode.window.showInputBox({ prompt: vscode.l10n.t("Commit hash to cherry-pick") }));
       if (!h) return;
       try {
         await cherryPick(root, h);
@@ -61,7 +61,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
     vscode.commands.registerCommand("rebased.rebase.interactive", async (baseRef: string | undefined) => {
       const root = repos.root;
       if (!root) return;
-      const ref = baseRef ?? (await vscode.window.showInputBox({ prompt: "Rebase onto (ref or hash)", value: "HEAD~5" }));
+      const ref = baseRef ?? (await vscode.window.showInputBox({ prompt: vscode.l10n.t("Rebase onto (ref or hash)"), value: "HEAD~5" }));
       if (!ref) return;
       try {
         await startInteractiveRebase(root, `${ref}^`);
@@ -74,7 +74,7 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
       const root = repos.root;
       if (!root) return;
       const lastMsg = (await runGit(["log", "-1", "--pretty=%B"], { cwd: root })).trim();
-      const msg = await vscode.window.showInputBox({ prompt: "Amend commit message", value: lastMsg });
+      const msg = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Amend commit message"), value: lastMsg });
       if (msg === undefined) return;
       try {
         await gitCommit(root, msg, true);

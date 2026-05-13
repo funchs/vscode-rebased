@@ -33,7 +33,7 @@ export async function showRemotesPicker(repos: RepoManager): Promise<void> {
   const FETCH_ALL: vscode.QuickPickItem = { label: "$(cloud-download) Fetch all (with prune)", alwaysShow: true };
   const items: vscode.QuickPickItem[] = [ADD, FETCH_ALL];
   if (remotes.length) {
-    items.push({ label: "Remotes", kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
+    items.push({ label: vscode.l10n.t("Remotes"), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
     for (const r of remotes) {
       const desc = r.fetchUrl === r.pushUrl ? r.fetchUrl : `${r.fetchUrl} (fetch), ${r.pushUrl} (push)`;
       items.push({
@@ -43,7 +43,7 @@ export async function showRemotesPicker(repos: RepoManager): Promise<void> {
     }
   }
   const pick = await vscode.window.showQuickPick(items, {
-    placeHolder: `${remotes.length} remote(s)`,
+    placeHolder: vscode.l10n.t("{0} remote(s)", String(remotes.length)),
     matchOnDescription: true,
   });
   if (!pick) return;
@@ -54,7 +54,7 @@ export async function showRemotesPicker(repos: RepoManager): Promise<void> {
 }
 
 async function addRemote(repos: RepoManager, root: string): Promise<void> {
-  const name = await vscode.window.showInputBox({ prompt: "Remote name", value: "origin" });
+  const name = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Remote name"), value: "origin" });
   if (!name) return;
   const url = await vscode.window.showInputBox({
     prompt: `Remote URL for ${name}`,
@@ -64,7 +64,7 @@ async function addRemote(repos: RepoManager, root: string): Promise<void> {
   try {
     await runGit(["remote", "add", name, url], { cwd: root });
     repos.fire();
-    vscode.window.showInformationMessage(`Added remote ${name}.`);
+    vscode.window.showInformationMessage(vscode.l10n.t("Added remote {0}.", name));
   } catch (e: unknown) {
     await showGitError("Add remote", e);
   }
@@ -97,7 +97,7 @@ async function remoteAction(repos: RepoManager, root: string, r: RemoteInfo): Pr
       { label: "$(link) Change URL…", value: "url" },
       { label: "$(trash) Remove", value: "remove" },
     ],
-    { placeHolder: `Action on ${r.name}` }
+    { placeHolder: vscode.l10n.t("Action on {0}", r.name) }
   );
   if (!action) return;
   try {
@@ -111,13 +111,13 @@ async function remoteAction(repos: RepoManager, root: string, r: RemoteInfo): Pr
         break;
       }
       case "rename": {
-        const next = await vscode.window.showInputBox({ prompt: `Rename ${r.name} to…`, value: r.name });
+        const next = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Rename {0} to…", r.name), value: r.name });
         if (!next || next === r.name) return;
         await runGit(["remote", "rename", r.name, next], { cwd: root });
         break;
       }
       case "url": {
-        const next = await vscode.window.showInputBox({ prompt: `New URL for ${r.name}`, value: r.fetchUrl });
+        const next = await vscode.window.showInputBox({ prompt: vscode.l10n.t("New URL for {0}", r.name), value: r.fetchUrl });
         if (!next || next === r.fetchUrl) return;
         await runGit(["remote", "set-url", r.name, next], { cwd: root });
         break;
@@ -126,9 +126,9 @@ async function remoteAction(repos: RepoManager, root: string, r: RemoteInfo): Pr
         const ok = await vscode.window.showWarningMessage(
           `Remove remote ${r.name}? This does not delete the remote itself.`,
           { modal: true },
-          "Remove"
+          vscode.l10n.t("Remove")
         );
-        if (ok !== "Remove") return;
+        if (ok !== vscode.l10n.t("Remove")) return;
         await runGit(["remote", "remove", r.name], { cwd: root });
         break;
       }

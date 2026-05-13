@@ -46,7 +46,7 @@ export async function showTagsPicker(repos: RepoManager): Promise<void> {
     });
   }
   const pick = await vscode.window.showQuickPick(items, {
-    placeHolder: `${tags.length} tag(s)`,
+    placeHolder: vscode.l10n.t("{0} tag(s)", String(tags.length)),
     matchOnDescription: true,
   });
   if (!pick) return;
@@ -59,12 +59,12 @@ export async function showTagsPicker(repos: RepoManager): Promise<void> {
 }
 
 async function createTag(repos: RepoManager, root: string): Promise<void> {
-  const name = await vscode.window.showInputBox({ prompt: "Tag name (e.g. v1.0.0)" });
+  const name = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Tag name (e.g. v1.0.0)") });
   if (!name) return;
-  const ref = await vscode.window.showInputBox({ prompt: "Commit/ref to tag", value: "HEAD" });
+  const ref = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Commit/ref to tag"), value: "HEAD" });
   if (!ref) return;
   const message = await vscode.window.showInputBox({
-    prompt: "Annotation message (leave empty for lightweight tag)",
+    prompt: vscode.l10n.t("Annotation message (leave empty for lightweight tag)"),
   });
   if (message === undefined) return;
   try {
@@ -74,7 +74,7 @@ async function createTag(repos: RepoManager, root: string): Promise<void> {
       await runGit(["tag", name, ref], { cwd: root });
     }
     repos.fire();
-    vscode.window.showInformationMessage(`Tag ${name} created on ${ref}.`);
+    vscode.window.showInformationMessage(vscode.l10n.t("Tag {0} created on {1}.", name, ref));
   } catch (e: unknown) {
     await showGitError("Tag create", e);
   }
@@ -83,12 +83,12 @@ async function createTag(repos: RepoManager, root: string): Promise<void> {
 async function tagAction(repos: RepoManager, root: string, name: string): Promise<void> {
   const action = await vscode.window.showQuickPick(
     [
-      { label: "$(eye) Show tagged commit", value: "show" },
-      { label: "$(cloud-upload) Push tag to origin", value: "push" },
-      { label: "$(trash) Delete locally", value: "deleteLocal" },
-      { label: "$(cloud) Delete on origin", value: "deleteRemote" },
+      { label: "$(eye) " + vscode.l10n.t("Show tagged commit"), value: "show" },
+      { label: "$(cloud-upload) " + vscode.l10n.t("Push tag to origin"), value: "push" },
+      { label: "$(trash) " + vscode.l10n.t("Delete locally"), value: "deleteLocal" },
+      { label: "$(cloud) " + vscode.l10n.t("Delete on origin"), value: "deleteRemote" },
     ],
-    { placeHolder: `Action on tag ${name}` }
+    { placeHolder: vscode.l10n.t("Action on tag {0}", name) }
   );
   if (!action) return;
   try {
@@ -102,18 +102,19 @@ async function tagAction(repos: RepoManager, root: string, name: string): Promis
         await runGit(["push", "origin", name], { cwd: root });
         break;
       case "deleteLocal": {
-        const ok = await vscode.window.showWarningMessage(`Delete local tag ${name}?`, { modal: true }, "Delete");
-        if (ok !== "Delete") return;
+        const deleteLabel = vscode.l10n.t("Delete");
+        const ok = await vscode.window.showWarningMessage(vscode.l10n.t("Delete local tag {0}?", name), { modal: true }, deleteLabel);
+        if (ok !== deleteLabel) return;
         await runGit(["tag", "-d", name], { cwd: root });
         break;
       }
       case "deleteRemote": {
         const ok = await vscode.window.showWarningMessage(
-          `Delete tag ${name} on origin? This affects others.`,
+          vscode.l10n.t("Delete tag {0} on origin? This affects others.", name),
           { modal: true },
-          "Delete remotely"
+          vscode.l10n.t("Delete remotely")
         );
-        if (ok !== "Delete remotely") return;
+        if (ok !== vscode.l10n.t("Delete remotely")) return;
         await runGit(["push", "origin", `:refs/tags/${name}`], { cwd: root });
         break;
       }

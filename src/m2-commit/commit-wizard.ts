@@ -14,19 +14,22 @@ interface State {
   breakingDescription?: string;
 }
 
-const TYPE_DESCRIPTIONS: Record<string, string> = {
-  feat: "A new feature",
-  fix: "A bug fix",
-  docs: "Documentation only",
-  style: "Whitespace/formatting (no logic)",
-  refactor: "Code change that neither fixes nor adds features",
-  perf: "Performance improvement",
-  test: "Tests only",
-  build: "Build system or dependencies",
-  ci: "CI configuration",
-  chore: "Other changes — maintenance, tooling",
-  revert: "Reverts a previous commit",
-};
+function typeDescription(t: string): string {
+  switch (t) {
+    case "feat": return vscode.l10n.t("A new feature");
+    case "fix": return vscode.l10n.t("A bug fix");
+    case "docs": return vscode.l10n.t("Documentation only");
+    case "style": return vscode.l10n.t("Whitespace/formatting (no logic)");
+    case "refactor": return vscode.l10n.t("Code change that neither fixes nor adds features");
+    case "perf": return vscode.l10n.t("Performance improvement");
+    case "test": return vscode.l10n.t("Tests only");
+    case "build": return vscode.l10n.t("Build system or dependencies");
+    case "ci": return vscode.l10n.t("CI configuration");
+    case "chore": return vscode.l10n.t("Other changes — maintenance, tooling");
+    case "revert": return vscode.l10n.t("Reverts a previous commit");
+    default: return "";
+  }
+}
 
 export async function runCommitWizard(repos: RepoManager): Promise<void> {
   const root = repos.root;
@@ -36,8 +39,8 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
 
   // 1. Type
   const typePick = await vscode.window.showQuickPick(
-    COMMIT_TYPES.map((t) => ({ label: t, description: TYPE_DESCRIPTIONS[t] ?? "" })),
-    { placeHolder: "Commit type" }
+    COMMIT_TYPES.map((t) => ({ label: t, description: typeDescription(t) })),
+    { placeHolder: vscode.l10n.t("Commit type") }
   );
   if (!typePick) return;
   state.type = typePick.label;
@@ -54,7 +57,7 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
   const scopeItems = [
     NONE,
     CUSTOM,
-    ...(scopes.length ? [{ label: "Recent / frequent", kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem] : []),
+    ...(scopes.length ? [{ label: vscode.l10n.t("Recent / frequent"), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem] : []),
     ...scopes.map((s) => ({
       label: s.scope,
       description: `${s.count}× · last ${s.lastUsedDays}d ago`,
@@ -62,12 +65,12 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
     })),
   ];
   const scopePick = await vscode.window.showQuickPick(scopeItems as Array<vscode.QuickPickItem & { value?: string }>, {
-    placeHolder: "Scope (optional)",
+    placeHolder: vscode.l10n.t("Scope (optional)"),
     matchOnDescription: true,
   });
   if (scopePick === undefined) return;
   if (scopePick.value === "__custom__") {
-    const custom = await vscode.window.showInputBox({ prompt: "Custom scope" });
+    const custom = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Custom scope") });
     if (custom === undefined) return;
     state.scope = custom.trim() || undefined;
   } else if (scopePick.value) {
@@ -76,15 +79,15 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
 
   // 3. Subject — show live remaining-chars feedback.
   const subjectInput = vscode.window.createInputBox();
-  subjectInput.title = "Subject";
-  subjectInput.placeholder = "Imperative, lowercase, no period";
+  subjectInput.title = vscode.l10n.t("Subject");
+  subjectInput.placeholder = vscode.l10n.t("Imperative, lowercase, no period");
   const prefix = `${state.type}${state.scope ? `(${state.scope})` : ""}: `;
-  subjectInput.prompt = `Will be prefixed: "${prefix}"  ·  recommended ≤ ${72 - prefix.length} chars`;
+  subjectInput.prompt = vscode.l10n.t("Will be prefixed: \"{0}\"  ·  recommended ≤ {1} chars", prefix, String(72 - prefix.length));
   const subject = await new Promise<string | undefined>((resolve) => {
     subjectInput.onDidChangeValue((v) => {
       const total = prefix.length + v.length;
       subjectInput.validationMessage = total > 72 ? {
-        message: `Header is ${total} chars — over the 72 recommendation.`,
+        message: vscode.l10n.t("Header is {0} chars — over the 72 recommendation.", String(total)),
         severity: vscode.InputBoxValidationSeverity.Warning,
       } : undefined;
     });
@@ -100,8 +103,8 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
 
   // 4. Body (optional).
   const body = await vscode.window.showInputBox({
-    prompt: "Body (optional, supports multi-line via \\n)",
-    placeHolder: "What and why, not how",
+    prompt: vscode.l10n.t("Body (optional, supports multi-line via \\n)"),
+    placeHolder: vscode.l10n.t("What and why, not how"),
   });
   if (body === undefined) return;
   state.body = body.replace(/\\n/g, "\n").trim() || undefined;
@@ -109,15 +112,15 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
   // 5. Breaking change?
   const breakingPick = await vscode.window.showQuickPick(
     [
-      { label: "No", value: false },
-      { label: "Yes — append ! to header and add BREAKING-CHANGE footer", value: true },
+      { label: vscode.l10n.t("No"), value: false },
+      { label: vscode.l10n.t("Yes — append ! to header and add BREAKING-CHANGE footer"), value: true },
     ],
-    { placeHolder: "Breaking change?" }
+    { placeHolder: vscode.l10n.t("Breaking change?") }
   );
   if (!breakingPick) return;
   state.breaking = breakingPick.value;
   if (state.breaking) {
-    const desc = await vscode.window.showInputBox({ prompt: "Describe the breaking change" });
+    const desc = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Describe the breaking change") });
     if (desc === undefined) return;
     state.breakingDescription = desc.trim() || undefined;
   }
@@ -134,32 +137,34 @@ export async function runCommitWizard(repos: RepoManager): Promise<void> {
   const issues = validateCC(message);
   const blockingIssue = issues.find((i) => i.severity === "error");
   if (blockingIssue) {
-    vscode.window.showErrorMessage(`Commit message invalid: ${blockingIssue.message}`);
+    vscode.window.showErrorMessage(vscode.l10n.t("Commit message invalid: {0}", blockingIssue.message));
     return;
   }
   const warnings = issues.filter((i) => i.severity === "warning");
 
   const lines = message.split("\n");
   const preview = lines.slice(0, 5).map((l) => `   ${l}`).join("\n") + (lines.length > 5 ? "\n   …" : "");
-  const warningHint = warnings.length ? `\n\n⚠ ${warnings.length} warning(s): ${warnings.map((w) => w.message).join(" · ")}` : "";
+  const warningHint = warnings.length ? "\n\n⚠ " + vscode.l10n.t("{0} warning(s): {1}", String(warnings.length), warnings.map((w) => w.message).join(" · ")) : "";
 
+  const commitLabel = vscode.l10n.t("Commit");
+  const editLabel = vscode.l10n.t("Edit & continue");
   const action = await vscode.window.showInformationMessage(
-    `Commit with this message?\n\n${preview}${warningHint}`,
+    vscode.l10n.t("Commit with this message?") + `\n\n${preview}${warningHint}`,
     { modal: true },
-    "Commit",
-    "Edit & continue"
+    commitLabel,
+    editLabel
   );
-  if (action === "Commit") {
+  if (action === commitLabel) {
     try {
       await gitCommit(root, message);
       repos.fire();
-      vscode.window.setStatusBarMessage("$(check) Committed.", 3000);
+      vscode.window.setStatusBarMessage("$(check) " + vscode.l10n.t("Committed."), 3000);
     } catch (e: unknown) {
       await showGitError("Commit", e);
     }
-  } else if (action === "Edit & continue") {
+  } else if (action === editLabel) {
     // Stash the structured message into the clipboard so the user can paste.
     await vscode.env.clipboard.writeText(message);
-    vscode.window.showInformationMessage("Commit message copied to clipboard.");
+    vscode.window.showInformationMessage(vscode.l10n.t("Commit message copied to clipboard."));
   }
 }

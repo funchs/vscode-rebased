@@ -38,13 +38,13 @@ export class CommitViewProvider implements vscode.WebviewViewProvider {
         await vscode.commands.executeCommand("rebased.commit.wizard");
       } else if (msg.type === "commit") {
         if (!msg.message?.trim()) {
-          vscode.window.showWarningMessage("Commit message cannot be empty.");
+          vscode.window.showWarningMessage(vscode.l10n.t("Commit message cannot be empty."));
           return;
         }
         try {
           await commit(root, msg.message, !!msg.amend);
           this.repos.fire();
-          vscode.window.showInformationMessage("Committed.");
+          vscode.window.showInformationMessage(vscode.l10n.t("Committed."));
         } catch (e: unknown) {
           await showGitError("Commit", e);
         }

@@ -46,7 +46,7 @@ export class ConflictWatcher implements vscode.Disposable {
       this.statusItem.text = `$(debug-continue) ${state.kind}: ready to continue`;
       this.statusItem.backgroundColor = new vscode.ThemeColor("statusBarItem.prominentBackground");
     }
-    this.statusItem.tooltip = `${state.kind} in progress — click to resolve`;
+    this.statusItem.tooltip = vscode.l10n.t("{0} in progress — click to resolve", state.kind!);
     this.statusItem.show();
 
     const sig = `${state.kind}:${total}`;
@@ -54,7 +54,7 @@ export class ConflictWatcher implements vscode.Disposable {
       this.lastShownState = sig;
       if (total > 0) {
         vscode.window.setStatusBarMessage(
-          `$(warning) Rebased: ${total} conflict${total === 1 ? "" : "s"} in ${state.kind}`,
+          `$(warning) ` + vscode.l10n.t("Rebased: {0} conflict(s) in {1}", String(total), state.kind!),
           5000
         );
       }
@@ -82,7 +82,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
   if (!root) return;
   const state = await getOperationState(root);
   if (!state.kind) {
-    vscode.window.showInformationMessage("No rebase/merge/cherry-pick/stash in progress.");
+    vscode.window.showInformationMessage(vscode.l10n.t("No rebase/merge/cherry-pick/stash in progress."));
     return;
   }
 
@@ -100,7 +100,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
     items.push({ label: "$(check-all) Resolve all in merge editor (sequential)", alwaysShow: true });
     items.push({ label: "$(circle-slash) Abort", description: `Abort the ${state.kind}`, alwaysShow: true });
   } else {
-    items.push({ label: "All conflicts resolved", kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
+    items.push({ label: vscode.l10n.t("All conflicts resolved"), kind: vscode.QuickPickItemKind.Separator } as vscode.QuickPickItem);
     if (state.kind === "stash-pop") {
       items.push({
         label: "$(check) Finalize: drop stash and continue",
@@ -115,7 +115,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
     } else if (state.kind === "orphan-unmerged") {
       items.push({
         label: "$(check) Mark resolved (git add)",
-        description: "Stage the resolved files so git stops blocking index writes",
+        description: vscode.l10n.t("Stage the resolved files so git stops blocking index writes"),
         alwaysShow: true,
       });
     } else {
@@ -151,7 +151,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
     try {
       await continueOperation(root, state.kind as Exclude<OperationState["kind"], null | "stash-pop" | "orphan-unmerged">);
       repos.fire();
-      vscode.window.showInformationMessage(`${state.kind} continued.`);
+      vscode.window.showInformationMessage(vscode.l10n.t("{0} continued.", state.kind!));
     } catch (e: unknown) {
       await showGitError(`Continue ${state.kind}`, e);
     }
@@ -166,7 +166,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
         await runGit(["add", "--", ...state.conflicted], { cwd: root });
       }
       repos.fire();
-      vscode.window.showInformationMessage("Conflicts marked resolved. You can now run Update Project / Commit / etc.");
+      vscode.window.showInformationMessage(vscode.l10n.t("Conflicts marked resolved. You can now run Update Project / Commit / etc."));
     } catch (e: unknown) {
       await showGitError("Mark resolved", e);
     }
@@ -187,7 +187,7 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
       }
       await clearStashPopInProgress(root);
       repos.fire();
-      vscode.window.showInformationMessage("Stash finalized; conflicts resolved.");
+      vscode.window.showInformationMessage(vscode.l10n.t("Stash finalized; conflicts resolved."));
     } catch (e: unknown) {
       await showGitError("Finalize stash", e);
     }
@@ -211,8 +211,9 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
     } else {
       warn = `Abort ${target}? This rolls back to the pre-operation state.`;
     }
-    const ok = await vscode.window.showWarningMessage(warn, { modal: true }, "Abort");
-    if (ok !== "Abort") return;
+    const abortLabel = vscode.l10n.t("Abort");
+    const ok = await vscode.window.showWarningMessage(warn, { modal: true }, abortLabel);
+    if (ok !== abortLabel) return;
     try {
       if (target === "stash-pop") {
         if (state.conflicted.length) {

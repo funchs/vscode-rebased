@@ -9,14 +9,14 @@ export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoM
     vscode.commands.registerCommand("rebased.stash.create", async () => {
       const root = repos.root;
       if (!root) return;
-      const message = await vscode.window.showInputBox({ prompt: "Stash message (optional)" });
+      const message = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Stash message (optional)") });
       if (message === undefined) return;
       const includeUntracked = await vscode.window.showQuickPick(
         [
-          { label: "Tracked only", value: false },
-          { label: "Include untracked", value: true },
+          { label: vscode.l10n.t("Tracked only"), value: false },
+          { label: vscode.l10n.t("Include untracked"), value: true },
         ],
-        { placeHolder: "Stash scope" }
+        { placeHolder: vscode.l10n.t("Stash scope") }
       );
       if (!includeUntracked) return;
       const args = ["stash", "push"];
@@ -25,7 +25,7 @@ export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoM
       try {
         await runGit(args, { cwd: root });
         repos.fire();
-        vscode.window.showInformationMessage("Stashed.");
+        vscode.window.showInformationMessage(vscode.l10n.t("Stashed."));
       } catch (e: unknown) {
         await showGitError("Stash", e);
       }
@@ -56,9 +56,9 @@ export function registerStashCommands(ctx: vscode.ExtensionContext, repos: RepoM
       const ok = await vscode.window.showWarningMessage(
         `Drop stash "${item.stash.subject}"?`,
         { modal: true },
-        "Drop"
+        vscode.l10n.t("Drop")
       );
-      if (ok !== "Drop") return;
+      if (ok !== vscode.l10n.t("Drop")) return;
       try {
         await runGit(["stash", "drop", item.stash.ref], { cwd: root });
         repos.fire();

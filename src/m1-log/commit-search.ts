@@ -30,7 +30,7 @@ export async function showCommitSearch(repos: RepoManager): Promise<void> {
 
   // Mode picker first so the query syntax is predictable.
   const modePick = await vscode.window.showQuickPick(MODES, {
-    placeHolder: "Search commits by…",
+    placeHolder: vscode.l10n.t("Search commits by…"),
   });
   if (!modePick) return;
   const mode = modePick.value;

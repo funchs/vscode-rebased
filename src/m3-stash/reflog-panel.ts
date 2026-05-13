@@ -43,20 +43,20 @@ export class ReflogPanel {
       } else if (msg.type === "reset") {
         const mode = await vscode.window.showQuickPick(
           [
-            { label: "Soft (keep working tree + index)", value: "--soft" },
-            { label: "Mixed (keep working tree)", value: "--mixed" },
-            { label: "Hard (DISCARD working tree)", value: "--hard", description: "Destructive" },
+            { label: vscode.l10n.t("Soft (keep working tree + index)"), value: "--soft" },
+            { label: vscode.l10n.t("Mixed (keep working tree)"), value: "--mixed" },
+            { label: vscode.l10n.t("Hard (DISCARD working tree)"), value: "--hard", description: vscode.l10n.t("Destructive") },
           ],
-          { placeHolder: "Reset mode" }
+          { placeHolder: vscode.l10n.t("Reset mode") }
         );
         if (!mode) return;
         if (mode.value === "--hard") {
           const ok = await vscode.window.showWarningMessage(
-            `Hard reset to ${msg.hash}? This DISCARDS uncommitted work.`,
+            vscode.l10n.t("Hard reset to {0}? This DISCARDS uncommitted work.", msg.hash),
             { modal: true },
-            "Reset"
+            vscode.l10n.t("Reset")
           );
-          if (ok !== "Reset") return;
+          if (ok !== vscode.l10n.t("Reset")) return;
         }
         try { await runGit(["reset", mode.value, msg.hash], { cwd: root }); repos.fire(); }
         catch (e: unknown) { await showGitError("Reset", e); }

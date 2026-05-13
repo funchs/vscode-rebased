@@ -22,7 +22,7 @@ export class BranchStatusBar implements vscode.Disposable {
       const head = (await runGit(["symbolic-ref", "--short", "-q", "HEAD"], { cwd: root })).trim();
       const dirty = (await runGit(["status", "--porcelain"], { cwd: root })).trim().length > 0;
       this.item.text = `$(git-branch) ${head || "(detached)"}${dirty ? "*" : ""}`;
-      this.item.tooltip = `Rebased — ${head || "detached HEAD"}\nClick to create a new branch`;
+      this.item.tooltip = vscode.l10n.t("Rebased — {0}\nClick to create a new branch", head || vscode.l10n.t("detached HEAD"));
       this.item.show();
     } catch {
       this.item.hide();

@@ -141,7 +141,7 @@ export class ChangelistTreeProvider implements vscode.TreeDataProvider<Node> {
     item.resourceUri = vscode.Uri.joinPath(vscode.Uri.file(this.repos.root ?? ""), n.path);
     item.command = {
       command: "vscode.open",
-      title: "Open",
+      title: vscode.l10n.t("Open"),
       arguments: [item.resourceUri],
     };
     return item;
@@ -185,13 +185,13 @@ export function registerChangelistCommands(
 ): void {
   ctx.subscriptions.push(
     vscode.commands.registerCommand("rebased.changelist.create", async () => {
-      const name = await vscode.window.showInputBox({ prompt: "New changelist name" });
+      const name = await vscode.window.showInputBox({ prompt: vscode.l10n.t("New changelist name") });
       if (!name) return;
       await mgr.createList(name);
     }),
     vscode.commands.registerCommand("rebased.changelist.rename", async (node: Node) => {
       if (!node || node.kind !== "list") return;
-      const next = await vscode.window.showInputBox({ prompt: `Rename ${node.name}`, value: node.name });
+      const next = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Rename {0}", node.name), value: node.name });
       if (!next || next === node.name) return;
       await mgr.renameList(node.name, next);
     }),
@@ -200,9 +200,9 @@ export function registerChangelistCommands(
       const ok = await vscode.window.showWarningMessage(
         `Delete changelist "${node.name}"? Files move to Default.`,
         { modal: true },
-        "Delete"
+        vscode.l10n.t("Delete")
       );
-      if (ok !== "Delete") return;
+      if (ok !== vscode.l10n.t("Delete")) return;
       await mgr.deleteList(node.name);
     }),
     vscode.commands.registerCommand("rebased.changelist.setActive", async (node: Node) => {
@@ -211,11 +211,11 @@ export function registerChangelistCommands(
     }),
     vscode.commands.registerCommand("rebased.changelist.commit", async (node: Node) => {
       if (!node || node.kind !== "list") return;
-      const msg = await vscode.window.showInputBox({ prompt: `Commit message for "${node.name}"` });
+      const msg = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Commit message for \"{0}\"", node.name) });
       if (!msg) return;
       try {
         await mgr.commitChangelist(node.name, msg);
-        vscode.window.showInformationMessage(`Committed "${node.name}".`);
+        vscode.window.showInformationMessage(vscode.l10n.t("Committed \"{0}\".", node.name));
       } catch (e: unknown) {
         await showGitError(`Commit changelist "${node.name}"`, e);
       }
@@ -225,7 +225,7 @@ export function registerChangelistCommands(
       const state = mgr.state();
       const target = await vscode.window.showQuickPick(
         Object.keys(state.lists).filter((n) => n !== node.list),
-        { placeHolder: `Move ${node.path} to…` }
+        { placeHolder: vscode.l10n.t("Move {0} to…", node.path) }
       );
       if (!target) return;
       await mgr.assignFile(target, node.path);

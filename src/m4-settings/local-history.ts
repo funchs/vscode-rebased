@@ -119,13 +119,13 @@ export class LocalHistory implements vscode.Disposable {
     if (!root) return;
     const uri = target ?? vscode.window.activeTextEditor?.document.uri;
     if (!uri) {
-      vscode.window.showInformationMessage("Open a file first.");
+      vscode.window.showInformationMessage(vscode.l10n.t("Open a file first."));
       return;
     }
     const rel = path.relative(root, uri.fsPath);
     const entries = await this.list(rel);
     if (!entries.length) {
-      vscode.window.showInformationMessage(`No local history yet for ${rel}.`);
+      vscode.window.showInformationMessage(vscode.l10n.t("No local history yet for {0}.", rel));
       return;
     }
 
@@ -135,17 +135,17 @@ export class LocalHistory implements vscode.Disposable {
       timestamp: e.timestamp,
     }));
     const pick = await vscode.window.showQuickPick(items, {
-      placeHolder: `${entries.length} snapshot(s) of ${rel}`,
+      placeHolder: vscode.l10n.t("{0} snapshot(s) of {1}", String(entries.length), rel),
     });
     if (!pick) return;
 
     const action = await vscode.window.showQuickPick(
       [
-        { label: "$(diff) Diff against current", value: "diff" },
-        { label: "$(eye) Open snapshot read-only", value: "open" },
-        { label: "$(history) Restore (overwrite current)", value: "restore" },
+        { label: "$(diff) " + vscode.l10n.t("Diff against current"), value: "diff" },
+        { label: "$(eye) " + vscode.l10n.t("Open snapshot read-only"), value: "open" },
+        { label: "$(history) " + vscode.l10n.t("Restore (overwrite current)"), value: "restore" },
       ],
-      { placeHolder: `${new Date(pick.timestamp).toLocaleString()} · ${rel}` }
+      { placeHolder: vscode.l10n.t("{0} · {1}", new Date(pick.timestamp).toLocaleString(), rel) }
     );
     if (!action) return;
 
@@ -168,12 +168,13 @@ export class LocalHistory implements vscode.Disposable {
         await vscode.window.showTextDocument(historyUri);
         break;
       case "restore": {
+        const restoreLabel = vscode.l10n.t("Restore");
         const ok = await vscode.window.showWarningMessage(
-          `Restore ${rel} to the snapshot from ${new Date(pick.timestamp).toLocaleString()}? Current content will be replaced.`,
+          vscode.l10n.t("Restore {0} to the snapshot from {1}? Current content will be replaced.", rel, new Date(pick.timestamp).toLocaleString()),
           { modal: true },
-          "Restore"
+          restoreLabel
         );
-        if (ok !== "Restore") return;
+        if (ok !== restoreLabel) return;
         const content = await this.read(rel, pick.timestamp);
         const doc = await vscode.workspace.openTextDocument(uri);
         const edit = new vscode.WorkspaceEdit();

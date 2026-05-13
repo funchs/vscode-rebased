@@ -23,7 +23,7 @@ export async function compareBranches(repos: RepoManager, against?: string): Pro
         description: b.upstream ? `→ ${b.upstream}` : "",
         name: b.name,
       })),
-      { placeHolder: "Pick a branch to compare against current" }
+      { placeHolder: vscode.l10n.t("Pick a branch to compare against current") }
     );
     if (!pick) return;
     a = pick.name;
@@ -46,12 +46,12 @@ export async function compareBranches(repos: RepoManager, against?: string): Pro
   pushSection(items, behind);
 
   if (!items.length) {
-    vscode.window.showInformationMessage(`HEAD and ${a} have identical history.`);
+    vscode.window.showInformationMessage(vscode.l10n.t("HEAD and {0} have identical history.", a));
     return;
   }
 
   const pick = (await vscode.window.showQuickPick(items, {
-    placeHolder: `Compare HEAD ⇆ ${a} — pick a commit to inspect`,
+    placeHolder: vscode.l10n.t("Compare HEAD ⇆ {0} — pick a commit to inspect", a),
     matchOnDescription: true,
   })) as (vscode.QuickPickItem & { hash?: string }) | undefined;
   if (!pick || !pick.hash) return;

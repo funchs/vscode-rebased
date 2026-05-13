@@ -24,11 +24,11 @@ export async function runDiagnostic(root: string): Promise<string> {
     const stat = await fs.stat(gitDir);
     checks.push({
       level: "ok",
-      title: `.git exists`,
+      title: vscode.l10n.t(".git exists"),
       detail: `mode=${(stat.mode & 0o777).toString(8)} uid=${stat.uid}`,
     });
   } catch (e: unknown) {
-    checks.push({ level: "error", title: ".git directory missing", detail: (e as Error).message });
+    checks.push({ level: "error", title: vscode.l10n.t(".git directory missing"), detail: (e as Error).message });
   }
 
   // 2. .git/index permissions + writability
@@ -37,21 +37,21 @@ export async function runDiagnostic(root: string): Promise<string> {
     const stat = await fs.stat(indexPath);
     checks.push({
       level: "ok",
-      title: `.git/index present`,
+      title: vscode.l10n.t(".git/index present"),
       detail: `size=${stat.size}  mode=${(stat.mode & 0o777).toString(8)}  uid=${stat.uid}`,
     });
     try {
       await fs.access(indexPath, fsConstants.W_OK);
-      checks.push({ level: "ok", title: ".git/index is writable" });
+      checks.push({ level: "ok", title: vscode.l10n.t(".git/index is writable") });
     } catch {
       checks.push({
         level: "error",
-        title: ".git/index NOT writable",
-        detail: "Run `chmod u+w .git/index` from a terminal, or check ownership.",
+        title: vscode.l10n.t(".git/index NOT writable"),
+        detail: vscode.l10n.t("Run `chmod u+w .git/index` from a terminal, or check ownership."),
       });
     }
   } catch (e: unknown) {
-    checks.push({ level: "error", title: ".git/index missing", detail: (e as Error).message });
+    checks.push({ level: "error", title: vscode.l10n.t(".git/index missing"), detail: (e as Error).message });
   }
 
   // 3. .git/index.lock
@@ -60,31 +60,31 @@ export async function runDiagnostic(root: string): Promise<string> {
     const ageS = Math.round((Date.now() - (lock.mtimeMs ?? Date.now())) / 1000);
     checks.push({
       level: ageS > 30 ? "error" : "warn",
-      title: `.git/index.lock present (${ageS}s old)`,
+      title: vscode.l10n.t(".git/index.lock present ({0}s old)", String(ageS)),
       detail: ageS > 30
-        ? "Stale lock — remove with `rm .git/index.lock` from a terminal."
-        : "Fresh lock — another git process is likely active.",
+        ? vscode.l10n.t("Stale lock — remove with `rm .git/index.lock` from a terminal.")
+        : vscode.l10n.t("Fresh lock — another git process is likely active."),
     });
   } else {
-    checks.push({ level: "ok", title: "No .git/index.lock" });
+    checks.push({ level: "ok", title: vscode.l10n.t("No .git/index.lock") });
   }
 
   // 4. git status (does basic read work?)
   try {
     await runGit(["status", "--porcelain=v1"], { cwd: root });
-    checks.push({ level: "ok", title: "git status succeeds" });
+    checks.push({ level: "ok", title: vscode.l10n.t("git status succeeds") });
   } catch (e: unknown) {
-    checks.push({ level: "error", title: "git status fails", detail: (e as Error).message });
+    checks.push({ level: "error", title: vscode.l10n.t("git status fails"), detail: (e as Error).message });
   }
 
   // 5. git fsck (quick — only --connectivity-only)
   try {
     await runGit(["fsck", "--connectivity-only", "--no-progress"], { cwd: root });
-    checks.push({ level: "ok", title: "git fsck (connectivity) clean" });
+    checks.push({ level: "ok", title: vscode.l10n.t("git fsck (connectivity) clean") });
   } catch (e: unknown) {
     checks.push({
       level: "warn",
-      title: "git fsck reports issues",
+      title: vscode.l10n.t("git fsck reports issues"),
       detail: (e as Error).message,
     });
   }
@@ -94,11 +94,11 @@ export async function runDiagnostic(root: string): Promise<string> {
   if (suspicious.test(root)) {
     checks.push({
       level: "warn",
-      title: "Repository sits on a cloud-sync or network mount",
-      detail: `${root}\nThese services can race with git index writes — try moving the repo to a plain local path.`,
+      title: vscode.l10n.t("Repository sits on a cloud-sync or network mount"),
+      detail: vscode.l10n.t("{0}\nThese services can race with git index writes — try moving the repo to a plain local path.", root),
     });
   } else {
-    checks.push({ level: "ok", title: "Repository on a plain local path" });
+    checks.push({ level: "ok", title: vscode.l10n.t("Repository on a plain local path") });
   }
 
   // 7. Disk free
@@ -112,9 +112,9 @@ export async function runDiagnostic(root: string): Promise<string> {
     });
     const lines = free.trim().split("\n");
     const lastLine = lines[lines.length - 1];
-    checks.push({ level: "ok", title: "Disk free", detail: lastLine });
+    checks.push({ level: "ok", title: vscode.l10n.t("Disk free"), detail: lastLine });
   } catch (e: unknown) {
-    checks.push({ level: "warn", title: "Could not determine disk free", detail: (e as Error).message });
+    checks.push({ level: "warn", title: vscode.l10n.t("Could not determine disk free"), detail: (e as Error).message });
   }
 
   // Format report

@@ -28,7 +28,7 @@ export async function showBranchesPicker(repos: RepoManager): Promise<void> {
   });
 
   const pick = await vscode.window.showQuickPick(items, {
-    placeHolder: "Search branches…  (Enter to pick, then choose an action)",
+    placeHolder: vscode.l10n.t("Search branches…  (Enter to pick, then choose an action)"),
     matchOnDescription: true,
   });
   if (!pick) return;
@@ -64,7 +64,7 @@ async function runBranchAction(
 
   const choice = await vscode.window.showQuickPick(
     actions.map((a) => ({ label: a.label, description: a.description, action: a.action })),
-    { placeHolder: `Action on ${name}` }
+    { placeHolder: vscode.l10n.t("Action on {0}", name) }
   );
   if (!choice) return;
 
@@ -85,27 +85,28 @@ async function runBranchAction(
         await runGit(["rebase", name], { cwd: root });
         break;
       case "rename": {
-        const next = await vscode.window.showInputBox({ prompt: `Rename ${name} to…`, value: name });
+        const next = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Rename {0} to…", name), value: name });
         if (!next || next === name) return;
         await runGit(["branch", "-m", name, next], { cwd: root });
         break;
       }
       case "delete": {
+        const forceLabel = vscode.l10n.t("Force delete");
         const force = await vscode.window.showWarningMessage(
-          `Delete branch ${name}?`,
+          vscode.l10n.t("Delete branch {0}?", name),
           { modal: true },
-          "Delete (safe)",
-          "Force delete"
+          vscode.l10n.t("Delete (safe)"),
+          forceLabel
         );
         if (!force) return;
         await runGit(
-          ["branch", force === "Force delete" ? "-D" : "-d", name],
+          ["branch", force === forceLabel ? "-D" : "-d", name],
           { cwd: root }
         );
         break;
       }
       case "newFromHere": {
-        const next = await vscode.window.showInputBox({ prompt: `New branch from ${name}` });
+        const next = await vscode.window.showInputBox({ prompt: vscode.l10n.t("New branch from {0}", name) });
         if (!next) return;
         await runGit(["checkout", "-b", next, name], { cwd: root });
         break;
@@ -129,7 +130,7 @@ async function runBranchAction(
       isWorkingTreeDirtyError(msg)
     ) {
       actions.push({
-        label: "Stash and retry",
+        label: vscode.l10n.t("Stash and retry"),
         run: async () => {
           try {
             await runGit(["stash", "push", "-u", "-m", `rebased: auto before ${choice.action} ${name}`], { cwd: root });
@@ -139,14 +140,14 @@ async function runBranchAction(
             await runGit(op, { cwd: root });
             await runGit(["stash", "pop"], { cwd: root });
             repos.fire();
-            vscode.window.showInformationMessage(`${choice.action} completed; stash popped.`);
+            vscode.window.showInformationMessage(vscode.l10n.t("{0} completed; stash popped.", choice.action));
           } catch (e2: unknown) {
             await showGitError(`Auto-stash ${choice.action}`, e2);
           }
         },
       });
       actions.push({
-        label: "Open Stash dialog",
+        label: vscode.l10n.t("Open Stash dialog"),
         run: async () => {
           await vscode.commands.executeCommand("rebased.stash.create");
         },

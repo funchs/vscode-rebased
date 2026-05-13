@@ -39,7 +39,7 @@ export class RebaseEditorProvider implements vscode.CustomTextEditorProvider {
         );
         await vscode.workspace.applyEdit(edit);
         await document.save();
-        vscode.window.showInformationMessage("Rebase plan saved. Git will continue.");
+        vscode.window.showInformationMessage(vscode.l10n.t("Rebase plan saved. Git will continue."));
       } else if (msg.type === "abort") {
         await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
       }

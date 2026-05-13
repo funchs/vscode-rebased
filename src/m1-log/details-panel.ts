@@ -101,6 +101,9 @@ export class CommitDetailsPanel {
       checkoutDetached: T("Checkout (detached)"),
       parents: T("parents:"),
       filesCount: T("Files ({0})"),
+      nFiles: T("{0} files"),
+      viewTree: T("Tree"),
+      viewFlat: T("Flat"),
     };
     return /* html */ `<!DOCTYPE html>
 <html><head>

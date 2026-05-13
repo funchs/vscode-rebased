@@ -59,6 +59,10 @@
   "Run diagnostic": "运行诊断",
   "Run in terminal": "在终端中重试",
   "Show output": "查看输出",
+  "{0} unresolved conflict(s) from a previous operation are blocking the index. Resolve them first: {1}": "上次操作遗留了 {0} 个未解决的冲突，git 拒绝写入索引，请先解决：{1}",
+  "Mark resolved (git add)": "标记为已解决（git add）",
+  "Conflicts marked resolved. You can now run Update Project / Commit / etc.": "冲突已标记为解决，现在可以运行更新项目 / 提交等命令。",
+  "Mark resolved": "标记为已解决",
   "Open .git/ in Finder": "在 Finder 中打开 .git/",
   "Running repository diagnostic…": "正在运行仓库诊断…",
   "Repository diagnostic": "仓库诊断报告"

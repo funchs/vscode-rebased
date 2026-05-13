@@ -268,8 +268,21 @@ export async function updateProject(repos: RepoManager, opts?: Partial<Options>)
   if (!root) return;
 
   // Refuse to start while another op is mid-flight — user needs to finish or
-  // abort that one first.
+  // abort that one first. "orphan-unmerged" is a special case: UU files exist
+  // without a formal op (e.g. a previous merge was `git reset` away). git
+  // refuses to write the index in this state, so stash/commit/checkout all
+  // fail; route the user to mark conflicts resolved first.
   const opState = await getOperationState(root);
+  if (opState.kind === "orphan-unmerged") {
+    await routeToConflictPanel(
+      vscode.l10n.t(
+        "{0} unresolved conflict(s) from a previous operation are blocking the index. Resolve them first: {1}",
+        String(opState.conflicted.length),
+        opState.conflicted.slice(0, 3).join(", ") + (opState.conflicted.length > 3 ? "…" : "")
+      )
+    );
+    return;
+  }
   if (opState.kind) {
     await routeToConflictPanel(
       vscode.l10n.t("A {0} is already in progress. Resolve it before running Update Project.", opState.kind!)

@@ -112,6 +112,12 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
         description: "Conflicts already resolved; leave the stash entry intact",
         alwaysShow: true,
       });
+    } else if (state.kind === "orphan-unmerged") {
+      items.push({
+        label: "$(check) Mark resolved (git add)",
+        description: "Stage the resolved files so git stops blocking index writes",
+        alwaysShow: true,
+      });
     } else {
       items.push({
         label: `$(check) Continue ${state.kind}`,
@@ -143,11 +149,26 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
   // Continue (non-stash ops)
   if (pick.label.startsWith("$(check) Continue ")) {
     try {
-      await continueOperation(root, state.kind as Exclude<OperationState["kind"], null | "stash-pop">);
+      await continueOperation(root, state.kind as Exclude<OperationState["kind"], null | "stash-pop" | "orphan-unmerged">);
       repos.fire();
       vscode.window.showInformationMessage(`${state.kind} continued.`);
     } catch (e: unknown) {
       await showGitError(`Continue ${state.kind}`, e);
+    }
+    return;
+  }
+
+  // Orphan-unmerged finalize: just stage the resolved files. No stash to drop,
+  // no operation state to clear — git is happy as soon as the index has no UU.
+  if (pick.label.startsWith("$(check) Mark resolved")) {
+    try {
+      if (state.conflicted.length) {
+        await runGit(["add", "--", ...state.conflicted], { cwd: root });
+      }
+      repos.fire();
+      vscode.window.showInformationMessage("Conflicts marked resolved. You can now run Update Project / Commit / etc.");
+    } catch (e: unknown) {
+      await showGitError("Mark resolved", e);
     }
     return;
   }
@@ -182,23 +203,31 @@ export async function showConflictResolution(repos: RepoManager): Promise<void> 
   // Abort
   if (pick.label.startsWith("$(circle-slash) Abort")) {
     const target = state.kind;
-    const ok = await vscode.window.showWarningMessage(
-      target === "stash-pop"
-        ? `Abort stash pop? Conflict markers will be reverted; your stash entry stays in 'git stash list'.`
-        : `Abort ${target}? This rolls back to the pre-operation state.`,
-      { modal: true },
-      "Abort"
-    );
+    let warn: string;
+    if (target === "stash-pop") {
+      warn = "Abort stash pop? Conflict markers will be reverted; your stash entry stays in 'git stash list'.";
+    } else if (target === "orphan-unmerged") {
+      warn = "Discard UU files and revert them to HEAD? Your in-progress conflict resolution will be lost.";
+    } else {
+      warn = `Abort ${target}? This rolls back to the pre-operation state.`;
+    }
+    const ok = await vscode.window.showWarningMessage(warn, { modal: true }, "Abort");
     if (ok !== "Abort") return;
     try {
       if (target === "stash-pop") {
-        // Revert the conflicted files to HEAD; stash remains so user can retry.
         if (state.conflicted.length) {
           await runGit(["checkout", "--", ...state.conflicted], { cwd: root });
         }
         await clearStashPopInProgress(root);
+      } else if (target === "orphan-unmerged") {
+        if (state.conflicted.length) {
+          // `git checkout -- <paths>` restores from index, but for UU files the
+          // index has multiple stages — use `git checkout HEAD -- <paths>` to
+          // force-reset to the committed version.
+          await runGit(["checkout", "HEAD", "--", ...state.conflicted], { cwd: root });
+        }
       } else {
-        await abortOperation(root, target as Exclude<OperationState["kind"], null | "stash-pop">);
+        await abortOperation(root, target as Exclude<OperationState["kind"], null | "stash-pop" | "orphan-unmerged">);
       }
       repos.fire();
     } catch (e: unknown) {

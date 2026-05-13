@@ -332,9 +332,13 @@ export async function applyPatch(repo: string, patch: string, options: { cached?
 }
 
 export interface OperationState {
-  kind: "rebase" | "merge" | "cherry-pick" | "revert" | "stash-pop" | null;
+  // "orphan-unmerged" = UU files present but no MERGE_HEAD / rebase / cherry-pick /
+  // revert state — happens when a prior op was reset away (e.g. `git reset` after
+  // a merge but before finishing conflict resolution). git refuses to write the
+  // index in this state, so we must surface it as its own resolve-first kind.
+  kind: "rebase" | "merge" | "cherry-pick" | "revert" | "stash-pop" | "orphan-unmerged" | null;
   conflicted: string[];
-  stashRef?: string; // when kind === "stash-pop": which stash to drop after resolve
+  stashRef?: string;
 }
 
 export async function getOperationState(repo: string): Promise<OperationState> {
@@ -365,6 +369,10 @@ export async function getOperationState(repo: string): Promise<OperationState> {
       kind = "stash-pop";
       return { kind, conflicted, stashRef };
     }
+    // UU files but no formal op AND no stash-pop sentinel: this is an "orphan"
+    // unmerged state. The user must mark resolved (`git add`) before any index-
+    // writing command (stash, commit, checkout, pull) can proceed.
+    kind = "orphan-unmerged";
   }
 
   return { kind, conflicted };
@@ -402,9 +410,9 @@ export async function removeIndexLock(repo: string): Promise<void> {
   await fs.unlink(path.join(repo, ".git", "index.lock"));
 }
 
-// "stash-pop" is a pseudo-op resolved by the conflict panel, not by these
-// generic helpers — exclude it from the union here.
-export type GitOp = Exclude<NonNullable<OperationState["kind"]>, "stash-pop">;
+// "stash-pop" and "orphan-unmerged" are pseudo-ops resolved by the conflict
+// panel, not by these generic helpers — exclude them from the union here.
+export type GitOp = Exclude<NonNullable<OperationState["kind"]>, "stash-pop" | "orphan-unmerged">;
 
 export async function continueOperation(repo: string, op: GitOp): Promise<void> {
   const map: Record<GitOp, string[]> = {

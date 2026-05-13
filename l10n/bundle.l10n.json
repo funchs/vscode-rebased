@@ -59,6 +59,10 @@
   "Run diagnostic": "Run diagnostic",
   "Run in terminal": "Run in terminal",
   "Show output": "Show output",
+  "{0} unresolved conflict(s) from a previous operation are blocking the index. Resolve them first: {1}": "{0} unresolved conflict(s) from a previous operation are blocking the index. Resolve them first: {1}",
+  "Mark resolved (git add)": "Mark resolved (git add)",
+  "Conflicts marked resolved. You can now run Update Project / Commit / etc.": "Conflicts marked resolved. You can now run Update Project / Commit / etc.",
+  "Mark resolved": "Mark resolved",
   "Open .git/ in Finder": "Open .git/ in Finder",
   "Running repository diagnostic…": "Running repository diagnostic…",
   "Repository diagnostic": "Repository diagnostic"

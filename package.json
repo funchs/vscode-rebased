@@ -3,7 +3,7 @@
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
   "l10n": "./l10n",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "funchs",
   "license": "MIT",
   "icon": "media/icons/rebased.png",
@@ -22,7 +22,10 @@
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["SCM Providers", "Other"],
+  "categories": [
+    "SCM Providers",
+    "Other"
+  ],
   "keywords": [
     "git",
     "rebase",
@@ -52,12 +55,32 @@
     },
     "views": {
       "rebased": [
-        { "id": "rebased.log", "name": "%view.log%", "type": "webview" },
-        { "id": "rebased.commit", "name": "%view.commit%", "type": "webview" },
-        { "id": "rebased.stash", "name": "%view.stashes%" },
-        { "id": "rebased.branches", "name": "%view.branches%" },
-        { "id": "rebased.changelists", "name": "%view.changelists%" },
-        { "id": "rebased.submodules", "name": "%view.submodules%" }
+        {
+          "id": "rebased.log",
+          "name": "%view.log%",
+          "type": "webview"
+        },
+        {
+          "id": "rebased.commit",
+          "name": "%view.commit%",
+          "type": "webview"
+        },
+        {
+          "id": "rebased.stash",
+          "name": "%view.stashes%"
+        },
+        {
+          "id": "rebased.branches",
+          "name": "%view.branches%"
+        },
+        {
+          "id": "rebased.changelists",
+          "name": "%view.changelists%"
+        },
+        {
+          "id": "rebased.submodules",
+          "name": "%view.submodules%"
+        }
       ]
     },
     "customEditors": [
@@ -65,103 +88,443 @@
         "viewType": "rebased.rebaseTodo",
         "displayName": "%cmd.rebase.interactive%",
         "selector": [
-          { "filenamePattern": "**/.git/rebase-merge/git-rebase-todo" },
-          { "filenamePattern": "**/git-rebase-todo" }
+          {
+            "filenamePattern": "**/.git/rebase-merge/git-rebase-todo"
+          },
+          {
+            "filenamePattern": "**/git-rebase-todo"
+          }
         ],
         "priority": "default"
       }
     ],
     "commands": [
-      { "command": "rebased.log.refresh", "title": "%cmd.log.refresh%", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.commit.refresh", "title": "%cmd.commit.refresh%", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.stash.refresh", "title": "%cmd.stash.refresh%", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.stash.create", "title": "%cmd.stash.create%", "category": "Rebased", "icon": "$(add)" },
-      { "command": "rebased.stash.apply", "title": "%cmd.stash.apply%", "category": "Rebased" },
-      { "command": "rebased.stash.pop", "title": "%cmd.stash.pop%", "category": "Rebased" },
-      { "command": "rebased.stash.drop", "title": "%cmd.stash.drop%", "category": "Rebased", "icon": "$(trash)" },
-      { "command": "rebased.cherryPick", "title": "%cmd.cherryPick%", "category": "Rebased" },
-      { "command": "rebased.rebase.interactive", "title": "%cmd.rebase.interactive%", "category": "Rebased" },
-      { "command": "rebased.branch.checkout", "title": "%cmd.branch.checkout%", "category": "Rebased" },
-      { "command": "rebased.branch.create", "title": "%cmd.branch.create%", "category": "Rebased", "icon": "$(git-branch)" },
-      { "command": "rebased.commit.amend", "title": "%cmd.commit.amend%", "category": "Rebased" },
-      { "command": "rebased.reflog.open", "title": "%cmd.reflog.open%", "category": "Rebased", "icon": "$(history)" },
-      { "command": "rebased.hunks.open", "title": "%cmd.hunks.open%", "category": "Rebased" },
-      { "command": "rebased.conflict.show", "title": "%cmd.conflict.show%", "category": "Rebased" },
-      { "command": "rebased.commit.show", "title": "%cmd.commit.show%", "category": "Rebased" },
-      { "command": "rebased.branches.pick", "title": "%cmd.branches.pick%", "category": "Rebased", "icon": "$(git-branch)" },
-      { "command": "rebased.file.history", "title": "%cmd.file.history%", "category": "Rebased" },
-      { "command": "rebased.branch.compare", "title": "%cmd.branch.compare%", "category": "Rebased" },
-      { "command": "rebased.tags.pick", "title": "%cmd.tags.pick%", "category": "Rebased", "icon": "$(tag)" },
-      { "command": "rebased.blame.toggleGutter", "title": "%cmd.blame.toggleGutter%", "category": "Rebased" },
-      { "command": "rebased.push", "title": "%cmd.push%", "category": "Rebased", "icon": "$(cloud-upload)" },
-      { "command": "rebased.pull", "title": "%cmd.pull%", "category": "Rebased", "icon": "$(cloud-download)" },
-      { "command": "rebased.commit.search", "title": "%cmd.commit.search%", "category": "Rebased", "icon": "$(search)" },
-      { "command": "rebased.remotes.pick", "title": "%cmd.remotes.pick%", "category": "Rebased", "icon": "$(cloud)" },
-      { "command": "rebased.changelist.create", "title": "%cmd.changelist.create%", "category": "Rebased", "icon": "$(add)" },
-      { "command": "rebased.changelist.rename", "title": "%cmd.changelist.rename%", "category": "Rebased" },
-      { "command": "rebased.changelist.delete", "title": "%cmd.changelist.delete%", "category": "Rebased", "icon": "$(trash)" },
-      { "command": "rebased.changelist.setActive", "title": "%cmd.changelist.setActive%", "category": "Rebased" },
-      { "command": "rebased.changelist.commit", "title": "%cmd.changelist.commit%", "category": "Rebased", "icon": "$(check)" },
-      { "command": "rebased.changelist.moveFile", "title": "%cmd.changelist.moveFile%", "category": "Rebased" },
-      { "command": "rebased.changelist.refresh", "title": "%cmd.changelist.refresh%", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.localHistory.show", "title": "%cmd.localHistory.show%", "category": "Rebased" },
-      { "command": "rebased.submodule.init", "title": "%cmd.submodule.init%", "category": "Rebased" },
-      { "command": "rebased.submodule.update", "title": "%cmd.submodule.update%", "category": "Rebased" },
-      { "command": "rebased.submodule.sync", "title": "%cmd.submodule.sync%", "category": "Rebased" },
-      { "command": "rebased.submodule.refresh", "title": "%cmd.submodule.refresh%", "category": "Rebased", "icon": "$(refresh)" },
-      { "command": "rebased.commit.wizard", "title": "%cmd.commit.wizard%", "category": "Rebased", "icon": "$(edit)" },
-      { "command": "rebased.updateProject", "title": "%cmd.updateProject%", "category": "Rebased", "icon": "$(sync)" },
-      { "command": "rebased.diagnose", "title": "%cmd.diagnose%", "category": "Rebased", "icon": "$(pulse)" },
-      { "command": "rebased.showOutput", "title": "%cmd.showOutput%", "category": "Rebased", "icon": "$(output)" }
+      {
+        "command": "rebased.log.refresh",
+        "title": "%cmd.log.refresh%",
+        "category": "Rebased",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "rebased.commit.refresh",
+        "title": "%cmd.commit.refresh%",
+        "category": "Rebased",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "rebased.stash.refresh",
+        "title": "%cmd.stash.refresh%",
+        "category": "Rebased",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "rebased.stash.create",
+        "title": "%cmd.stash.create%",
+        "category": "Rebased",
+        "icon": "$(add)"
+      },
+      {
+        "command": "rebased.stash.apply",
+        "title": "%cmd.stash.apply%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.stash.pop",
+        "title": "%cmd.stash.pop%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.stash.drop",
+        "title": "%cmd.stash.drop%",
+        "category": "Rebased",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "rebased.cherryPick",
+        "title": "%cmd.cherryPick%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.rebase.interactive",
+        "title": "%cmd.rebase.interactive%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.branch.checkout",
+        "title": "%cmd.branch.checkout%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.branch.create",
+        "title": "%cmd.branch.create%",
+        "category": "Rebased",
+        "icon": "$(git-branch)"
+      },
+      {
+        "command": "rebased.commit.amend",
+        "title": "%cmd.commit.amend%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.reflog.open",
+        "title": "%cmd.reflog.open%",
+        "category": "Rebased",
+        "icon": "$(history)"
+      },
+      {
+        "command": "rebased.hunks.open",
+        "title": "%cmd.hunks.open%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.conflict.show",
+        "title": "%cmd.conflict.show%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.commit.show",
+        "title": "%cmd.commit.show%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.branches.pick",
+        "title": "%cmd.branches.pick%",
+        "category": "Rebased",
+        "icon": "$(git-branch)"
+      },
+      {
+        "command": "rebased.file.history",
+        "title": "%cmd.file.history%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.branch.compare",
+        "title": "%cmd.branch.compare%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.tags.pick",
+        "title": "%cmd.tags.pick%",
+        "category": "Rebased",
+        "icon": "$(tag)"
+      },
+      {
+        "command": "rebased.blame.toggleGutter",
+        "title": "%cmd.blame.toggleGutter%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.push",
+        "title": "%cmd.push%",
+        "category": "Rebased",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "rebased.pull",
+        "title": "%cmd.pull%",
+        "category": "Rebased",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "rebased.commit.search",
+        "title": "%cmd.commit.search%",
+        "category": "Rebased",
+        "icon": "$(search)"
+      },
+      {
+        "command": "rebased.remotes.pick",
+        "title": "%cmd.remotes.pick%",
+        "category": "Rebased",
+        "icon": "$(cloud)"
+      },
+      {
+        "command": "rebased.changelist.create",
+        "title": "%cmd.changelist.create%",
+        "category": "Rebased",
+        "icon": "$(add)"
+      },
+      {
+        "command": "rebased.changelist.rename",
+        "title": "%cmd.changelist.rename%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.changelist.delete",
+        "title": "%cmd.changelist.delete%",
+        "category": "Rebased",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "rebased.changelist.setActive",
+        "title": "%cmd.changelist.setActive%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.changelist.commit",
+        "title": "%cmd.changelist.commit%",
+        "category": "Rebased",
+        "icon": "$(check)"
+      },
+      {
+        "command": "rebased.changelist.moveFile",
+        "title": "%cmd.changelist.moveFile%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.changelist.refresh",
+        "title": "%cmd.changelist.refresh%",
+        "category": "Rebased",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "rebased.localHistory.show",
+        "title": "%cmd.localHistory.show%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.submodule.init",
+        "title": "%cmd.submodule.init%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.submodule.update",
+        "title": "%cmd.submodule.update%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.submodule.sync",
+        "title": "%cmd.submodule.sync%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.submodule.refresh",
+        "title": "%cmd.submodule.refresh%",
+        "category": "Rebased",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "rebased.commit.wizard",
+        "title": "%cmd.commit.wizard%",
+        "category": "Rebased",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "rebased.updateProject",
+        "title": "%cmd.updateProject%",
+        "category": "Rebased",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "rebased.diagnose",
+        "title": "%cmd.diagnose%",
+        "category": "Rebased",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "rebased.showOutput",
+        "title": "%cmd.showOutput%",
+        "category": "Rebased",
+        "icon": "$(output)"
+      }
     ],
     "menus": {
       "view/title": [
-        { "command": "rebased.log.refresh",     "when": "view == rebased.log",    "group": "navigation" },
-        { "command": "rebased.commit.refresh",  "when": "view == rebased.commit", "group": "navigation" },
-        { "command": "rebased.stash.refresh",   "when": "view == rebased.stash",  "group": "navigation" },
-        { "command": "rebased.stash.create",    "when": "view == rebased.stash",  "group": "navigation" },
-        { "command": "rebased.branch.create",   "when": "view == rebased.branches","group": "navigation" },
-        { "command": "rebased.reflog.open",     "when": "view == rebased.log",    "group": "navigation@9" },
-        { "command": "rebased.branches.pick",   "when": "view == rebased.branches","group": "navigation@1" },
-        { "command": "rebased.tags.pick",       "when": "view == rebased.branches","group": "navigation@2" },
-        { "command": "rebased.commit.search",   "when": "view == rebased.log",    "group": "navigation@1" },
-        { "command": "rebased.updateProject",   "when": "view == rebased.commit", "group": "navigation@0" },
-        { "command": "rebased.push",            "when": "view == rebased.commit", "group": "navigation@1" },
-        { "command": "rebased.pull",            "when": "view == rebased.commit", "group": "navigation@2" },
-        { "command": "rebased.changelist.create","when": "view == rebased.changelists","group": "navigation@1" },
-        { "command": "rebased.changelist.refresh","when": "view == rebased.changelists","group": "navigation@2" },
-        { "command": "rebased.submodule.init",    "when": "view == rebased.submodules", "group": "navigation@1" },
-        { "command": "rebased.submodule.update",  "when": "view == rebased.submodules", "group": "navigation@2" },
-        { "command": "rebased.submodule.refresh", "when": "view == rebased.submodules", "group": "navigation@3" }
+        {
+          "command": "rebased.log.refresh",
+          "when": "view == rebased.log",
+          "group": "navigation"
+        },
+        {
+          "command": "rebased.commit.refresh",
+          "when": "view == rebased.commit",
+          "group": "navigation"
+        },
+        {
+          "command": "rebased.stash.refresh",
+          "when": "view == rebased.stash",
+          "group": "navigation"
+        },
+        {
+          "command": "rebased.stash.create",
+          "when": "view == rebased.stash",
+          "group": "navigation"
+        },
+        {
+          "command": "rebased.branch.create",
+          "when": "view == rebased.branches",
+          "group": "navigation"
+        },
+        {
+          "command": "rebased.reflog.open",
+          "when": "view == rebased.log",
+          "group": "navigation@9"
+        },
+        {
+          "command": "rebased.branches.pick",
+          "when": "view == rebased.branches",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rebased.tags.pick",
+          "when": "view == rebased.branches",
+          "group": "navigation@2"
+        },
+        {
+          "command": "rebased.commit.search",
+          "when": "view == rebased.log",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rebased.updateProject",
+          "when": "view == rebased.commit",
+          "group": "navigation@0"
+        },
+        {
+          "command": "rebased.push",
+          "when": "view == rebased.commit",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rebased.pull",
+          "when": "view == rebased.commit",
+          "group": "navigation@2"
+        },
+        {
+          "command": "rebased.changelist.create",
+          "when": "view == rebased.changelists",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rebased.changelist.refresh",
+          "when": "view == rebased.changelists",
+          "group": "navigation@2"
+        },
+        {
+          "command": "rebased.submodule.init",
+          "when": "view == rebased.submodules",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rebased.submodule.update",
+          "when": "view == rebased.submodules",
+          "group": "navigation@2"
+        },
+        {
+          "command": "rebased.submodule.refresh",
+          "when": "view == rebased.submodules",
+          "group": "navigation@3"
+        }
       ],
       "explorer/context": [
-        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" },
-        { "command": "rebased.localHistory.show", "when": "resourceScheme == file", "group": "1_rebased@2" }
+        {
+          "command": "rebased.file.history",
+          "when": "resourceScheme == file",
+          "group": "1_rebased@1"
+        },
+        {
+          "command": "rebased.localHistory.show",
+          "when": "resourceScheme == file",
+          "group": "1_rebased@2"
+        }
       ],
       "editor/context": [
-        { "command": "rebased.file.history", "when": "resourceScheme == file", "group": "1_rebased@1" },
-        { "command": "rebased.localHistory.show", "when": "resourceScheme == file", "group": "1_rebased@2" }
+        {
+          "command": "rebased.file.history",
+          "when": "resourceScheme == file",
+          "group": "1_rebased@1"
+        },
+        {
+          "command": "rebased.localHistory.show",
+          "when": "resourceScheme == file",
+          "group": "1_rebased@2"
+        }
       ],
       "view/item/context": [
-        { "command": "rebased.stash.apply", "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@1" },
-        { "command": "rebased.stash.pop",   "when": "view == rebased.stash && viewItem == stash", "group": "1_actions@2" },
-        { "command": "rebased.stash.drop",  "when": "view == rebased.stash && viewItem == stash", "group": "9_danger@1" },
-        { "command": "rebased.branch.checkout", "when": "view == rebased.branches && viewItem == branch", "group": "1_actions@1" },
-        { "command": "rebased.changelist.commit",   "when": "view == rebased.changelists && viewItem =~ /changelist/", "group": "1_actions@1" },
-        { "command": "rebased.changelist.setActive","when": "view == rebased.changelists && viewItem == changelist", "group": "1_actions@2" },
-        { "command": "rebased.changelist.rename",   "when": "view == rebased.changelists && viewItem =~ /changelist/", "group": "2_edit@1" },
-        { "command": "rebased.changelist.delete",   "when": "view == rebased.changelists && viewItem == changelist", "group": "9_danger@1" },
-        { "command": "rebased.changelist.moveFile", "when": "view == rebased.changelists && viewItem == changelist-file", "group": "1_actions@1" }
+        {
+          "command": "rebased.stash.apply",
+          "when": "view == rebased.stash && viewItem == stash",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "rebased.stash.pop",
+          "when": "view == rebased.stash && viewItem == stash",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "rebased.stash.drop",
+          "when": "view == rebased.stash && viewItem == stash",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "rebased.branch.checkout",
+          "when": "view == rebased.branches && viewItem == branch",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "rebased.changelist.commit",
+          "when": "view == rebased.changelists && viewItem =~ /changelist/",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "rebased.changelist.setActive",
+          "when": "view == rebased.changelists && viewItem == changelist",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "rebased.changelist.rename",
+          "when": "view == rebased.changelists && viewItem =~ /changelist/",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "rebased.changelist.delete",
+          "when": "view == rebased.changelists && viewItem == changelist",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "rebased.changelist.moveFile",
+          "when": "view == rebased.changelists && viewItem == changelist-file",
+          "group": "1_actions@1"
+        }
       ]
     },
     "keybindings": [
-      { "command": "rebased.commit.amend", "key": "ctrl+alt+k", "mac": "cmd+alt+k" },
-      { "command": "rebased.branches.pick", "key": "ctrl+shift+b", "mac": "cmd+shift+b" },
-      { "command": "rebased.file.history", "key": "ctrl+alt+h", "mac": "cmd+alt+h", "when": "editorTextFocus" },
-      { "command": "rebased.blame.toggleGutter", "key": "ctrl+alt+b", "mac": "cmd+alt+b", "when": "editorTextFocus" },
-      { "command": "rebased.commit.search", "key": "ctrl+alt+f", "mac": "cmd+alt+f" },
-      { "command": "rebased.commit.wizard", "key": "ctrl+alt+c", "mac": "cmd+alt+c" },
-      { "command": "rebased.updateProject", "key": "ctrl+alt+t", "mac": "cmd+alt+t" }
+      {
+        "command": "rebased.commit.amend",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k"
+      },
+      {
+        "command": "rebased.branches.pick",
+        "key": "ctrl+shift+b",
+        "mac": "cmd+shift+b"
+      },
+      {
+        "command": "rebased.file.history",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "rebased.blame.toggleGutter",
+        "key": "ctrl+alt+b",
+        "mac": "cmd+alt+b",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "rebased.commit.search",
+        "key": "ctrl+alt+f",
+        "mac": "cmd+alt+f"
+      },
+      {
+        "command": "rebased.commit.wizard",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c"
+      },
+      {
+        "command": "rebased.updateProject",
+        "key": "ctrl+alt+t",
+        "mac": "cmd+alt+t"
+      }
     ],
     "configuration": {
       "title": "Rebased",
@@ -203,7 +566,11 @@
         },
         "rebased.updateProject.strategy": {
           "type": "string",
-          "enum": ["ask", "rebase", "merge"],
+          "enum": [
+            "ask",
+            "rebase",
+            "merge"
+          ],
           "enumDescriptions": [
             "%cfg.updateProject.strategy.ask%",
             "%cfg.updateProject.strategy.rebase%",

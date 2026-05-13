@@ -6,6 +6,36 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-13
+
+First Open VSX release. Builds on 0.1.0 with i18n, more screenshots, and
+production-ready conflict handling discovered during real-world use.
+
+### Added
+- **Update Project (⌘⌥T)** — JetBrains-style one-shot pipeline: stash → fetch → pull rebase/merge → pop, with full conflict routing at any step.
+- **Conflict resolver webview** — JetBrains-style file list with per-file actions (采用我方 / 采用对方 / 合并… / 重置), state-aware finalize button.
+- **Orphan-unmerged state detection** — when UU files exist without a formal rebase/merge/cherry-pick in progress (e.g. previous op was reset away), route to conflict panel instead of attempting to stash.
+- **Untracked-file collision dialog** — when stash pop is blocked by upstream files of the same name, offer Keep upstream / Restore from stash (overwrite) / Compare per file / Keep stash.
+- **Index-lock recovery** — silent retry after 600ms on transient races (VS Code's built-in git extension); modal dialog with "Remove lock and retry" for stale locks; "Run diagnostic / Run in terminal / Show output" actions when retries fail.
+- **Repository diagnostic** (`rebased.diagnose`) — 7-check health report covering permissions, lock state, fsck, cloud-sync path heuristic, disk free.
+- **Rebased Git output channel** (`rebased.showOutput`) — full argv / stderr / exit code / elapsed time of every git invocation.
+
+### Added — UX
+- **Internationalization** via `vscode.l10n` — follows VS Code locale automatically. Full Simplified Chinese translation for ~280 strings: command titles, view names, all toasts, all QuickPick items, every webview label.
+- **Screenshots** — 8 illustrative mockups + a hero animated GIF generated from them, embedded inline in the README.
+
+### Fixed
+- Codicon-prefix labels (`$(git-merge) Merge into current`) rendered as literal text in toast notifications because `showErrorMessage` doesn't parse codicons. Switched stuck-index error from toast to modal so all recovery buttons stay visible.
+- Multi-line git errors collapsed to a single line in toasts. New `showGitError` helper surfaces a summary + "Details" button that opens a modal with the full multi-line output.
+- 8 broken comparisons where `if (ok !== "English")` checks were left after the corresponding label got translated. Now using label-constant pattern.
+- `git show --name-status` missed renames because rename detection isn't on by default. Now passes `-M` flag (also for numstat).
+- `parseTodo` rejected lines with leading whitespace and single-token actions (`break`). Now tolerant of both.
+
+### CI / infrastructure
+- `actions/checkout@v4` now uses `fetch-depth: 0` so the smoke test's `git log` against the repo itself sees real history.
+- Release workflow makes both `VSCE_PAT` and `OVSX_PAT` independently optional — publishes to whichever one(s) you have a secret for.
+- Issue templates, PR template, CONTRIBUTING.md, Dependabot config added for public repo readiness.
+
 ## [0.1.0] - 2026-05-12
 
 First public release. JetBrains-style git client features for VS Code.

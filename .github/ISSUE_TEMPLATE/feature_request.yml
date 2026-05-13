@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a new feature or improvement.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What workflow are you trying to do, and where does the current behavior get in the way?
+      placeholder: "When I'm doing X, the extension makes me …"
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How would you like it to work? Reference JetBrains / GitLens / built-in git behavior if it helps.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: "Stays out of GitLens / built-in git's lane (no overlap with existing extensions)"
+        - label: "I'd be willing to contribute a PR"

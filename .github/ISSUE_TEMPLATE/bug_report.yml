@@ -1,0 +1,67 @@
+name: Bug report
+description: A reproducible issue with the extension.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Before filing, please:
+        1. Run **Rebased: Repository Diagnostic** (`rebased.diagnose`) — paste the report below.
+        2. Open **Rebased: Show Output (Git Log)** — copy the last ~20 lines.
+        3. Include screenshots when the issue is visual.
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      description: From the Extensions view sidebar, or `code --list-extensions --show-versions | grep rebased`.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: vscode-version
+    attributes:
+      label: VS Code version
+      description: Help → About → Version line.
+      placeholder: "1.95.0 (Universal)"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Linux
+        - Windows
+        - WSL
+    validations:
+      required: true
+  - type: input
+    id: git
+    attributes:
+      label: Git version
+      description: Output of `git --version`.
+      placeholder: "git version 2.46.0"
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Open repo X
+        2. Run command Y
+        3. Expected: …
+        4. Actual: …
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostic
+    attributes:
+      label: Diagnostic report (rebased.diagnose)
+      render: text
+  - type: textarea
+    id: output
+    attributes:
+      label: Rebased Git output channel
+      render: shell

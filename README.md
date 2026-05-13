@@ -3,7 +3,8 @@
 > JetBrains-style git client features for VS Code.
 > Drag-drop interactive rebase, log graph, hunk staging, changelists, local history.
 
-[![Tests](https://img.shields.io/badge/tests-38%20passing-brightgreen)](#testing)
+[![CI](https://github.com/funchs/vscode-rebased/actions/workflows/ci.yml/badge.svg)](https://github.com/funchs/vscode-rebased/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-47%20passing-brightgreen)](#testing)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.85.0-007ACC)](https://code.visualstudio.com/)
 
@@ -153,14 +154,14 @@ npm test
 Runs five chained suites:
 
 ```
-smoke         5 tests   pure parser round-trips, real-repo graph layout
-integration   7 tests   ephemeral git repos: renames, conflicts, reflog, edge repos
-edge-cases    8 tests   octopus merges, rename detection, EOF markers, malformed input
-cc           12 tests   Conventional Commits parser / validator / formatter
-notify        6 tests   codicon stripping, dirty-tree heuristic, multi-line summarizer
+smoke          6 checks   pure parser round-trips, real-repo graph layout
+integration    9 tests    ephemeral git repos: renames, conflicts, reflog, update-project, edge repos
+edge-cases     8 tests    octopus merges, rename detection, EOF markers, malformed input
+cc            12 tests    Conventional Commits parser / validator / formatter
+notify        12 tests    codicon stripping, dirty-tree heuristic, multi-line summarizer, lock detection, untracked collision parser
 ```
 
-Total: **38 passing**.
+Total: **47 passing**.
 
 ---
 

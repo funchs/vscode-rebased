@@ -3,7 +3,7 @@
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
   "l10n": "./l10n",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "funchs",
   "license": "MIT",
   "icon": "media/icons/rebased.png",
@@ -51,15 +51,24 @@
           "title": "Rebased",
           "icon": "media/icons/activity-bar.svg"
         }
+      ],
+      "panel": [
+        {
+          "id": "rebased-panel",
+          "title": "%view.log%",
+          "icon": "media/icons/activity-bar.svg"
+        }
       ]
     },
     "views": {
-      "rebased": [
+      "rebased-panel": [
         {
           "id": "rebased.log",
           "name": "%view.log%",
           "type": "webview"
-        },
+        }
+      ],
+      "rebased": [
         {
           "id": "rebased.commit",
           "name": "%view.commit%",
@@ -104,6 +113,12 @@
         "title": "%cmd.log.refresh%",
         "category": "Rebased",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "rebased.log.openPanel",
+        "title": "%cmd.log.openPanel%",
+        "category": "Rebased",
+        "icon": "$(layout-panel)"
       },
       {
         "command": "rebased.commit.refresh",

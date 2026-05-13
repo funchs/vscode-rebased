@@ -6,6 +6,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-13
+
+### Changed
+- **Log view moved to the bottom panel** (terminal row). The swim-lane graph
+  benefits from horizontal real estate that the sidebar can't give it, and
+  switching context from code → log via Cmd+J feels closer to how Source
+  Control panels work in JetBrains IDEs. Users who prefer the sidebar can
+  drag the view back via right-click → Move View.
+- **Status bar branch chip is now the Log shortcut**. Click `⎇ main*` to
+  focus the Log panel instead of opening the New Branch dialog. Branch
+  creation moves to `Rebased: Branches…` (⌘⇧B) or the Branches sidebar.
+
+### Added
+- `rebased.log.openPanel` command — reveals the bottom panel and focuses
+  the Log view. Wired to the status bar click; also reachable from the
+  command palette.
+
 ## [0.1.2] - 2026-05-13
 
 ### Fixed

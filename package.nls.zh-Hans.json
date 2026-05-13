@@ -8,6 +8,7 @@
   "view.changelists": "变更列表",
   "view.submodules": "子模块",
   "cmd.log.refresh": "刷新日志",
+  "cmd.log.openPanel": "打开日志面板",
   "cmd.commit.refresh": "刷新提交视图",
   "cmd.stash.refresh": "刷新贮藏",
   "cmd.stash.create": "贮藏改动…",

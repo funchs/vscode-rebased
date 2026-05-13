@@ -7,7 +7,9 @@ export class BranchStatusBar implements vscode.Disposable {
 
   constructor(private readonly repos: RepoManager) {
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);
-    this.item.command = "rebased.branch.create";
+    // Click opens the Log panel at the bottom (terminal row). A right-click
+    // tooltip points users at the Branches QuickPick for branch creation.
+    this.item.command = "rebased.log.openPanel";
     repos.onChange(() => void this.refresh());
     void this.refresh();
   }
@@ -22,7 +24,7 @@ export class BranchStatusBar implements vscode.Disposable {
       const head = (await runGit(["symbolic-ref", "--short", "-q", "HEAD"], { cwd: root })).trim();
       const dirty = (await runGit(["status", "--porcelain"], { cwd: root })).trim().length > 0;
       this.item.text = `$(git-branch) ${head || "(detached)"}${dirty ? "*" : ""}`;
-      this.item.tooltip = vscode.l10n.t("Rebased — {0}\nClick to create a new branch", head || vscode.l10n.t("detached HEAD"));
+      this.item.tooltip = vscode.l10n.t("Rebased — {0}\nClick to open the Log panel", head || vscode.l10n.t("detached HEAD"));
       this.item.show();
     } catch {
       this.item.hide();

@@ -70,7 +70,12 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.window.registerWebviewViewProvider(LogViewProvider.viewType, logView)
   );
   ctx.subscriptions.push(
-    vscode.commands.registerCommand("rebased.log.refresh", () => logView.refresh())
+    vscode.commands.registerCommand("rebased.log.refresh", () => logView.refresh()),
+    vscode.commands.registerCommand("rebased.log.openPanel", async () => {
+      // Reveal the bottom panel and focus the Log view within it. VS Code
+      // auto-registers a `<viewId>.focus` command for every contributed view.
+      await vscode.commands.executeCommand("rebased.log.focus");
+    })
   );
 
   const commitView = new CommitViewProvider(ctx, repos);

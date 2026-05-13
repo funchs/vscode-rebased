@@ -8,6 +8,7 @@
   "view.changelists": "Changelists",
   "view.submodules": "Submodules",
   "cmd.log.refresh": "Refresh Log",
+  "cmd.log.openPanel": "Open Log Panel",
   "cmd.commit.refresh": "Refresh Commit View",
   "cmd.stash.refresh": "Refresh Stashes",
   "cmd.stash.create": "Stash Changes...",

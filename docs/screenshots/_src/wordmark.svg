@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="wm" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#c4b5fd"/>
+    </linearGradient>
+    <filter id="g"><feGaussianBlur stdDeviation="20"/></filter>
+  </defs>
+
+  <rect width="800" height="400" fill="url(#bg)"/>
+  <circle cx="700" cy="60" r="60" fill="#c4b5fd" opacity="0.20" filter="url(#g)"/>
+  <circle cx="80" cy="340" r="80" fill="#7c3aed" opacity="0.25" filter="url(#g)"/>
+
+  <!-- Centered logo + wordmark -->
+  <g transform="translate(180, 130)">
+    <g stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="28" cy="20" r="14" fill="#ffffff"/>
+      <circle cx="28" cy="120" r="14" fill="#ffffff"/>
+      <circle cx="108" cy="70" r="14" fill="#ffffff"/>
+      <line x1="28" y1="34" x2="28" y2="106"/>
+      <path d="M 28 70 C 28 96 70 120 96 110"/>
+      <path d="M 28 70 C 28 44 70 20 96 30"/>
+    </g>
+    <text x="170" y="80" font-family="-apple-system, sans-serif" font-weight="800" font-size="92" letter-spacing="-3" fill="url(#wm)">Rebased</text>
+  </g>
+
+  <!-- Tagline below center -->
+  <text x="400" y="320" text-anchor="middle" font-family="-apple-system, sans-serif" font-weight="500" font-size="20" fill="#c4b5fd" opacity="0.90">JetBrains-style Git client for VS Code</text>
+</svg>

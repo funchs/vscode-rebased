@@ -15,6 +15,11 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Surface which publishers are configured for this run. Secrets are not
+    # available in `if:` at the step level, so we expose presence via env.
+    env:
+      HAS_VSCE_PAT: ${{ secrets.VSCE_PAT != '' }}
+      HAS_OVSX_PAT: ${{ secrets.OVSX_PAT != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,13 +45,13 @@ jobs:
         run: npx --yes @vscode/vsce package --no-yarn --allow-missing-repository
 
       - name: Publish to VS Code Marketplace
-        if: ${{ secrets.VSCE_PAT != '' }}
+        if: env.HAS_VSCE_PAT == 'true'
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: npx --yes @vscode/vsce publish --packagePath *.vsix --no-yarn
 
       - name: Publish to Open VSX
-        if: ${{ secrets.OVSX_PAT != '' }}
+        if: env.HAS_OVSX_PAT == 'true'
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: npx --yes ovsx publish *.vsix

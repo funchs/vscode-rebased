@@ -8,7 +8,7 @@
 #
 # Usage: bash scripts/take-screenshots.sh [shot-name]
 #   shot-name = one of: rebase-editor log-graph commit-details commit-wizard
-#               blame-gutter local-history conflict-panel
+#               blame-gutter local-history conflict-panel branches-context
 #               (default: all)
 
 set -euo pipefail
@@ -134,6 +134,22 @@ case "$shot" in
 1. Press Cmd+Shift+P → 'Rebased: Resolve Conflicts…' (apps/web/server.ts has UU markers).
 2. The Conflict resolver webview opens with the file row + 4 action buttons.
 3. Capture the panel.
+"
+    [ "$shot" = "all" ] || exit 0 ;;
+esac
+
+case "$shot" in
+  all|branches-context)
+    [ "$shot" = "all" ] || open_fixture
+    prompt "branches-context" "
+1. Click the Rebased icon in the activity bar.
+2. Expand the 'Branches' view in the sidebar. You should see Local + Remote groups.
+3. Right-click a NON-current local branch (e.g. 'feature/api') to open the
+   context menu — it should list 11+ actions across 4 groups:
+   Checkout / Merge / Rebase / Compare / New from Here / Copy Name / Rename /
+   Push (Set Upstream) / Force Push / Reset Current to Here / Delete.
+4. Capture the window so both the branches tree AND the open context menu
+   are visible. Use Cmd+Shift+4 → Space → click for a tighter crop if needed.
 "
     ;;
 esac

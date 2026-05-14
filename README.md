@@ -92,6 +92,29 @@ commit them as one without touching unrelated edits.
 
 ![Changelists view](docs/screenshots/changelists.png)
 
+### Branches view with direct right-click actions
+
+The sidebar **Branches** tree groups local + remote branches and exposes every
+action JetBrains pops into its branches popup — directly on each row, no
+intermediate quick-pick. Click a branch to open the Log panel filtered to
+that branch (single- or double-click per `workbench.list.openMode`).
+
+Per-type context menus:
+
+- **Current branch** — New Branch from Here · Rename · Push (set upstream) ·
+  Force Push (with-lease) · Copy Name
+- **Local non-current** — Checkout · Merge into Current · Rebase Current onto This ·
+  Compare with Current · New from Here · Rename · Push (set upstream) · Force Push ·
+  Copy Name · Reset Current to Here · Delete
+- **Remote** (`origin/…`) — Checkout · Merge · Rebase onto · Compare · New from Here ·
+  Fetch This Branch · Copy Name · Reset Current to Here · Delete on Remote
+
+Destructive actions (Force Push, Reset Hard, Delete on Remote) gate behind a
+modal confirmation; merge / rebase auto-offer "Stash and retry" on a dirty
+working tree.
+
+![Branches context menu](docs/screenshots/branches-context.png)
+
 ### Status bar that follows the operation
 
 Color and content adapt to the current state — clean (blue), dirty
@@ -117,7 +140,7 @@ init / update / sync.
 | **Rebase** | Drag-drop editor · ⌘⏎ save · auto-stash on dirty tree |
 | **Log** | Graph · virtual scroll · 5-field filter · refs · context menu (rebase / cherry-pick / checkout) |
 | **Commit** | Stage/unstage · hunk staging · amend · changelists · CC validator · wizard |
-| **Branches** | QuickPick with 8 actions · ⌘⇧B · compare · push --set-upstream |
+| **Branches** | Sidebar tree with JetBrains-style right-click (checkout · merge · rebase · compare · rename · push · force-push · fetch · reset · delete · copy name) · click-to-Log · QuickPick (⌘⇧B) |
 | **History** | Commit details · file history (`--follow`) · compare branches · commit search (6 modes) |
 | **Blame** | Inline current line · full-file gutter (⌘⌥B) · hover shows commit |
 | **Stash** | Tree view · apply / pop / drop · auto-stash-and-retry on dirty tree |

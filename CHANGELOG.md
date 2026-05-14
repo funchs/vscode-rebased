@@ -6,6 +6,45 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Branches sidebar: JetBrains-style direct right-click actions.** The
+  Branches tree now exposes the full action set per node — previously the
+  only way to merge / rebase / rename / delete / push-set-upstream a branch
+  was the `Rebased: Branches…` QuickPick (⌘⇧B), which forced "pick branch →
+  pick action" two steps. The tree's context menu now groups by branch type
+  (current / local / remote), with a `9_danger` group at the bottom.
+
+  New per-row commands: `rebased.branch.merge`, `rebased.branch.rebaseOnto`,
+  `rebased.branch.rename`, `rebased.branch.delete`, `rebased.branch.newFromHere`,
+  `rebased.branch.pushSetUpstream`, `rebased.branch.pushForce`,
+  `rebased.branch.fetch`, `rebased.branch.deleteRemote`,
+  `rebased.branch.resetTo`, `rebased.branch.copyName`.
+
+  Destructive actions (force-push, hard-reset, delete on remote) gate behind
+  a modal warning; merge / rebase keep the existing "Stash and retry" recovery.
+
+- **Click a branch in the tree → opens the Log filtered to that branch.**
+  Added `rebased.log.showBranch` command and an inbound `setBranchFilter`
+  message on the Log webview; `BranchItem` now carries that command, so the
+  click fires per `workbench.list.openMode` (single- or double-click).
+
+### Changed
+
+- Branches view title bar's "New Branch" icon switched from `$(git-branch)`
+  to `$(add)` — the previous icon duplicated the adjacent `$(git-branch)`
+  for the Branches QuickPick. Aligns with the "create" icon convention used
+  by Stashes / Changelists.
+- `BranchItem.contextValue` split from a single `"branch"` into three
+  variants — `branch-current`, `branch-local`, `branch-remote` — so the
+  context menu can hide actions that don't apply (e.g. Delete on the
+  current branch, Delete on Remote for local branches).
+- Action-execution body extracted from `branches-picker.ts` into a shared
+  `performBranchAction(repos, root, action, name, opts)` helper. The
+  QuickPick and the new context-menu commands now go through the same code
+  path — single source of truth for error handling, dirty-tree recovery,
+  and status-bar feedback.
+
 ## [0.1.4] - 2026-05-13
 
 ### Changed

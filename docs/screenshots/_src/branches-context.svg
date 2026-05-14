@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .bg { fill: #1e1e1e; }
+      .title-bar { fill: #3c3c3c; }
+      .activity-bar { fill: #333333; }
+      .sidebar { fill: #252526; }
+      .status-bar { fill: #007acc; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; font-size: 12px; }
+      .text-sub { fill: #858585; font-family: -apple-system, sans-serif; font-size: 11px; }
+      .text-dim { fill: #6c6c6c; font-family: -apple-system, sans-serif; font-size: 11px; }
+      .heading { fill: #cccccc; font-family: -apple-system; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      .menu-bg { fill: #252526; stroke: #454545; stroke-width: 1; }
+      .menu-shadow { fill: #000; opacity: 0.35; }
+      .menu-text { fill: #cccccc; font-family: -apple-system; font-size: 12px; }
+      .menu-text-danger { fill: #f48771; font-family: -apple-system; font-size: 12px; }
+      .menu-sep { stroke: #3c3c3c; stroke-width: 1; }
+      .menu-hover { fill: #094771; }
+      .branch-row-hl { fill: #37373d; }
+      .ico { stroke: #c5c5c5; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+      .ico-mute { stroke: #8a8a8a; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+      .ico-current { stroke: #3fb950; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+      .ico-danger { stroke: #f48771; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+
+    <!-- Reusable git-branch glyph (size ~14px) -->
+    <symbol id="git-branch" viewBox="0 0 14 14">
+      <circle cx="3.5" cy="3" r="1.6"/>
+      <circle cx="3.5" cy="11" r="1.6"/>
+      <circle cx="10.5" cy="6.5" r="1.6"/>
+      <line x1="3.5" y1="4.6" x2="3.5" y2="9.4"/>
+      <path d="M 3.5 7 C 3.5 9.5 7 10.5 9.5 8.2"/>
+    </symbol>
+    <!-- Check (current branch marker) -->
+    <symbol id="check" viewBox="0 0 14 14">
+      <polyline points="2.5,7.5 5.6,10.5 11.5,3.5"/>
+    </symbol>
+    <!-- Cloud (remote branch marker) -->
+    <symbol id="cloud" viewBox="0 0 14 14">
+      <path d="M 3 10 Q 1 10 1 8 Q 1 6 3 5.5 Q 3.5 3 6 3 Q 8.8 3 9.5 5.6 Q 13 5.6 13 8.2 Q 13 10 11 10 Z"/>
+    </symbol>
+    <!-- Generic menu icons -->
+    <symbol id="ico-merge" viewBox="0 0 14 14">
+      <circle cx="3.5" cy="3" r="1.4"/>
+      <circle cx="3.5" cy="11" r="1.4"/>
+      <circle cx="10.5" cy="7" r="1.4"/>
+      <line x1="3.5" y1="4.4" x2="3.5" y2="9.6"/>
+      <path d="M 3.5 4 C 3.5 6 7 7 9.1 7"/>
+    </symbol>
+    <symbol id="ico-rebase" viewBox="0 0 14 14">
+      <path d="M 1.5 7 L 10 7"/>
+      <polyline points="7,4 10,7 7,10"/>
+      <circle cx="12" cy="7" r="1.4"/>
+    </symbol>
+    <symbol id="ico-diff" viewBox="0 0 14 14">
+      <rect x="2" y="2" width="4" height="10"/>
+      <rect x="8" y="2" width="4" height="10"/>
+    </symbol>
+    <symbol id="ico-plus" viewBox="0 0 14 14">
+      <line x1="7" y1="3" x2="7" y2="11"/>
+      <line x1="3" y1="7" x2="11" y2="7"/>
+    </symbol>
+    <symbol id="ico-copy" viewBox="0 0 14 14">
+      <rect x="3" y="3" width="7" height="8"/>
+      <rect x="5" y="1" width="7" height="8"/>
+    </symbol>
+    <symbol id="ico-pencil" viewBox="0 0 14 14">
+      <path d="M 2 12 L 5 11 L 11.5 4.5 L 9.5 2.5 L 3 9 Z"/>
+      <line x1="9" y1="3" x2="11" y2="5"/>
+    </symbol>
+    <symbol id="ico-up" viewBox="0 0 14 14">
+      <polyline points="3,7 7,3 11,7"/>
+      <line x1="7" y1="3" x2="7" y2="12"/>
+    </symbol>
+    <symbol id="ico-zap" viewBox="0 0 14 14">
+      <polygon points="8,1 3,8 7,8 6,13 11,6 7,6"/>
+    </symbol>
+    <symbol id="ico-discard" viewBox="0 0 14 14">
+      <path d="M 11.5 7 A 4.5 4.5 0 1 1 7 2.5"/>
+      <polyline points="7,1 10.5,2.5 9,5"/>
+    </symbol>
+    <symbol id="ico-trash" viewBox="0 0 14 14">
+      <line x1="2" y1="4" x2="12" y2="4"/>
+      <path d="M 3.5 4 L 4.5 12 L 9.5 12 L 10.5 4"/>
+      <line x1="6" y1="2" x2="8" y2="2"/>
+    </symbol>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="750" class="bg"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project</text>
+
+  <!-- Activity bar -->
+  <rect x="0" y="30" width="48" height="720" class="activity-bar"/>
+  <rect x="0" y="170" width="48" height="40" fill="#37373d"/>
+  <rect x="0" y="170" width="2" height="40" fill="#007acc"/>
+  <use href="#git-branch" x="15" y="180" width="18" height="20" class="ico"/>
+
+  <!-- Sidebar -->
+  <rect x="48" y="30" width="400" height="720" class="sidebar"/>
+  <text x="64" y="55" class="heading">REBASED</text>
+
+  <!-- Collapsed sections -->
+  <text x="64" y="88" class="text">▶ Log</text>
+  <text x="64" y="113" class="text">▶ Commit</text>
+  <text x="64" y="138" class="text">▶ Stashes</text>
+
+  <!-- Branches section -->
+  <g transform="translate(64, 168)">
+    <text class="text" style="font-weight:600;">▼ Branches</text>
+    <!-- title-bar icons: $(add) $(git-branch) $(tag) -->
+    <g transform="translate(316, -10)" class="ico-mute">
+      <use href="#ico-plus" x="0" y="0" width="14" height="14"/>
+      <use href="#git-branch" x="22" y="0" width="14" height="14"/>
+      <g transform="translate(44, 0)">
+        <path d="M 2 2 L 8 2 L 12 6 L 8 10 L 2 10 Z"/>
+        <circle cx="5" cy="6" r="1.1"/>
+      </g>
+    </g>
+
+    <!-- ── Local (3) ── -->
+    <text x="0" y="25" class="text">▼ Local (3)</text>
+
+    <!-- main (current) -->
+    <use href="#check" x="14" y="36" width="14" height="14" class="ico-current"/>
+    <text x="32" y="48" class="text">main</text>
+
+    <!-- feature/api -->
+    <use href="#git-branch" x="14" y="56" width="14" height="14" class="ico"/>
+    <text x="32" y="68" class="text">feature/api</text>
+    <text x="116" y="68" class="text-dim">→ origin/feature/api  ↑2</text>
+
+    <!-- feature/perf — highlighted (right-clicked) -->
+    <rect x="-10" y="76" width="370" height="20" class="branch-row-hl"/>
+    <use href="#git-branch" x="14" y="78" width="14" height="14" class="ico"/>
+    <text x="32" y="90" class="text">feature/perf</text>
+    <text x="116" y="90" class="text-dim">→ origin/feature/perf  ↑5 ↓1</text>
+
+    <!-- ── Remote (4) ── -->
+    <text x="0" y="120" class="text">▼ Remote (4)</text>
+    <use href="#cloud" x="14" y="130" width="14" height="14" class="ico-mute"/>
+    <text x="32" y="142" class="text" fill="#9aa5b1">origin/main</text>
+    <use href="#cloud" x="14" y="150" width="14" height="14" class="ico-mute"/>
+    <text x="32" y="162" class="text" fill="#9aa5b1">origin/feature/api</text>
+    <use href="#cloud" x="14" y="170" width="14" height="14" class="ico-mute"/>
+    <text x="32" y="182" class="text" fill="#9aa5b1">origin/feature/perf</text>
+    <use href="#cloud" x="14" y="190" width="14" height="14" class="ico-mute"/>
+    <text x="32" y="202" class="text" fill="#9aa5b1">origin/release/v0.7.0</text>
+  </g>
+
+  <!-- Editor body — intentionally muted -->
+  <rect x="448" y="30" width="752" height="700" fill="#1e1e1e"/>
+  <g transform="translate(620, 360)" class="text-sub">
+    <text x="0" y="0" font-size="13">click a branch → Log panel filters to it</text>
+    <text x="0" y="22" font-size="11" fill="#6c6c6c">(uses `workbench.list.openMode` — single- or double-click)</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="730" width="1200" height="20" class="status-bar"/>
+  <text x="14" y="744" fill="white" font-family="-apple-system" font-size="11">⎇ feature/perf*</text>
+  <text x="160" y="744" fill="rgba(255,255,255,.78)" font-family="-apple-system" font-size="11">↻ history</text>
+
+  <!-- ────────── Context menu on feature/perf ────────── -->
+  <!-- Drop shadow under the menu -->
+  <rect x="154" y="262" width="328" height="358" rx="6" class="menu-shadow"/>
+  <g transform="translate(150, 258)">
+    <rect width="328" height="358" rx="5" class="menu-bg"/>
+
+    <!-- group 1: actions -->
+    <g class="ico">
+      <use href="#check" x="12" y="11" width="14" height="14"/>
+    </g>
+    <text x="34" y="22" class="menu-text">Checkout</text>
+
+    <rect x="0" y="30" width="328" height="22" class="menu-hover"/>
+    <use href="#ico-merge" x="12" y="33" width="14" height="14" class="ico"/>
+    <text x="34" y="45" class="menu-text" style="font-weight:500;">Merge into Current Branch</text>
+
+    <use href="#ico-rebase" x="12" y="56" width="14" height="14" class="ico"/>
+    <text x="34" y="68" class="menu-text">Rebase Current onto This</text>
+
+    <line x1="10" y1="80" x2="318" y2="80" class="menu-sep"/>
+
+    <!-- group 2: inspect -->
+    <use href="#ico-diff" x="12" y="86" width="14" height="14" class="ico"/>
+    <text x="34" y="98" class="menu-text">Compare with Current</text>
+
+    <use href="#ico-plus" x="12" y="110" width="14" height="14" class="ico"/>
+    <text x="34" y="122" class="menu-text">New Branch from Here…</text>
+
+    <use href="#ico-copy" x="12" y="134" width="14" height="14" class="ico"/>
+    <text x="34" y="146" class="menu-text">Copy Branch Name</text>
+
+    <line x1="10" y1="158" x2="318" y2="158" class="menu-sep"/>
+
+    <!-- group 3: edit -->
+    <use href="#ico-pencil" x="12" y="164" width="14" height="14" class="ico"/>
+    <text x="34" y="176" class="menu-text">Rename Branch…</text>
+
+    <use href="#ico-up" x="12" y="188" width="14" height="14" class="ico"/>
+    <text x="34" y="200" class="menu-text">Push (Set Upstream)</text>
+
+    <use href="#ico-zap" x="12" y="212" width="14" height="14" class="ico"/>
+    <text x="34" y="224" class="menu-text">Force Push (with-lease)</text>
+
+    <line x1="10" y1="236" x2="318" y2="236" class="menu-sep"/>
+
+    <!-- group 9: danger -->
+    <use href="#ico-discard" x="12" y="242" width="14" height="14" class="ico-danger"/>
+    <text x="34" y="254" class="menu-text-danger">Reset Current Branch to Here…</text>
+
+    <use href="#ico-trash" x="12" y="266" width="14" height="14" class="ico-danger"/>
+    <text x="34" y="278" class="menu-text-danger">Delete Branch…</text>
+  </g>
+
+  <!-- Annotation callout -->
+  <g transform="translate(488, 280)">
+    <path d="M 0 22 L 50 22 L 78 4" stroke="#888" stroke-width="1.2" fill="none"/>
+    <circle cx="78" cy="4" r="3" fill="#888"/>
+    <text x="92" y="8" class="text-sub" font-size="12">right-click → JetBrains-style menu</text>
+    <text x="92" y="26" class="text-dim">grouped: actions · inspect · edit · danger</text>
+  </g>
+</svg>

@@ -44,12 +44,24 @@ class GroupItem extends vscode.TreeItem {
 export class BranchItem extends vscode.TreeItem {
   constructor(public branch: BranchInfo) {
     super(branch.name, vscode.TreeItemCollapsibleState.None);
-    this.contextValue = "branch";
+    this.contextValue = branch.current
+      ? "branch-current"
+      : branch.remote
+      ? "branch-remote"
+      : "branch-local";
     this.iconPath = new vscode.ThemeIcon(branch.current ? "check" : "git-branch");
     const bits: string[] = [];
     if (branch.upstream) bits.push(`→ ${branch.upstream}`);
     if (branch.ahead) bits.push(`↑${branch.ahead}`);
     if (branch.behind) bits.push(`↓${branch.behind}`);
     if (bits.length) this.description = bits.join(" ");
+    // Default click action: reveal the Log view filtered to this branch.
+    // VS Code's `workbench.list.openMode` (singleClick / doubleClick) decides
+    // when this fires.
+    this.command = {
+      command: "rebased.log.showBranch",
+      title: vscode.l10n.t("Show in Log"),
+      arguments: [this],
+    };
   }
 }

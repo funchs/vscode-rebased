@@ -308,6 +308,23 @@ window.addEventListener("message", (event) => {
       qBranch.appendChild(opt);
     }
     qBranch.value = cur;
+  } else if (m.type === "setBranchFilter") {
+    // Programmatically set the branch filter (e.g. from "Show in Log").
+    const target = (m.branch as string) ?? "";
+    if (target) {
+      let exists = false;
+      for (let i = 0; i < qBranch.options.length; i++) {
+        if (qBranch.options[i].value === target) { exists = true; break; }
+      }
+      if (!exists) {
+        const opt = document.createElement("option");
+        opt.value = target;
+        opt.textContent = target;
+        qBranch.appendChild(opt);
+      }
+    }
+    qBranch.value = target;
+    emitFilter();
   } else if (m.type === "error") {
     statusEl.textContent = t("errorPrefix", "Error: {0}", m.message);
     statusEl.style.display = "block";

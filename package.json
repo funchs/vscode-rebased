@@ -121,6 +121,12 @@
         "icon": "$(layout-panel)"
       },
       {
+        "command": "rebased.log.showBranch",
+        "title": "%cmd.log.showBranch%",
+        "category": "Rebased",
+        "icon": "$(eye)"
+      },
+      {
         "command": "rebased.commit.refresh",
         "title": "%cmd.commit.refresh%",
         "category": "Rebased",
@@ -173,7 +179,72 @@
         "command": "rebased.branch.create",
         "title": "%cmd.branch.create%",
         "category": "Rebased",
-        "icon": "$(git-branch)"
+        "icon": "$(add)"
+      },
+      {
+        "command": "rebased.branch.merge",
+        "title": "%cmd.branch.merge%",
+        "category": "Rebased",
+        "icon": "$(git-merge)"
+      },
+      {
+        "command": "rebased.branch.rebaseOnto",
+        "title": "%cmd.branch.rebaseOnto%",
+        "category": "Rebased"
+      },
+      {
+        "command": "rebased.branch.rename",
+        "title": "%cmd.branch.rename%",
+        "category": "Rebased",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "rebased.branch.delete",
+        "title": "%cmd.branch.delete%",
+        "category": "Rebased",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "rebased.branch.newFromHere",
+        "title": "%cmd.branch.newFromHere%",
+        "category": "Rebased",
+        "icon": "$(add)"
+      },
+      {
+        "command": "rebased.branch.pushSetUpstream",
+        "title": "%cmd.branch.pushSetUpstream%",
+        "category": "Rebased",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "rebased.branch.pushForce",
+        "title": "%cmd.branch.pushForce%",
+        "category": "Rebased",
+        "icon": "$(zap)"
+      },
+      {
+        "command": "rebased.branch.fetch",
+        "title": "%cmd.branch.fetch%",
+        "category": "Rebased",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "rebased.branch.deleteRemote",
+        "title": "%cmd.branch.deleteRemote%",
+        "category": "Rebased",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "rebased.branch.resetTo",
+        "title": "%cmd.branch.resetTo%",
+        "category": "Rebased",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "rebased.branch.copyName",
+        "title": "%cmd.branch.copyName%",
+        "category": "Rebased",
+        "icon": "$(copy)"
       },
       {
         "command": "rebased.commit.amend",
@@ -472,8 +543,68 @@
         },
         {
           "command": "rebased.branch.checkout",
-          "when": "view == rebased.branches && viewItem == branch",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-remote)",
           "group": "1_actions@1"
+        },
+        {
+          "command": "rebased.branch.merge",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-remote)",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "rebased.branch.rebaseOnto",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-remote)",
+          "group": "1_actions@3"
+        },
+        {
+          "command": "rebased.branch.compare",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-remote)",
+          "group": "2_inspect@1"
+        },
+        {
+          "command": "rebased.branch.newFromHere",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-remote || viewItem == branch-current)",
+          "group": "2_inspect@2"
+        },
+        {
+          "command": "rebased.branch.rename",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-current)",
+          "group": "3_edit@1"
+        },
+        {
+          "command": "rebased.branch.pushSetUpstream",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-current)",
+          "group": "3_edit@2"
+        },
+        {
+          "command": "rebased.branch.fetch",
+          "when": "view == rebased.branches && viewItem == branch-remote",
+          "group": "1_actions@4"
+        },
+        {
+          "command": "rebased.branch.copyName",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-remote || viewItem == branch-current)",
+          "group": "2_inspect@3"
+        },
+        {
+          "command": "rebased.branch.pushForce",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-current)",
+          "group": "3_edit@3"
+        },
+        {
+          "command": "rebased.branch.resetTo",
+          "when": "view == rebased.branches && (viewItem == branch-local || viewItem == branch-remote)",
+          "group": "9_danger@0"
+        },
+        {
+          "command": "rebased.branch.delete",
+          "when": "view == rebased.branches && viewItem == branch-local",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "rebased.branch.deleteRemote",
+          "when": "view == rebased.branches && viewItem == branch-remote",
+          "group": "9_danger@2"
         },
         {
           "command": "rebased.changelist.commit",

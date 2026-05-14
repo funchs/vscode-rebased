@@ -2,16 +2,46 @@ import * as vscode from "vscode";
 import { cherryPick, runGit, startInteractiveRebase, commit as gitCommit } from "../core/git";
 import type { RepoManager } from "../core/repo";
 import type { BranchItem } from "./branch-tree";
+import { performBranchAction, type BranchActionKind } from "./branches-picker";
 import { showGitError, isWorkingTreeDirtyError } from "../core/notify";
+
+type BranchArg = BranchItem | { name: string; remote?: boolean; current?: boolean } | undefined;
+
+function resolve(arg: BranchArg): { name: string; remote: boolean; current: boolean } | undefined {
+  if (!arg) return undefined;
+  if ("branch" in arg) {
+    return { name: arg.branch.name, remote: !!arg.branch.remote, current: !!arg.branch.current };
+  }
+  return { name: arg.name, remote: !!arg.remote, current: !!arg.current };
+}
+
+function delegate(action: BranchActionKind, repos: RepoManager) {
+  return async (arg: BranchArg) => {
+    const root = repos.root;
+    if (!root) return;
+    const info = resolve(arg);
+    if (!info) {
+      const name = await vscode.window.showInputBox({ prompt: vscode.l10n.t("Branch name") });
+      if (!name) return;
+      await performBranchAction(repos, root, action, name, { remote: false, current: false });
+      return;
+    }
+    await performBranchAction(repos, root, action, info.name, { remote: info.remote, current: info.current });
+  };
+}
 
 export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: RepoManager): void {
   ctx.subscriptions.push(
-    vscode.commands.registerCommand("rebased.branch.checkout", async (arg: BranchItem | { name: string }) => {
+    vscode.commands.registerCommand("rebased.branch.checkout", async (arg: BranchArg) => {
       const root = repos.root;
       if (!root || !arg) return;
-      const name = "branch" in arg ? arg.branch.name : arg.name;
+      const info = resolve(arg);
+      if (!info) return;
+      // Local: checkout by name. Remote: strip "origin/" so git creates/uses
+      // a local branch tracking it (matches existing behavior).
+      const target = info.remote ? info.name.replace(/^[^/]+\//, "") : info.name;
       try {
-        await runGit(["checkout", name.replace(/^origin\//, "")], { cwd: root });
+        await runGit(["checkout", target], { cwd: root });
         repos.fire();
       } catch (e: unknown) {
         const msg = (e as Error).message;
@@ -21,8 +51,8 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
             label: vscode.l10n.t("Stash and retry"),
             run: async () => {
               try {
-                await runGit(["stash", "push", "-u", "-m", `rebased: auto before checkout ${name}`], { cwd: root });
-                await runGit(["checkout", name.replace(/^origin\//, "")], { cwd: root });
+                await runGit(["stash", "push", "-u", "-m", `rebased: auto before checkout ${target}`], { cwd: root });
+                await runGit(["checkout", target], { cwd: root });
                 await runGit(["stash", "pop"], { cwd: root });
                 repos.fire();
               } catch (e2: unknown) {
@@ -31,9 +61,20 @@ export function registerBranchCommands(ctx: vscode.ExtensionContext, repos: Repo
             },
           });
         }
-        await showGitError(`Checkout ${name}`, e, actions);
+        await showGitError(`Checkout ${target}`, e, actions);
       }
     }),
+    vscode.commands.registerCommand("rebased.branch.merge", delegate("merge", repos)),
+    vscode.commands.registerCommand("rebased.branch.rebaseOnto", delegate("rebaseOnto", repos)),
+    vscode.commands.registerCommand("rebased.branch.rename", delegate("rename", repos)),
+    vscode.commands.registerCommand("rebased.branch.delete", delegate("delete", repos)),
+    vscode.commands.registerCommand("rebased.branch.newFromHere", delegate("newFromHere", repos)),
+    vscode.commands.registerCommand("rebased.branch.pushSetUpstream", delegate("pushSetUpstream", repos)),
+    vscode.commands.registerCommand("rebased.branch.pushForce", delegate("pushForceWithLease", repos)),
+    vscode.commands.registerCommand("rebased.branch.fetch", delegate("fetch", repos)),
+    vscode.commands.registerCommand("rebased.branch.deleteRemote", delegate("deleteRemote", repos)),
+    vscode.commands.registerCommand("rebased.branch.resetTo", delegate("resetCurrentToHere", repos)),
+    vscode.commands.registerCommand("rebased.branch.copyName", delegate("copyName", repos)),
     vscode.commands.registerCommand("rebased.branch.create", async () => {
       const root = repos.root;
       if (!root) return;

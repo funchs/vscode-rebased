@@ -8,9 +8,26 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "rebased.log";
   private view?: vscode.WebviewView;
   private currentFilter: LogFilter = {};
+  // Branch to apply once the webview signals "ready". Holds the request when
+  // revealForBranch is called before the view has been resolved (first reveal).
+  private pendingBranchFilter?: string;
 
   constructor(private readonly ctx: vscode.ExtensionContext, private readonly repos: RepoManager) {
     repos.onChange(() => void this.refresh());
+  }
+
+  async revealForBranch(name: string): Promise<void> {
+    this.pendingBranchFilter = name;
+    // VS Code auto-registers `<viewId>.focus` for every contributed view.
+    // This also resolves the webview if it hasn't been opened yet.
+    await vscode.commands.executeCommand("rebased.log.focus");
+    this.applyPendingFilter();
+  }
+
+  private applyPendingFilter(): void {
+    if (!this.view || !this.pendingBranchFilter) return;
+    this.view.webview.postMessage({ type: "setBranchFilter", branch: this.pendingBranchFilter });
+    this.pendingBranchFilter = undefined;
   }
 
   resolveWebviewView(view: vscode.WebviewView): void {
@@ -32,6 +49,7 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
       if (msg.type === "ready") {
         await this.sendBranches();
         await this.refresh();
+        this.applyPendingFilter();
       } else if (msg.type === "setFilter") {
         this.currentFilter = msg.filter ?? {};
         await this.refresh();

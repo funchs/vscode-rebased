@@ -90,6 +90,26 @@ JetBrains 风格的命名分组，把工作区路径归到不同 changelist。
 
 ![更改列表视图](docs/screenshots/changelists.png)
 
+### 分支视图：直接右键的 JetBrains 式动作
+
+侧栏的 **Branches** 树按本地 / 远端两组列出所有分支，把 JetBrains 弹出菜单里
+的全部动作直接挂到每一行的右键菜单上，不再需要先开 QuickPick 选分支。点击
+分支节点会打开底部 Log 面板并按该分支过滤提交（单击或双击触发由
+`workbench.list.openMode` 决定）。
+
+按分支类型显示对应菜单：
+
+- **当前分支** — 从此处新建分支 · 重命名 · 推送（设置上游） · 强制推送（with-lease） · 复制分支名
+- **本地非当前** — Checkout · 合并到当前 · 把当前变基到此 · 与当前对比 ·
+  从此处新建分支 · 重命名 · 推送 · 强制推送 · 复制分支名 · 重置当前到这里 · 删除
+- **远端**（`origin/…`） — Checkout · 合并 · 变基 · 对比 · 从此处新建分支 ·
+  获取此分支 · 复制分支名 · 重置当前到这里 · 在远端删除
+
+破坏性操作（强制推送、硬重置、在远端删除）走模态二次确认；merge / rebase
+在工作区脏时自动提供"贮藏后重试"。
+
+![分支右键菜单](docs/screenshots/branches-context.png)
+
 ### 跟随状态的状态栏
 
 颜色和内容随仓库状态变化 —— clean（蓝色）、dirty（蓝色 + changelist 名）、
@@ -113,7 +133,7 @@ conflict（红色 + 冲突文件数）。点击可创建分支。
 | **Rebase** | 拖拽编辑器 · ⌘⏎ 保存 · 脏工作区时自动 stash |
 | **Log** | 提交图 · 虚拟滚动 · 5 字段过滤 · refs · 右键菜单（rebase / cherry-pick / checkout） |
 | **Commit** | 暂存 / 取消暂存 · hunk 级暂存 · amend · changelists · CC 校验 · wizard |
-| **Branches** | 8 种动作的 QuickPick · ⌘⇧B · 对比 · push --set-upstream |
+| **Branches** | 侧栏树 + JetBrains 风右键菜单（checkout · merge · rebase · 对比 · 重命名 · push · 强制推送 · fetch · 重置 · 删除 · 复制名） · 点击即打开 Log · QuickPick（⌘⇧B） |
 | **History** | 提交详情 · 文件历史（`--follow`） · 对比分支 · 提交搜索（6 种模式） |
 | **Blame** | 当前行内联 · 整文件侧栏（⌘⌥B） · 悬停查看提交 |
 | **Stash** | 树状视图 · apply / pop / drop · 脏工作区时自动 stash 再重试 |

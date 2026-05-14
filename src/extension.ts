@@ -75,6 +75,18 @@ export function activate(ctx: vscode.ExtensionContext): void {
       // Reveal the bottom panel and focus the Log view within it. VS Code
       // auto-registers a `<viewId>.focus` command for every contributed view.
       await vscode.commands.executeCommand("rebased.log.focus");
+    }),
+    vscode.commands.registerCommand("rebased.log.showBranch", async (arg?: string | { branch?: { name: string }; name?: string }) => {
+      const name =
+        typeof arg === "string"
+          ? arg
+          : arg && "branch" in arg && arg.branch
+          ? arg.branch.name
+          : arg && "name" in arg
+          ? arg.name
+          : undefined;
+      if (!name) return;
+      await logView.revealForBranch(name);
     })
   );
 
@@ -114,9 +126,17 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("rebased.file.history", (uri?: vscode.Uri) =>
       showFileHistory(repos, uri)
     ),
-    vscode.commands.registerCommand("rebased.branch.compare", (name?: string) =>
-      compareBranches(repos, name)
-    ),
+    vscode.commands.registerCommand("rebased.branch.compare", (arg?: string | { branch?: { name: string }; name?: string }) => {
+      const against =
+        typeof arg === "string"
+          ? arg
+          : arg && "branch" in arg && arg.branch
+          ? arg.branch.name
+          : arg && "name" in arg
+          ? arg.name
+          : undefined;
+      return compareBranches(repos, against);
+    }),
     vscode.commands.registerCommand("rebased.tags.pick", () => showTagsPicker(repos)),
     vscode.commands.registerCommand("rebased.blame.toggleGutter", () => blameGutter.toggle()),
     vscode.commands.registerCommand("rebased.push", () => showPushDialog(repos)),

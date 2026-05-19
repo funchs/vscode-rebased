@@ -3,7 +3,7 @@
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
   "l10n": "./l10n",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "publisher": "funchs",
   "license": "MIT",
   "icon": "media/icons/rebased.png",

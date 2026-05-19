@@ -6,6 +6,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-19
+
 ### Added
 
 - **Commit view redesign — VS Code-native, JetBrains-feature-parity.** The

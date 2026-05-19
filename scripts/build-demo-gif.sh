@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build docs/screenshots/demo.gif — slideshow of the 7 PNG screenshots.
+# Build docs/screenshots/demo.gif — slideshow of the project's PNG screenshots.
 # Cross-platform (needs ffmpeg). Uses palettegen + paletteuse for small filesize.
 
 set -euo pipefail
@@ -15,21 +15,39 @@ fi
 TMP=$(mktemp -d)
 trap "rm -rf $TMP" EXIT
 
+# Frame order tells the story:
+#  1. Log graph — the headline visual
+#  2. Log filter — IntelliJ-style multi-select / hash / custom range
+#  3. Commit view — checkbox staging + group-by + chevron variants
+#  4. Branches context menu — JetBrains-style direct right-click
+#  5. Drag-drop interactive rebase editor — flagship
+#  6. Commit details side panel
+#  7. Conventional Commits wizard
+#  8. Blame gutter
+#  9. Conflict resolution panel
+# 10. Local history
+# 11. Loop back to log graph
 cat > "$TMP/order.txt" <<EOF
 file '$PWD/docs/screenshots/log-graph.png'
+duration 2.4
+file '$PWD/docs/screenshots/log-filter.png'
 duration 2.8
+file '$PWD/docs/screenshots/commit-view.png'
+duration 2.8
+file '$PWD/docs/screenshots/branches-context.png'
+duration 2.6
 file '$PWD/docs/screenshots/rebase-editor.png'
-duration 2.8
+duration 2.6
 file '$PWD/docs/screenshots/commit-details.png'
-duration 2.8
+duration 2.4
 file '$PWD/docs/screenshots/commit-wizard.png'
-duration 2.5
+duration 2.2
 file '$PWD/docs/screenshots/blame-gutter.png'
-duration 2.8
+duration 2.4
 file '$PWD/docs/screenshots/conflict-panel.png'
-duration 2.8
+duration 2.6
 file '$PWD/docs/screenshots/local-history.png'
-duration 2.5
+duration 2.2
 file '$PWD/docs/screenshots/log-graph.png'
 EOF
 

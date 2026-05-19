@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getLog, getBranches, type LogFilter } from "../core/git";
+import { getLog, getBranches, getAuthors, type LogFilter } from "../core/git";
 import { layout } from "./graph";
 import type { RepoManager } from "../core/repo";
 import { asset, csp, nonce } from "../core/webview-util";
@@ -43,11 +43,13 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
       menuCheckout: T("Checkout {0}"),
       statusFiltered: T("{0} commit{1} match · clear filters to show all"),
       errorPrefix: T("Error: {0}"),
+      msNoMatches: T("No matches."),
+      currentBranchHead: T("Current branch (HEAD)"),
     };
     view.webview.html = this.html(view.webview, l10n);
     view.webview.onDidReceiveMessage(async (msg) => {
       if (msg.type === "ready") {
-        await this.sendBranches();
+        await Promise.all([this.sendBranches(), this.sendAuthors()]);
         await this.refresh();
         this.applyPendingFilter();
       } else if (msg.type === "setFilter") {
@@ -61,6 +63,24 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
         await vscode.commands.executeCommand("rebased.cherryPick", msg.hash);
       } else if (msg.type === "showCommit" && msg.hash) {
         await vscode.commands.executeCommand("rebased.commit.show", msg.hash);
+      } else if (msg.type === "pickPath") {
+        // Open VS Code's native file/folder dialog; return a repo-relative
+        // path back to the webview so the user doesn't have to type one.
+        const root = this.repos.root;
+        const defaultUri = root ? vscode.Uri.file(root) : undefined;
+        const picked = await vscode.window.showOpenDialog({
+          canSelectFiles: true,
+          canSelectFolders: true,
+          canSelectMany: false,
+          openLabel: vscode.l10n.t("Filter to this path"),
+          defaultUri,
+        });
+        if (!picked?.[0]) return;
+        let p = picked[0].fsPath;
+        if (root && (p === root || p.startsWith(root + "/"))) {
+          p = p === root ? "" : p.slice(root.length + 1);
+        }
+        this.view?.webview.postMessage({ type: "setPathFilter", path: p });
       }
     });
   }
@@ -76,6 +96,17 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
       });
     } catch {
       // ignore — first-time repos may have no refs yet
+    }
+  }
+
+  private async sendAuthors(): Promise<void> {
+    const root = this.repos.root;
+    if (!root || !this.view) return;
+    try {
+      const authors = await getAuthors(root);
+      this.view.webview.postMessage({ type: "authors", authors });
+    } catch {
+      // empty repo or no commits yet — leave authors empty
     }
   }
 
@@ -118,30 +149,82 @@ export class LogViewProvider implements vscode.WebviewViewProvider {
     const n = nonce();
     const script = asset(webview, this.ctx, "out", "webview", "log.js");
     const style = asset(webview, this.ctx, "media", "log.css");
+    const codicon = asset(webview, this.ctx, "media", "codicons", "codicon.css");
+    const T = vscode.l10n.t;
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
     return /* html */ `<!DOCTYPE html>
 <html><head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="${csp(webview, n)}" />
+<link rel="stylesheet" href="${codicon}" />
 <link rel="stylesheet" href="${style}" />
 </head><body>
-<div id="empty" class="empty">${vscode.l10n.t("No git repository in the current workspace.")}</div>
+<div id="empty" class="empty">${esc(T("No git repository in the current workspace."))}</div>
+
 <form id="toolbar" class="toolbar" autocomplete="off">
-  <input id="q-message" placeholder="${vscode.l10n.t("Subject…")}" type="search" />
-  <input id="q-author" placeholder="${vscode.l10n.t("Author")}" type="search" />
-  <input id="q-path" placeholder="${vscode.l10n.t("Path")}" type="search" />
-  <select id="q-branch">
-    <option value="">${vscode.l10n.t("All branches")}</option>
+  <!-- Subject text search -->
+  <input id="q-message" type="search" placeholder="${esc(T("Subject…"))}" />
+
+  <!-- Author multi-select. Trigger button shows summary; popover hosts a
+       filter input + checkbox list (populated via 'authors' message). -->
+  <div class="ms" id="ms-author" data-empty="${esc(T("All users"))}" data-plural="${esc(T("{0} users"))}">
+    <button type="button" class="ms-trigger" title="${esc(T("Author"))}">
+      <span class="ms-label">${esc(T("All users"))}</span>
+      <span class="codicon codicon-chevron-down ms-caret"></span>
+    </button>
+    <div class="ms-popover" hidden>
+      <input class="ms-search" type="search" placeholder="${esc(T("Filter…"))}" />
+      <ul class="ms-list"></ul>
+      <div class="ms-foot">
+        <button type="button" class="ms-reset link-btn">${esc(T("Clear"))}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Path filter + Browse button (VS Code openDialog). -->
+  <input id="q-path" type="search" placeholder="${esc(T("Path"))}" />
+  <button type="button" id="q-path-pick" class="icon-btn" title="${esc(T("Browse…"))}" aria-label="${esc(T("Browse…"))}">
+    <span class="codicon codicon-folder-opened"></span>
+  </button>
+
+  <!-- Branch multi-select. Includes two static head entries (All / HEAD)
+       above the dynamic branch list. -->
+  <div class="ms" id="ms-branch" data-empty="${esc(T("All branches"))}" data-plural="${esc(T("{0} branches"))}">
+    <button type="button" class="ms-trigger" title="${esc(T("Branch"))}">
+      <span class="ms-label">${esc(T("All branches"))}</span>
+      <span class="codicon codicon-chevron-down ms-caret"></span>
+    </button>
+    <div class="ms-popover" hidden>
+      <input class="ms-search" type="search" placeholder="${esc(T("Filter…"))}" />
+      <ul class="ms-list"></ul>
+      <div class="ms-foot">
+        <button type="button" class="ms-reset link-btn">${esc(T("Clear"))}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date range. "Custom…" reveals from/until inputs. -->
+  <select id="q-since" title="${esc(T("Date range"))}">
+    <option value="">${esc(T("Any time"))}</option>
+    <option value="1.day.ago">${esc(T("Last 24h"))}</option>
+    <option value="1.week.ago">${esc(T("Last week"))}</option>
+    <option value="1.month.ago">${esc(T("Last month"))}</option>
+    <option value="3.months.ago">${esc(T("Last 3 months"))}</option>
+    <option value="1.year.ago">${esc(T("Last year"))}</option>
+    <option value="__custom__">${esc(T("Custom range…"))}</option>
   </select>
-  <select id="q-since">
-    <option value="">${vscode.l10n.t("Any time")}</option>
-    <option value="1.day.ago">${vscode.l10n.t("Last 24h")}</option>
-    <option value="1.week.ago">${vscode.l10n.t("Last week")}</option>
-    <option value="1.month.ago">${vscode.l10n.t("Last month")}</option>
-    <option value="3.months.ago">${vscode.l10n.t("Last 3 months")}</option>
-    <option value="1.year.ago">${vscode.l10n.t("Last year")}</option>
-  </select>
-  <button type="button" id="clear" title="${vscode.l10n.t("Clear filters")}">×</button>
+  <input id="q-since-date" type="date" hidden title="${esc(T("From date"))}" />
+  <input id="q-until-date" type="date" hidden title="${esc(T("Until date"))}" />
+
+  <!-- Hash filter — separate from subject because git's --grep doesn't match SHAs. -->
+  <input id="q-hash" type="search" placeholder="${esc(T("Commit hash"))}" pattern="[0-9a-fA-F]{4,40}" />
+
+  <!-- Clear-all button (codicon). -->
+  <button type="button" id="clear" class="icon-btn" title="${esc(T("Clear filters"))}" aria-label="${esc(T("Clear filters"))}">
+    <span class="codicon codicon-clear-all"></span>
+  </button>
 </form>
+
 <div id="status" class="status"></div>
 <div id="log"></div>
 <script nonce="${n}">window.__rebasedL10n=${JSON.stringify(l10n)};</script>

@@ -9,6 +9,7 @@
 # Usage: bash scripts/take-screenshots.sh [shot-name]
 #   shot-name = one of: rebase-editor log-graph commit-details commit-wizard
 #               blame-gutter local-history conflict-panel branches-context
+#               commit-view log-filter
 #               (default: all)
 
 set -euo pipefail
@@ -150,6 +151,42 @@ case "$shot" in
    Push (Set Upstream) / Force Push / Reset Current to Here / Delete.
 4. Capture the window so both the branches tree AND the open context menu
    are visible. Use Cmd+Shift+4 → Space → click for a tighter crop if needed.
+"
+    [ "$shot" = "all" ] || exit 0 ;;
+esac
+
+case "$shot" in
+  all|commit-view)
+    [ "$shot" = "all" ] || open_fixture
+    prompt "commit-view" "
+1. Click the Rebased icon in the activity bar — the badge should show the
+   modified file count.
+2. Expand the 'Commit' view. Make sure several files are modified (run e.g.
+   'echo x >> README.md' in different files if needed).
+3. Toggle 'Group by' in the view title bar (the codicon-list-tree icon) →
+   pick 'By directory' so the file list shows directory headers.
+4. Tick a couple of checkboxes so the section pill reads '2/4' or similar.
+5. Type a commit message; click the chevron next to 'Commit' to open the
+   variant menu (Commit and Push / Commit (amend, no edit) / Show Diff /
+   Open Hunk Editor / Move to changelist / Open Stashes / Rollback…).
+6. Capture the sidebar with the chevron menu visible.
+"
+    [ "$shot" = "all" ] || exit 0 ;;
+esac
+
+case "$shot" in
+  all|log-filter)
+    [ "$shot" = "all" ] || open_fixture
+    prompt "log-filter" "
+1. Open the Log panel (Cmd+J then click the Log tab in the bottom panel).
+2. In the toolbar, click the Author multi-select trigger — the popover
+   should open with a Filter… input and a checkbox list of authors.
+3. Tick a couple of authors.
+4. Pick 'Custom range…' in the date dropdown so the from/until date
+   inputs appear next to it.
+5. Type a partial hash in the hash field.
+6. Capture the Log panel with the Author popover still open and the date
+   inputs visible — the whole filter toolbar should fit in frame.
 "
     ;;
 esac

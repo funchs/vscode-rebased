@@ -29,35 +29,189 @@ interface Row {
 const vscode = acquireVsCodeApi<unknown>();
 
 // Toolbar wiring -------------------------------------------------------------
-const qMessage = document.getElementById("q-message") as HTMLInputElement;
-const qAuthor = document.getElementById("q-author") as HTMLInputElement;
-const qPath = document.getElementById("q-path") as HTMLInputElement;
-const qBranch = document.getElementById("q-branch") as HTMLSelectElement;
-const qSince = document.getElementById("q-since") as HTMLSelectElement;
-const clearBtn = document.getElementById("clear") as HTMLButtonElement;
-const statusEl = document.getElementById("status") as HTMLDivElement;
+const qMessage     = document.getElementById("q-message") as HTMLInputElement;
+const qPath        = document.getElementById("q-path") as HTMLInputElement;
+const qPathPick    = document.getElementById("q-path-pick") as HTMLButtonElement;
+const qSince       = document.getElementById("q-since") as HTMLSelectElement;
+const qSinceDate   = document.getElementById("q-since-date") as HTMLInputElement;
+const qUntilDate   = document.getElementById("q-until-date") as HTMLInputElement;
+const qHash        = document.getElementById("q-hash") as HTMLInputElement;
+const clearBtn     = document.getElementById("clear") as HTMLButtonElement;
+const statusEl     = document.getElementById("status") as HTMLDivElement;
+
+// Multi-select widget shared by author + branch filters. Trigger button
+// summarises the current selection; clicking opens a popover with a search
+// box and checkbox list. Static head items (e.g. "Current branch (HEAD)")
+// are added via setStaticItems before dynamic data arrives.
+interface MSItem { value: string; label: string; }
+class MultiSelect {
+  private items: MSItem[] = [];
+  private staticItems: MSItem[] = [];
+  private selected = new Set<string>();
+  private label: HTMLSpanElement;
+  private trigger: HTMLButtonElement;
+  private popover: HTMLDivElement;
+  private listEl: HTMLUListElement;
+  private searchEl: HTMLInputElement;
+  private resetEl: HTMLButtonElement;
+
+  constructor(
+    host: HTMLElement,
+    private emptyLabel: string,
+    private pluralLabel: string, // "{0} branches" — {0} replaced with count
+    private onChange: () => void,
+  ) {
+    this.trigger = host.querySelector(".ms-trigger") as HTMLButtonElement;
+    this.popover = host.querySelector(".ms-popover") as HTMLDivElement;
+    this.listEl  = host.querySelector(".ms-list") as HTMLUListElement;
+    this.searchEl = host.querySelector(".ms-search") as HTMLInputElement;
+    this.resetEl  = host.querySelector(".ms-reset") as HTMLButtonElement;
+    this.label   = host.querySelector(".ms-label") as HTMLSpanElement;
+
+    this.trigger.onclick = (e) => { e.stopPropagation(); this.toggle(); };
+    this.searchEl.oninput = () => this.renderList();
+    this.resetEl.onclick = () => { this.selected.clear(); this.renderList(); this.updateTrigger(); onChange(); };
+    document.addEventListener("click", (e) => {
+      if (!host.contains(e.target as Node)) this.close();
+    });
+    this.updateTrigger();
+  }
+
+  setStaticItems(items: MSItem[]) { this.staticItems = items; this.renderList(); }
+  setItems(items: MSItem[]) { this.items = items; this.renderList(); }
+  values(): string[] { return [...this.selected]; }
+  // For backend-driven setSelection (e.g. "Show in Log").
+  setSelection(values: string[]) {
+    this.selected = new Set(values);
+    this.renderList();
+    this.updateTrigger();
+  }
+  toggle() { this.popover.hidden ? this.open() : this.close(); }
+  open() {
+    this.popover.hidden = false;
+    this.searchEl.value = "";
+    this.searchEl.focus();
+    this.renderList();
+  }
+  close() { this.popover.hidden = true; }
+  private updateTrigger() {
+    const n = this.selected.size;
+    if (n === 0) this.label.textContent = this.emptyLabel;
+    else if (n === 1) {
+      const v = [...this.selected][0];
+      const found = [...this.staticItems, ...this.items].find((i) => i.value === v);
+      this.label.textContent = found ? found.label : v;
+    } else this.label.textContent = this.pluralLabel.replace("{0}", String(n));
+  }
+  private renderList() {
+    while (this.listEl.firstChild) this.listEl.removeChild(this.listEl.firstChild);
+    const filter = this.searchEl.value.toLowerCase();
+    const render = (it: MSItem, isStatic: boolean) => {
+      if (filter && !it.label.toLowerCase().includes(filter)) return;
+      const li = document.createElement("li");
+      li.className = "ms-item" + (isStatic ? " ms-static" : "");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = this.selected.has(it.value);
+      cb.onchange = () => {
+        if (cb.checked) this.selected.add(it.value);
+        else this.selected.delete(it.value);
+        this.updateTrigger();
+        this.onChange();
+      };
+      const lbl = document.createElement("span");
+      lbl.className = "ms-item-label";
+      lbl.textContent = it.label;
+      li.appendChild(cb);
+      li.appendChild(lbl);
+      li.onclick = (e) => { if (e.target !== cb) cb.click(); };
+      this.listEl.appendChild(li);
+    };
+    for (const it of this.staticItems) render(it, true);
+    if (this.staticItems.length && this.items.length) {
+      const sep = document.createElement("li");
+      sep.className = "ms-sep";
+      this.listEl.appendChild(sep);
+    }
+    for (const it of this.items) render(it, false);
+    if (!this.listEl.firstChild) {
+      const li = document.createElement("li");
+      li.className = "ms-empty";
+      li.textContent = (window.__rebasedL10n?.msNoMatches ?? "No matches.");
+      this.listEl.appendChild(li);
+    }
+  }
+}
+
+const msAuthorEl = document.getElementById("ms-author") as HTMLDivElement;
+const msBranchEl = document.getElementById("ms-branch") as HTMLDivElement;
+const msAuthor = new MultiSelect(
+  msAuthorEl,
+  msAuthorEl.dataset.empty ?? "All users",
+  msAuthorEl.dataset.plural ?? "{0} users",
+  () => emitFilter(),
+);
+const msBranch = new MultiSelect(
+  msBranchEl,
+  msBranchEl.dataset.empty ?? "All branches",
+  msBranchEl.dataset.plural ?? "{0} branches",
+  () => emitFilter(),
+);
+// Pre-populate branch widget with the "Current branch (HEAD)" sentinel that
+// always appears even before the branches list arrives from the backend.
+msBranch.setStaticItems([
+  { value: "HEAD", label: (window.__rebasedL10n?.currentBranchHead ?? "Current branch (HEAD)") },
+]);
+
+function readDateFilter(): { since?: string; until?: string } {
+  if (qSince.value === "__custom__") {
+    return { since: qSinceDate.value || undefined, until: qUntilDate.value || undefined };
+  }
+  return { since: qSince.value || undefined };
+}
 
 let filterTimer: number | undefined;
 function emitFilter() {
   clearTimeout(filterTimer);
   filterTimer = window.setTimeout(() => {
+    const date = readDateFilter();
+    const authors = msAuthor.values();
+    const branches = msBranch.values();
     vscode.postMessage({
       type: "setFilter",
       filter: {
         message: qMessage.value.trim() || undefined,
-        author: qAuthor.value.trim() || undefined,
-        path: qPath.value.trim() || undefined,
-        branch: qBranch.value || undefined,
-        since: qSince.value || undefined,
+        author:  authors.length === 0 ? undefined : authors.length === 1 ? authors[0] : authors,
+        path:    qPath.value.trim() || undefined,
+        branch:  branches.length === 0 ? undefined : branches.length === 1 ? branches[0] : branches,
+        since:   date.since,
+        until:   date.until,
+        hash:    qHash.value.trim() || undefined,
       },
     });
   }, 220);
 }
-for (const el of [qMessage, qAuthor, qPath]) el.addEventListener("input", emitFilter);
-for (const el of [qBranch, qSince]) el.addEventListener("change", emitFilter);
+for (const el of [qMessage, qPath, qHash, qSinceDate, qUntilDate]) el.addEventListener("input", emitFilter);
+qSince.addEventListener("change", emitFilter);
+
+qPathPick.addEventListener("click", () => vscode.postMessage({ type: "pickPath" }));
+
+// Show/hide from/until date pickers when "Custom range…" is picked.
+qSince.addEventListener("change", () => {
+  const custom = qSince.value === "__custom__";
+  qSinceDate.hidden = !custom;
+  qUntilDate.hidden = !custom;
+  if (custom) qSinceDate.focus();
+  else { qSinceDate.value = ""; qUntilDate.value = ""; }
+});
+
 clearBtn.addEventListener("click", () => {
-  qMessage.value = qAuthor.value = qPath.value = "";
-  qBranch.value = qSince.value = "";
+  qMessage.value = qPath.value = qHash.value = "";
+  qSinceDate.value = qUntilDate.value = "";
+  qSince.value = "";
+  qSinceDate.hidden = qUntilDate.hidden = true;
+  msAuthor.setSelection([]);
+  msBranch.setSelection([]);
   emitFilter();
 });
 
@@ -298,32 +452,16 @@ window.addEventListener("message", (event) => {
     emptyEl.style.display = "block";
     statusEl.style.display = "none";
   } else if (m.type === "branches") {
-    const cur = qBranch.value;
-    // Rebuild the select while keeping "All" + restoring selection.
-    while (qBranch.options.length > 1) qBranch.remove(1);
-    for (const b of m.branches as string[]) {
-      const opt = document.createElement("option");
-      opt.value = b;
-      opt.textContent = b;
-      qBranch.appendChild(opt);
-    }
-    qBranch.value = cur;
+    msBranch.setItems((m.branches as string[]).map((b) => ({ value: b, label: b })));
+  } else if (m.type === "authors") {
+    msAuthor.setItems((m.authors as string[]).map((a) => ({ value: a, label: a })));
   } else if (m.type === "setBranchFilter") {
-    // Programmatically set the branch filter (e.g. from "Show in Log").
+    // Programmatically replace the branch selection (e.g. from "Show in Log").
     const target = (m.branch as string) ?? "";
-    if (target) {
-      let exists = false;
-      for (let i = 0; i < qBranch.options.length; i++) {
-        if (qBranch.options[i].value === target) { exists = true; break; }
-      }
-      if (!exists) {
-        const opt = document.createElement("option");
-        opt.value = target;
-        opt.textContent = target;
-        qBranch.appendChild(opt);
-      }
-    }
-    qBranch.value = target;
+    msBranch.setSelection(target ? [target] : []);
+    emitFilter();
+  } else if (m.type === "setPathFilter") {
+    qPath.value = (m.path as string) ?? "";
     emitFilter();
   } else if (m.type === "error") {
     statusEl.textContent = t("errorPrefix", "Error: {0}", m.message);

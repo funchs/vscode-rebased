@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .bg { fill: #1e1e1e; }
+      .title-bar { fill: #3c3c3c; }
+      .activity-bar { fill: #333333; }
+      .sidebar { fill: #252526; }
+      .status-bar { fill: #007acc; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 12px; }
+      .text-sub { fill: #858585; font-family: -apple-system, sans-serif; font-size: 11px; }
+      .text-dim { fill: #6c6c6c; font-family: -apple-system, sans-serif; font-size: 11px; }
+      .heading { fill: #cccccc; font-family: -apple-system; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      .section-head { fill: #cccccc; font-family: -apple-system; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      .pill { fill: #4d4d4d; }
+      .pill-text { fill: #cccccc; font-family: -apple-system; font-size: 10px; }
+      .ico { stroke: #c5c5c5; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+      .ico-mute { stroke: #8a8a8a; fill: none; stroke-width: 1.4; }
+      .ico-danger { stroke: #f48771; fill: none; stroke-width: 1.4; }
+      .checkbox { fill: #1e1e1e; stroke: #6c6c6c; stroke-width: 1; }
+      .checkbox-on { fill: #6a3fce; }
+      .check-mark { stroke: white; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .indeterm { fill: white; }
+      .fc-modified { fill: #e2c08d; font-family: -apple-system, sans-serif; font-size: 12px; }
+      .fc-added { fill: #81b88b; font-family: -apple-system, sans-serif; font-size: 12px; }
+      .fc-renamed { fill: #73c991; font-family: -apple-system, sans-serif; font-size: 12px; }
+      .status-letter { font-family: "SF Mono", Menlo, monospace; font-size: 11px; font-weight: 700; }
+      .menu-bg { fill: #252526; stroke: #454545; stroke-width: 1; }
+      .menu-shadow { fill: #000; opacity: 0.35; }
+      .menu-text { fill: #cccccc; font-family: -apple-system; font-size: 12px; }
+      .menu-text-danger { fill: #f48771; font-family: -apple-system; font-size: 12px; }
+      .menu-sep { stroke: #3c3c3c; stroke-width: 1; }
+      .menu-hover { fill: #094771; }
+      .input-bg { fill: #3c3c3c; stroke: #2d2d30; }
+      .cc-chip { font-family: "SF Mono", Menlo, monospace; font-size: 9px; font-weight: 700; fill: white; }
+      .chip-feat { fill: #4caf50; }
+      .chip-scope { fill: #c19a5b; }
+      .badge-bg { fill: #6a3fce; }
+      .badge-text { fill: white; font-family: -apple-system, sans-serif; font-size: 10px; font-weight: 600; }
+    </style>
+    <symbol id="ico-chev-down" viewBox="0 0 14 14"><polyline points="3,5 7,9 11,5"/></symbol>
+    <symbol id="ico-chev-right" viewBox="0 0 14 14"><polyline points="5,3 9,7 5,11"/></symbol>
+    <symbol id="ico-refresh" viewBox="0 0 14 14"><path d="M 11 7 A 4 4 0 1 1 7 3"/><polyline points="7,1 7,3 9,3"/></symbol>
+    <symbol id="ico-sync" viewBox="0 0 14 14"><path d="M 3 7 A 4 4 0 0 1 9 4"/><polyline points="9,2 9,4 11,4"/><path d="M 11 7 A 4 4 0 0 1 5 10"/><polyline points="5,12 5,10 3,10"/></symbol>
+    <symbol id="ico-up" viewBox="0 0 14 14"><polyline points="3,6 7,2 11,6"/><line x1="7" y1="2" x2="7" y2="12"/></symbol>
+    <symbol id="ico-down" viewBox="0 0 14 14"><polyline points="3,8 7,12 11,8"/><line x1="7" y1="2" x2="7" y2="12"/></symbol>
+    <symbol id="ico-tree" viewBox="0 0 14 14"><line x1="3" y1="3" x2="11" y2="3"/><line x1="5" y1="7" x2="11" y2="7"/><line x1="7" y1="11" x2="11" y2="11"/></symbol>
+    <symbol id="ico-preview" viewBox="0 0 14 14"><rect x="2" y="3" width="10" height="8"/><line x1="7" y1="3" x2="7" y2="11"/></symbol>
+    <symbol id="ico-discard" viewBox="0 0 14 14"><path d="M 11 7 A 4 4 0 1 1 7 3"/><polyline points="7,1 9,3 7,5"/></symbol>
+    <symbol id="ico-gear" viewBox="0 0 14 14"><circle cx="7" cy="7" r="2"/><path d="M 7 2 L 7 4 M 7 10 L 7 12 M 2 7 L 4 7 M 10 7 L 12 7 M 3.5 3.5 L 5 5 M 9 9 L 10.5 10.5 M 3.5 10.5 L 5 9 M 9 5 L 10.5 3.5"/></symbol>
+    <symbol id="ico-branch" viewBox="0 0 14 14"><circle cx="3.5" cy="3" r="1.6"/><circle cx="3.5" cy="11" r="1.6"/><circle cx="10.5" cy="6.5" r="1.6"/><line x1="3.5" y1="4.6" x2="3.5" y2="9.4"/><path d="M 3.5 7 C 3.5 9.5 7 10.5 9.5 8.2"/></symbol>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="750" class="bg"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project</text>
+
+  <!-- Activity bar with badge "4" on Rebased icon -->
+  <rect x="0" y="30" width="48" height="720" class="activity-bar"/>
+  <rect x="0" y="170" width="48" height="40" fill="#37373d"/>
+  <rect x="0" y="170" width="2" height="40" fill="#007acc"/>
+  <use href="#ico-branch" x="15" y="180" width="18" height="20" class="ico"/>
+  <!-- Badge: pill with "4" -->
+  <rect x="30" y="195" width="16" height="14" rx="7" class="badge-bg"/>
+  <text x="38" y="206" text-anchor="middle" class="badge-text">4</text>
+
+  <!-- Sidebar -->
+  <rect x="48" y="30" width="430" height="720" class="sidebar"/>
+  <text x="64" y="55" class="heading">REBASED</text>
+
+  <!-- Collapsed Log -->
+  <text x="64" y="88" class="text">▶ Log</text>
+
+  <!-- Commit section (expanded — focus of this image) -->
+  <text x="64" y="118" class="text" font-weight="600">▾ Commit</text>
+  <!-- title-bar toolbar icons (right side of view title) -->
+  <g transform="translate(312, 108)" class="ico-mute">
+    <use href="#ico-refresh" x="0"   y="0" width="14" height="14"/>
+    <use href="#ico-sync"    x="22"  y="0" width="14" height="14"/>
+    <use href="#ico-up"      x="44"  y="0" width="14" height="14"/>
+    <use href="#ico-down"    x="66"  y="0" width="14" height="14"/>
+    <use href="#ico-tree"    x="88"  y="0" width="14" height="14"/>
+    <use href="#ico-preview" x="110" y="0" width="14" height="14"/>
+  </g>
+
+  <!-- Section header: ▾ CHANGES 3/4 ... [↺] -->
+  <g transform="translate(64, 140)">
+    <use href="#ico-chev-down" x="0" y="0" width="14" height="14" class="ico"/>
+    <text x="22" y="11" class="section-head">CHANGES</text>
+    <rect x="92" y="0" width="32" height="14" rx="7" class="pill"/>
+    <text x="108" y="11" text-anchor="middle" class="pill-text">3/4</text>
+    <!-- bulk rollback button, right-aligned -->
+    <use href="#ico-discard" x="380" y="0" width="14" height="14" class="ico-mute"/>
+  </g>
+
+  <!-- File rows (group-by directory ON to show hierarchy + multi-level indent) -->
+  <!-- Group: src -->
+  <g transform="translate(86, 174)">
+    <use href="#ico-chev-down" x="0" y="0" width="14" height="14" class="ico"/>
+    <text x="22" y="11" class="text" font-weight="600">src</text>
+    <rect x="48" y="0" width="20" height="14" rx="7" class="pill"/>
+    <text x="58" y="11" text-anchor="middle" class="pill-text">2</text>
+  </g>
+  <!-- file 1: unchecked, modified -->
+  <g transform="translate(100, 198)">
+    <rect x="0" y="4" width="12" height="12" rx="2" class="checkbox"/>
+    <text x="22" y="14" class="fc-modified">auth.ts</text>
+    <text x="408" y="14" class="status-letter fc-modified" text-anchor="end">M</text>
+  </g>
+  <!-- file 2: checked, renamed -->
+  <g transform="translate(100, 222)">
+    <rect x="0" y="4" width="12" height="12" rx="2" class="checkbox-on"/>
+    <polyline points="2.5,10 5.5,13 10,7" transform="translate(0,-1)" class="check-mark"/>
+    <text x="22" y="14" class="fc-renamed">util.ts → utils.ts</text>
+    <text x="408" y="14" class="status-letter fc-renamed" text-anchor="end">R</text>
+  </g>
+
+  <!-- Group: apps/api -->
+  <g transform="translate(86, 250)">
+    <use href="#ico-chev-down" x="0" y="0" width="14" height="14" class="ico"/>
+    <text x="22" y="11" class="text" font-weight="600">apps/api</text>
+    <rect x="78" y="0" width="20" height="14" rx="7" class="pill"/>
+    <text x="88" y="11" text-anchor="middle" class="pill-text">1</text>
+  </g>
+  <g transform="translate(100, 274)">
+    <rect x="0" y="4" width="12" height="12" rx="2" class="checkbox-on"/>
+    <polyline points="2.5,10 5.5,13 10,7" transform="translate(0,-1)" class="check-mark"/>
+    <text x="22" y="14" class="fc-modified">list.ts</text>
+    <text x="408" y="14" class="status-letter fc-modified" text-anchor="end">M</text>
+  </g>
+
+  <!-- Group: apps/web -->
+  <g transform="translate(86, 302)">
+    <use href="#ico-chev-down" x="0" y="0" width="14" height="14" class="ico"/>
+    <text x="22" y="11" class="text" font-weight="600">apps/web</text>
+    <rect x="84" y="0" width="20" height="14" rx="7" class="pill"/>
+    <text x="94" y="11" text-anchor="middle" class="pill-text">1</text>
+  </g>
+  <g transform="translate(100, 326)">
+    <rect x="0" y="4" width="12" height="12" rx="2" class="checkbox-on"/>
+    <polyline points="2.5,10 5.5,13 10,7" transform="translate(0,-1)" class="check-mark"/>
+    <text x="22" y="14" class="fc-added">handlers.ts</text>
+    <text x="408" y="14" class="status-letter fc-added" text-anchor="end">+</text>
+  </g>
+
+  <!-- ──────── Commit message area (bottom) ──────── -->
+  <line x1="48" y1="560" x2="478" y2="560" stroke="#3c3c3c" stroke-width="1"/>
+
+  <!-- CC chips above textarea -->
+  <g transform="translate(64, 576)">
+    <rect x="0" y="0" width="34" height="14" rx="3" class="chip-feat"/>
+    <text x="17" y="10" text-anchor="middle" class="cc-chip">feat</text>
+    <rect x="40" y="0" width="36" height="14" rx="3" class="chip-scope"/>
+    <text x="58" y="10" text-anchor="middle" class="cc-chip">auth</text>
+    <text x="395" y="11" text-anchor="end" class="text-sub" font-size="11" fill="#3fb950" font-style="italic">Wizard…</text>
+  </g>
+
+  <!-- Textarea -->
+  <rect x="64" y="600" width="398" height="50" rx="3" class="input-bg"/>
+  <text x="74" y="618" class="text" font-family="SF Mono, Menlo, monospace">feat(auth): rotate session tokens on idle expiry</text>
+  <text x="74" y="638" class="text-sub" font-size="10" fill="#81b88b">✓ Conventional Commit</text>
+
+  <!-- Actions row: amend + cog + spacer + split button -->
+  <g transform="translate(64, 668)">
+    <!-- ☑ Amend -->
+    <rect x="0" y="4" width="12" height="12" rx="2" class="checkbox"/>
+    <text x="20" y="14" class="text-sub">Amend</text>
+    <!-- gear cog -->
+    <use href="#ico-gear" x="68" y="2" width="14" height="14" class="ico-mute"/>
+    <!-- split button [Commit ▾] -->
+    <rect x="332" y="0" width="84" height="22" rx="3" fill="#0e639c"/>
+    <line x1="380" y1="2" x2="380" y2="20" stroke="#062f49" stroke-width="1"/>
+    <text x="370" y="15" text-anchor="end" fill="white" font-family="-apple-system" font-size="12">Commit</text>
+    <use href="#ico-chev-down" x="389" y="4" width="14" height="14" class="ico" stroke="white"/>
+  </g>
+
+  <!-- ──────── Chevron menu (open) ──────── -->
+  <rect x="354" y="544" width="200" height="226" class="menu-shadow" rx="6"/>
+  <g transform="translate(350, 540)">
+    <rect width="200" height="226" rx="5" class="menu-bg"/>
+    <rect x="0" y="6" width="200" height="22" class="menu-hover"/>
+    <text x="12" y="22" class="menu-text" font-weight="500">Commit and Push</text>
+    <text x="12" y="46" class="menu-text">Commit (amend, no edit)</text>
+    <line x1="6" y1="56" x2="194" y2="56" class="menu-sep"/>
+    <text x="12" y="74" class="menu-text">Show Diff</text>
+    <text x="12" y="98" class="menu-text">Open Hunk Editor</text>
+    <text x="12" y="122" class="menu-text">Move to changelist…</text>
+    <line x1="6" y1="132" x2="194" y2="132" class="menu-sep"/>
+    <text x="12" y="150" class="menu-text">Open Stashes view</text>
+    <text x="12" y="174" class="menu-text-danger">Rollback…</text>
+  </g>
+
+  <!-- ──────── Editor area (muted) — annotation -->
+  <rect x="478" y="30" width="722" height="700" fill="#1e1e1e"/>
+  <g transform="translate(580, 350)" class="text-sub" font-size="12">
+    <text x="0" y="0">Checkboxes drive include / exclude · group by flat / directory / changelist</text>
+    <text x="0" y="22">Section header → bulk rollback · chevron → commit variants</text>
+    <text x="0" y="44">⚙ cog → sign-off · GPG sign · override author</text>
+    <text x="0" y="66" fill="#4caf50">Activity bar badge "4" = modified file count</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="730" width="1200" height="20" class="status-bar"/>
+  <text x="14" y="744" fill="white" font-family="-apple-system" font-size="11">⎇ main*</text>
+  <text x="160" y="744" fill="rgba(255,255,255,.78)" font-family="-apple-system" font-size="11">↻ history</text>
+</svg>

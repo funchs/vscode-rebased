@@ -36,8 +36,40 @@ VS Code 扩展，与内置 Git 和 GitLens 共存。
 
 ### 带虚拟滚动的提交图
 
-按分支组织的泳道图、彩色 ref 标签、置顶过滤工具栏（subject / author / path /
-branch / since）。一万条提交也能流畅滚动。
+按分支组织的泳道图、彩色 ref 标签，虚拟滚动支撑 1 万+ 提交。置顶过滤工具栏
+对齐 IntelliJ：**subject** 文本搜索、**author 多选**（`git shortlog` 取作者列表，
+弹窗里可二次过滤）、**path** 旁带"浏览…"按钮调起 VS Code 原生文件对话框、
+**branch 多选** 顶部固定一个 "Current branch (HEAD)" 项、**date** 预设之上有
+"自定义范围…"（展开起始 / 结束日期选择器）、独立的 **commit hash** 输入框
+（git `--grep` 不匹配 SHA，所以单独走位置参数）。所有控件用 codicon + VS Code
+原生输入框样式。
+
+![Log 筛选工具栏](docs/screenshots/log-filter.png)
+
+### 提交视图 —— 复选框暂存、分组、单按钮 + chevron 派生动作
+
+提交面板是 IntelliJ 提交对话框的 VS Code 原生重写：
+
+- **统一的 Changes 列表** 每行带复选框（取代原来 Staged + Changes 双栏）。
+  部分暂存的文件显示 indeterminate 状态。
+- **Group by** 视图标题栏切换 —— Flat / By directory / By changelist
+  （直接读 changelist 数据，文件在 changelist 间移动后立刻反映）。
+- **Section header 批量回滚** —— `↺` 按钮右对齐在 `CHANGES n/m` 计数旁，
+  有选中行回滚选中，否则回滚全部。
+- **多选** —— Cmd/Ctrl+Click 切换、Shift+Click 区间、Cmd+A 全选可见行、
+  Delete 回滚选中。
+- **单主按钮 + chevron 菜单** —— `提交` + 下拉里的
+  `Commit and Push` / `Commit (amend, no edit)` / `Show Diff` /
+  `Open Hunk Editor` / `Move to changelist…` / `Open Stashes view` /
+  `Rollback…`。
+- **Commit 选项齿轮** —— popover 含 Sign-off (`--signoff`) /
+  GPG sign (`-S`) / Override author (`--author=...`)。
+- **活动栏徽章** —— Rebased 图标右下角显示本地已修改文件数（`getStatus`
+  统计，工作区变化自动刷新）。
+
+Conventional Commits 实时校验标签、状态指示、原有 Wizard… 快捷入口全部保留。
+
+![提交视图](docs/screenshots/commit-view.png)
 
 ### 提交详情侧边面板
 
@@ -131,8 +163,8 @@ conflict（红色 + 冲突文件数）。点击可创建分支。
 | 类别 | 功能 |
 |---|---|
 | **Rebase** | 拖拽编辑器 · ⌘⏎ 保存 · 脏工作区时自动 stash |
-| **Log** | 提交图 · 虚拟滚动 · 5 字段过滤 · refs · 右键菜单（rebase / cherry-pick / checkout） |
-| **Commit** | 暂存 / 取消暂存 · hunk 级暂存 · amend · changelists · CC 校验 · wizard |
+| **Log** | 提交图 · 虚拟滚动 · IntelliJ 风筛选（author 多选 · branch 多选 · path picker · 自定义日期范围 · 独立 hash） · refs · 右键菜单 |
+| **Commit** | 复选框暂存 · 按 flat/dir/changelist 分组 · 多选回滚 · Commit + chevron 派生动作 · Sign-off / GPG / 覆盖作者 · CC 校验 · Wizard · 活动栏数量徽章 |
 | **Branches** | 侧栏树 + JetBrains 风右键菜单（checkout · merge · rebase · 对比 · 重命名 · push · 强制推送 · fetch · 重置 · 删除 · 复制名） · 点击即打开 Log · QuickPick（⌘⇧B） |
 | **History** | 提交详情 · 文件历史（`--follow`） · 对比分支 · 提交搜索（6 种模式） |
 | **Blame** | 当前行内联 · 整文件侧栏（⌘⌥B） · 悬停查看提交 |

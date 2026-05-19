@@ -133,6 +133,18 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "rebased.commit.groupBy",
+        "title": "%cmd.commit.groupBy%",
+        "category": "Rebased",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "rebased.commit.toggleDiffPreview",
+        "title": "%cmd.commit.toggleDiffPreview%",
+        "category": "Rebased",
+        "icon": "$(open-preview)"
+      },
+      {
         "command": "rebased.stash.refresh",
         "title": "%cmd.stash.refresh%",
         "category": "Rebased",
@@ -476,6 +488,16 @@
           "group": "navigation@2"
         },
         {
+          "command": "rebased.commit.groupBy",
+          "when": "view == rebased.commit",
+          "group": "navigation@3"
+        },
+        {
+          "command": "rebased.commit.toggleDiffPreview",
+          "when": "view == rebased.commit",
+          "group": "navigation@4"
+        },
+        {
           "command": "rebased.changelist.create",
           "when": "view == rebased.changelists",
           "group": "navigation@1"
@@ -739,6 +761,7 @@
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
+    "@vscode/codicons": "^0.0.45",
     "esbuild": "^0.20.0",
     "typescript": "^5.4.0"
   }

@@ -11,6 +11,8 @@
   "cmd.log.openPanel": "打开日志面板",
   "cmd.log.showBranch": "在日志中显示分支",
   "cmd.commit.refresh": "刷新提交视图",
+  "cmd.commit.groupBy": "变更分组方式…",
+  "cmd.commit.toggleDiffPreview": "切换点击行预览 Diff",
   "cmd.stash.refresh": "刷新贮藏",
   "cmd.stash.create": "贮藏改动…",
   "cmd.stash.apply": "应用贮藏",

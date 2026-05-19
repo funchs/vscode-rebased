@@ -8,6 +8,73 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Commit view redesign — VS Code-native, JetBrains-feature-parity.** The
+  Commit panel was rebuilt around VS Code SCM conventions while keeping all
+  the IntelliJ behaviour. Highlights:
+  - Unified Changes list with per-file checkboxes (replaces the Staged +
+    Changes two-pane layout). Indeterminate state for partially-staged files.
+  - **Multi-select** for rows: Cmd/Ctrl-click toggles, Shift-click ranges,
+    Cmd+A selects all visible. Delete / Backspace rolls back the selection.
+  - **Group by** menu (view title bar) — Flat / By directory / By changelist
+    (reads from `ChangelistManager`). Group headers carry their own
+    "commit only this group" action when in changelist mode.
+  - **Section-header bulk rollback** — `↺` button right-aligned next to the
+    `CHANGES n/m` count pill. Rolls back selected files if any, otherwise
+    all. Tracked files go through `git restore --staged --worktree`;
+    untracked files go through `git clean -f --` with a modal that names
+    the count of each so destructive deletion is never silent.
+  - **Single primary + chevron menu** for commit variants — `Commit` plus
+    `Commit and Push` (auto-suggests `--set-upstream` retry on push failure),
+    `Commit (amend, no edit)`, `Show Diff`, `Open Hunk Editor`,
+    `Move to changelist…`, `Open Stashes view`, `Rollback…`.
+  - **Commit options popover** (cog icon) — Sign-off (`--signoff`), GPG sign
+    (`-S`), Override author (`--author=Name <email>`).
+  - **Activity-bar badge** on the Rebased icon — count of locally modified
+    files. Refreshes on every `RepoManager.onChange`.
+
+  All icons use `@vscode/codicons` (bundled in `media/codicons/`) so the
+  view stops mixing unicode characters with codicon refs.
+
+- **Log filter overhaul — IntelliJ parity.** The Log toolbar gained multi-
+  select widgets and matches DetachHead/rebased's filter surface:
+  - **Author multi-select** — populated from `git log --pretty=%an --no-merges
+    --max-count=2000` deduplicated. Popover with search + checkbox list +
+    Clear footer.
+  - **Branch multi-select** — same widget. Top of the list pins a
+    `Current branch (HEAD)` sentinel before the dynamic branch entries.
+  - **Path picker** — `📁 Browse…` button posts a `pickPath` message to
+    the extension, which calls `vscode.window.showOpenDialog` (files OR
+    folders) and returns a repo-relative path.
+  - **Custom date range** — `Custom range…` option in the date dropdown
+    reveals from/until `<input type="date">` fields. ISO `YYYY-MM-DD` goes
+    directly to `git log --since=... --until=...`.
+  - **Commit hash filter** — separate input (4–40 hex chars). git's
+    `--grep` doesn't match SHAs, so the value is sent as a positional ref;
+    it short-circuits the branch/all scope.
+  - All controls use codicons + standard VS Code input styling. Toolbar
+    layout is flex-wrap so narrow panels reflow gracefully.
+
+  Backend `LogFilter` now accepts `string | string[]` for `author` and
+  `branch` (back-compat with single-value callers), plus new `until` and
+  `hash` fields. `getAuthors(repo)` was added to `core/git.ts`.
+
+### Changed
+
+- **Notify lock dialog now localized.** `notify.ts` previously interpolated
+  English strings via template literals (`\`Another git process…\``),
+  bypassing `vscode.l10n.t`. Bundle translations existed but were
+  unreachable. All lock-dialog strings (including age formatting like
+  `{0}s old`, `{0} min old`, `{0} h old`) now go through `vscode.l10n.t`.
+- **`commit()` core API** accepts a `CommitOptions` object (`amend` /
+  `signoff` / `gpgSign` / `author` / `allowEmpty`) in addition to the
+  legacy `(repo, msg, amend?: boolean)` signature.
+- **Locale audit cleanup.** Source ↔ bundle gap closed: 12 missing
+  translations added, 11 dead orphan entries removed, the `Body
+  (…via \\n)` escape mismatch fixed, plus 6 webview short-key bridges
+  re-wired in `view-provider.ts`'s `l10nBundle`. Three locales
+  (`zh-cn` / `zh-Hans` / `en` passthrough) now have identical key sets
+  with no source-to-bundle drift.
+
 - **Branches sidebar: JetBrains-style direct right-click actions.** The
   Branches tree now exposes the full action set per node — previously the
   only way to merge / rebase / rename / delete / push-set-upstream a branch

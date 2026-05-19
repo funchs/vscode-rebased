@@ -113,10 +113,33 @@ function mapStatus(c: string): FileChange["status"] {
 
 export interface LogFilter {
   message?: string;
-  author?: string;
+  // author / branch accept multiple values for IntelliJ-style multi-select
+  // ("any of these") — backward compatible with a single string.
+  author?: string | string[];
   path?: string;
-  branch?: string;
+  branch?: string | string[];
   since?: string;
+  until?: string;
+  hash?: string;
+}
+
+// All unique commit authors seen in this repo, sorted by recency (most recent
+// commits first). Used to populate the User filter dropdown — much faster
+// than scanning the entire log every time the filter opens.
+export async function getAuthors(repo: string): Promise<string[]> {
+  const out = await runGit(
+    ["log", "--pretty=format:%an", "--no-merges", "--max-count=2000"],
+    { cwd: repo }
+  );
+  const seen = new Set<string>();
+  const ordered: string[] = [];
+  for (const line of out.split("\n")) {
+    const name = line.trim();
+    if (!name || seen.has(name)) continue;
+    seen.add(name);
+    ordered.push(name);
+  }
+  return ordered;
 }
 
 export async function getLog(
@@ -130,10 +153,22 @@ export async function getLog(
   const args = ["log", "-z", "--topo-order", `--pretty=format:${format}`, `--max-count=${opts.maxCount}`];
   const f = opts.filter ?? {};
   if (f.message) args.push(`--grep=${f.message}`, "--regexp-ignore-case");
-  if (f.author) args.push(`--author=${f.author}`, "-i");
-  if (f.since) args.push(`--since=${f.since}`);
-  if (f.branch) args.push(f.branch);
-  else if (opts.allBranches) args.push("--all");
+  // Multiple --author flags are OR'd by git; -i makes them case-insensitive.
+  const authors = Array.isArray(f.author) ? f.author : f.author ? [f.author] : [];
+  for (const a of authors) args.push(`--author=${a}`);
+  if (authors.length) args.push("-i");
+  if (f.since)  args.push(`--since=${f.since}`);
+  if (f.until)  args.push(`--until=${f.until}`);
+  // Scope (positional refs) — hash > branches > --all. Multiple branches are
+  // passed as separate positional refs (git unions them).
+  const branches = Array.isArray(f.branch) ? f.branch : f.branch ? [f.branch] : [];
+  if (f.hash && /^[0-9a-f]{4,40}$/i.test(f.hash.trim())) {
+    args.push(f.hash.trim());
+  } else if (branches.length) {
+    for (const b of branches) args.push(b);
+  } else if (opts.allBranches) {
+    args.push("--all");
+  }
   if (f.path) args.push("--", f.path);
   const out = await runGit(args, { cwd: repo });
   return out.split(NUL).filter(Boolean).map((line) => {
@@ -161,9 +196,26 @@ export async function unstage(repo: string, paths: string[]): Promise<void> {
   await runGit(["restore", "--staged", "--", ...paths], { cwd: repo });
 }
 
-export async function commit(repo: string, message: string, amend = false): Promise<void> {
+export interface CommitOptions {
+  amend?: boolean;
+  signoff?: boolean;
+  gpgSign?: boolean;
+  author?: string;       // "Name <email>"
+  allowEmpty?: boolean;
+}
+
+export async function commit(
+  repo: string,
+  message: string,
+  optsOrAmend: boolean | CommitOptions = false
+): Promise<void> {
+  const opts: CommitOptions = typeof optsOrAmend === "boolean" ? { amend: optsOrAmend } : optsOrAmend;
   const args = ["commit", "-m", message];
-  if (amend) args.splice(1, 0, "--amend");
+  if (opts.amend) args.push("--amend");
+  if (opts.signoff) args.push("--signoff");
+  if (opts.gpgSign) args.push("-S");
+  if (opts.author) args.push(`--author=${opts.author}`);
+  if (opts.allowEmpty) args.push("--allow-empty");
   await runGit(args, { cwd: repo });
 }
 

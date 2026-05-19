@@ -32,7 +32,7 @@ import { SubmoduleTreeProvider, registerSubmoduleCommands } from "./m3-stash/sub
 import { runCommitWizard } from "./m2-commit/commit-wizard";
 import { updateProject } from "./m3-stash/update-project";
 import { showDiagnostic } from "./m3-stash/diagnostic";
-import { showOutput } from "./core/git";
+import { showOutput, getStatus } from "./core/git";
 
 export function activate(ctx: vscode.ExtensionContext): void {
   const repos = new RepoManager();
@@ -90,13 +90,31 @@ export function activate(ctx: vscode.ExtensionContext): void {
     })
   );
 
-  const commitView = new CommitViewProvider(ctx, repos);
+  // ChangelistManager is created before CommitViewProvider so the commit view
+  // can read changelist state for the "Group by → Changelist" option.
+  const changelistMgr = new ChangelistManager(ctx, repos);
+  const commitView = new CommitViewProvider(ctx, repos, changelistMgr);
   ctx.subscriptions.push(
     vscode.window.registerWebviewViewProvider(CommitViewProvider.viewType, commitView)
   );
   ctx.subscriptions.push(
-    vscode.commands.registerCommand("rebased.commit.refresh", () => commitView.refresh())
+    vscode.commands.registerCommand("rebased.commit.refresh", () => commitView.refresh()),
+    vscode.commands.registerCommand("rebased.commit.groupBy", async () => {
+      const pick = await vscode.window.showQuickPick(
+        [
+          { label: "$(list-flat) " + vscode.l10n.t("Flat"), value: "flat" },
+          { label: "$(list-tree) " + vscode.l10n.t("By directory"), value: "dir" },
+          { label: "$(folder-library) " + vscode.l10n.t("By changelist"), value: "changelist" },
+        ],
+        { placeHolder: vscode.l10n.t("Group Changes By…") }
+      );
+      if (pick) commitView.postMessage({ type: "setGroupMode", mode: pick.value });
+    }),
+    vscode.commands.registerCommand("rebased.commit.toggleDiffPreview", () =>
+      commitView.postMessage({ type: "toggleDiffPreview" })
+    )
   );
+  changelistMgr.onDidChange(() => void commitView.refresh());
 
   const stashProvider = new StashTreeProvider(repos);
   ctx.subscriptions.push(
@@ -145,13 +163,34 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("rebased.remotes.pick", () => showRemotesPicker(repos))
   );
 
-  // Changelists
-  const changelistMgr = new ChangelistManager(ctx, repos);
+  // Changelists tree (manager created above so the commit view can use it)
   const changelistTree = new ChangelistTreeProvider(changelistMgr, repos);
-  ctx.subscriptions.push(
-    vscode.window.registerTreeDataProvider("rebased.changelists", changelistTree)
-  );
+  // Use createTreeView (not registerTreeDataProvider) so we can set .badge.
+  // VS Code aggregates badges from child views onto the activity-bar container icon.
+  const changelistTreeView = vscode.window.createTreeView("rebased.changelists", {
+    treeDataProvider: changelistTree,
+  });
+  ctx.subscriptions.push(changelistTreeView);
   registerChangelistCommands(ctx, changelistMgr, changelistTree);
+
+  // Activity-bar icon badge = number of locally modified files. The commit
+  // view already calls getStatus on every repo change, so we listen to the
+  // same signal and refresh independently here.
+  const updateBadge = async () => {
+    const root = repos.root;
+    if (!root) { changelistTreeView.badge = undefined; return; }
+    try {
+      const files = await getStatus(root);
+      const unique = new Set(files.map((f) => f.path));
+      changelistTreeView.badge = unique.size > 0
+        ? { value: unique.size, tooltip: vscode.l10n.t("{0} modified files", String(unique.size)) }
+        : undefined;
+    } catch {
+      changelistTreeView.badge = undefined;
+    }
+  };
+  ctx.subscriptions.push(repos.onChange(() => void updateBadge()));
+  void updateBadge();
 
   // Local history
   const localHistory = new LocalHistory(ctx, repos);

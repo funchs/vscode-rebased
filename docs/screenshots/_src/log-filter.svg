@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <style>
+      .bg { fill: #1e1e1e; }
+      .panel-bg { fill: #252526; }
+      .title-bar { fill: #3c3c3c; }
+      .status-bar { fill: #007acc; }
+      .text { fill: #cccccc; font-family: -apple-system, "SF Pro Text", sans-serif; font-size: 12px; }
+      .text-sub { fill: #858585; font-family: -apple-system, sans-serif; font-size: 11px; }
+      .text-dim { fill: #6c6c6c; font-family: -apple-system, sans-serif; font-size: 11px; }
+      .heading { fill: #cccccc; font-family: -apple-system; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      .input-bg { fill: #3c3c3c; stroke: #2d2d30; stroke-width: 1; }
+      .input-placeholder { fill: #6c6c6c; font-family: -apple-system; font-size: 11px; }
+      .input-value { fill: #cccccc; font-family: -apple-system; font-size: 11px; }
+      .input-mono { fill: #cccccc; font-family: "SF Mono", Menlo, monospace; font-size: 11px; }
+      .ico { stroke: #c5c5c5; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+      .ico-mute { stroke: #8a8a8a; fill: none; stroke-width: 1.4; }
+      .menu-bg { fill: #252526; stroke: #454545; stroke-width: 1; }
+      .menu-shadow { fill: #000; opacity: 0.35; }
+      .menu-text { fill: #cccccc; font-family: -apple-system; font-size: 12px; }
+      .menu-sep { stroke: #3c3c3c; stroke-width: 1; }
+      .menu-hover { fill: #094771; }
+      .checkbox { fill: #1e1e1e; stroke: #6c6c6c; stroke-width: 1; }
+      .checkbox-on { fill: #6a3fce; }
+      .check-mark { stroke: white; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .row-hover { fill: #2a2d2e; }
+      .ref { fill: #5a5d5e; }
+      .ref-head { fill: #3fb950; }
+      .ref-remote { fill: #0969da; }
+      .ref-text { fill: white; font-family: -apple-system; font-size: 9px; font-weight: 600; }
+      .hash { fill: #d18616; font-family: "SF Mono", Menlo, monospace; font-size: 11px; }
+      .lane-blue { fill: #6cb6ff; stroke: #6cb6ff; }
+      .lane-orange { fill: #d18616; stroke: #d18616; }
+      .lane-green { fill: #81b88b; stroke: #81b88b; }
+      .anno { fill: #888; font-family: -apple-system; font-size: 11px; font-style: italic; }
+    </style>
+    <symbol id="ico-chev-down" viewBox="0 0 14 14"><polyline points="3,5 7,9 11,5"/></symbol>
+    <symbol id="ico-folder" viewBox="0 0 14 14"><path d="M 1 4 L 6 4 L 7 5 L 13 5 L 13 11 L 1 11 Z"/></symbol>
+    <symbol id="ico-clear-all" viewBox="0 0 14 14"><line x1="2" y1="4" x2="12" y2="4"/><line x1="2" y1="7" x2="9" y2="7"/><line x1="2" y1="10" x2="7" y2="10"/><polyline points="10,8 13,11 10,14"/></symbol>
+    <symbol id="ico-calendar" viewBox="0 0 14 14"><rect x="2" y="3" width="10" height="10"/><line x1="2" y1="6" x2="12" y2="6"/><line x1="5" y1="2" x2="5" y2="5"/><line x1="9" y1="2" x2="9" y2="5"/></symbol>
+    <symbol id="ico-search" viewBox="0 0 14 14"><circle cx="6" cy="6" r="3.5"/><line x1="8.5" y1="8.5" x2="12" y2="12"/></symbol>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="750" class="bg"/>
+  <rect width="1200" height="30" class="title-bar"/>
+  <circle cx="18" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="38" cy="15" r="6" fill="#febc2e"/>
+  <circle cx="58" cy="15" r="6" fill="#28c840"/>
+  <text x="600" y="20" text-anchor="middle" class="text-sub">demo-project — Log</text>
+
+  <!-- Panel header -->
+  <rect x="0" y="30" width="1200" height="30" class="title-bar"/>
+  <text x="14" y="50" class="heading">LOG</text>
+
+  <!-- ──────── Filter toolbar ──────── -->
+  <rect x="0" y="60" width="1200" height="40" class="panel-bg"/>
+  <line x1="0" y1="100" x2="1200" y2="100" stroke="#3c3c3c"/>
+
+  <!-- Row 1 of toolbar (controls left-to-right) -->
+  <g transform="translate(8, 69)">
+    <!-- Subject input -->
+    <rect x="0" y="0" width="180" height="22" rx="3" class="input-bg"/>
+    <use href="#ico-search" x="6" y="4" width="14" height="14" class="ico-mute"/>
+    <text x="24" y="15" class="input-value">rotate</text>
+
+    <!-- Author multi-select trigger ("3 users") -->
+    <rect x="188" y="0" width="140" height="22" rx="3" class="input-bg"/>
+    <text x="196" y="15" class="input-value">3 users</text>
+    <use href="#ico-chev-down" x="316" y="4" width="14" height="14" class="ico-mute"/>
+
+    <!-- Path input -->
+    <rect x="332" y="0" width="180" height="22" rx="3" class="input-bg"/>
+    <text x="338" y="15" class="input-value">apps/api</text>
+
+    <!-- Path picker button -->
+    <rect x="516" y="0" width="22" height="22" rx="3" fill="transparent" stroke="transparent"/>
+    <use href="#ico-folder" x="520" y="4" width="14" height="14" class="ico-mute"/>
+
+    <!-- Branch multi-select trigger -->
+    <rect x="542" y="0" width="140" height="22" rx="3" class="input-bg"/>
+    <text x="550" y="15" class="input-value">Current branch (HEAD)</text>
+    <use href="#ico-chev-down" x="670" y="4" width="14" height="14" class="ico-mute"/>
+
+    <!-- Since dropdown — "Custom range…" -->
+    <rect x="686" y="0" width="130" height="22" rx="3" class="input-bg"/>
+    <text x="694" y="15" class="input-value">Custom range…</text>
+    <use href="#ico-chev-down" x="804" y="4" width="14" height="14" class="ico-mute"/>
+
+    <!-- Date inputs (revealed because Custom range… is selected) -->
+    <rect x="820" y="0" width="120" height="22" rx="3" class="input-bg"/>
+    <text x="828" y="15" class="input-mono">2026-04-01</text>
+    <use href="#ico-calendar" x="922" y="4" width="14" height="14" class="ico-mute"/>
+
+    <rect x="944" y="0" width="120" height="22" rx="3" class="input-bg"/>
+    <text x="952" y="15" class="input-mono">2026-05-19</text>
+    <use href="#ico-calendar" x="1046" y="4" width="14" height="14" class="ico-mute"/>
+
+    <!-- Hash input -->
+    <rect x="1068" y="0" width="92" height="22" rx="3" class="input-bg"/>
+    <text x="1074" y="15" class="input-mono">a1b2c3d</text>
+
+    <!-- Clear (icon button) right-aligned -->
+    <rect x="1170" y="0" width="22" height="22" rx="3" fill="transparent"/>
+    <use href="#ico-clear-all" x="1174" y="4" width="14" height="14" class="ico-mute"/>
+  </g>
+
+  <!-- ──────── Sample log graph (muted, just for context) ──────── -->
+  <g font-family="SF Mono, Menlo, monospace" font-size="11">
+    <!-- Lanes -->
+    <g transform="translate(20, 130)">
+      <line x1="6" y1="0" x2="6" y2="220" class="lane-blue" stroke-width="1.2"/>
+      <line x1="20" y1="40" x2="20" y2="220" class="lane-orange" stroke-width="1.2"/>
+      <line x1="34" y1="100" x2="34" y2="180" class="lane-green" stroke-width="1.2"/>
+      <circle cx="6" cy="6" r="4" class="lane-blue"/>
+      <circle cx="6" cy="32" r="4" class="lane-blue"/>
+      <circle cx="20" cy="58" r="4" class="lane-orange"/>
+      <circle cx="6" cy="84" r="4" class="lane-blue"/>
+      <circle cx="34" cy="110" r="4" class="lane-green"/>
+      <circle cx="20" cy="136" r="4" class="lane-orange"/>
+      <circle cx="6" cy="162" r="4" class="lane-blue"/>
+      <circle cx="34" cy="188" r="4" class="lane-green"/>
+    </g>
+
+    <!-- Rows -->
+    <g class="text">
+      <text x="68" y="136" class="hash">a1b2c3d</text>
+      <text x="140" y="136">feat(auth): rotate session tokens on idle expiry</text>
+      <rect x="540" y="125" width="38" height="14" rx="3" class="ref-head"/>
+      <text x="559" y="135" text-anchor="middle" class="ref-text">main</text>
+      <text x="640" y="136" class="text-sub">Alice Wang · 2 days ago</text>
+
+      <text x="68" y="162" class="hash">f4e5d6c</text>
+      <text x="140" y="162">refactor(auth): extract token store</text>
+      <text x="640" y="162" class="text-sub">Alice Wang · 2 days ago</text>
+
+      <text x="68" y="188" class="hash">9876543</text>
+      <text x="140" y="188">fix(api): pagination off-by-one</text>
+      <rect x="430" y="177" width="78" height="14" rx="3" class="ref-remote"/>
+      <text x="468" y="187" text-anchor="middle" class="ref-text">origin/api</text>
+      <text x="640" y="188" class="text-sub">Bob Chen · 3 days ago</text>
+
+      <text x="68" y="214" class="hash">1122334</text>
+      <text x="140" y="214">perf(parser): batch reads (×3.2)</text>
+      <text x="640" y="214" class="text-sub">Carol Wu · 1 week ago</text>
+
+      <text x="68" y="240" class="hash">aabbccd</text>
+      <text x="140" y="240">test(api): expand pagination coverage</text>
+      <text x="640" y="240" class="text-sub">Bob Chen · 1 week ago</text>
+
+      <text x="68" y="266" class="hash">5566778</text>
+      <text x="140" y="266">docs: add architecture diagram</text>
+      <text x="640" y="266" class="text-sub">Alice Wang · 2 weeks ago</text>
+
+      <text x="68" y="292" class="hash">ccddee0</text>
+      <text x="140" y="292">chore: bump deps</text>
+      <text x="640" y="292" class="text-sub">Carol Wu · 3 weeks ago</text>
+    </g>
+  </g>
+
+  <!-- ──────── Author multi-select popover (open) ──────── -->
+  <rect x="190" y="98" width="234" height="248" class="menu-shadow" rx="6"/>
+  <g transform="translate(186, 94)">
+    <rect width="234" height="248" rx="5" class="menu-bg"/>
+    <!-- search input -->
+    <rect x="8" y="8" width="218" height="22" rx="3" class="input-bg"/>
+    <use href="#ico-search" x="14" y="12" width="14" height="14" class="ico-mute"/>
+    <text x="32" y="23" class="input-placeholder">Filter…</text>
+    <!-- list -->
+    <g transform="translate(8, 36)">
+      <!-- 3 selected, 3 unselected -->
+      <rect x="6" y="2" width="12" height="12" rx="2" class="checkbox-on"/>
+      <polyline points="8.5,9 11.5,12 16,6" class="check-mark"/>
+      <text x="24" y="12" class="menu-text">Alice Wang</text>
+
+      <rect x="6" y="22" width="12" height="12" rx="2" class="checkbox-on"/>
+      <polyline points="8.5,29 11.5,32 16,26" class="check-mark"/>
+      <text x="24" y="32" class="menu-text">Bob Chen</text>
+
+      <rect x="6" y="42" width="12" height="12" rx="2" class="checkbox-on"/>
+      <polyline points="8.5,49 11.5,52 16,46" class="check-mark"/>
+      <text x="24" y="52" class="menu-text">Carol Wu</text>
+
+      <rect x="6" y="62" width="12" height="12" rx="2" class="checkbox"/>
+      <text x="24" y="72" class="menu-text">David Park</text>
+
+      <rect x="6" y="82" width="12" height="12" rx="2" class="checkbox"/>
+      <text x="24" y="92" class="menu-text">Eve Liu</text>
+
+      <rect x="6" y="102" width="12" height="12" rx="2" class="checkbox"/>
+      <text x="24" y="112" class="menu-text">Frank Zhao</text>
+
+      <rect x="6" y="122" width="12" height="12" rx="2" class="checkbox"/>
+      <text x="24" y="132" class="menu-text">Grace Liang</text>
+    </g>
+    <!-- footer Clear -->
+    <line x1="8" y1="212" x2="226" y2="212" class="menu-sep"/>
+    <text x="218" y="228" text-anchor="end" class="menu-text" font-size="11" fill="#3fb950">Clear</text>
+  </g>
+
+  <!-- ──────── Annotations ──────── -->
+  <g class="anno">
+    <text x="64" y="500">↑ multi-select author / branch · ↑ codicon clear-all · path picker opens VS Code dialog</text>
+    <text x="64" y="520">↑ "Custom range…" reveals from/until date pickers · separate hash filter (4–40 hex chars)</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="730" width="1200" height="20" class="status-bar"/>
+  <text x="14" y="744" fill="white" font-family="-apple-system" font-size="11">⎇ main</text>
+  <text x="160" y="744" fill="rgba(255,255,255,.78)" font-family="-apple-system" font-size="11">↻ history</text>
+</svg>

@@ -11,6 +11,8 @@
   "cmd.log.openPanel": "Open Log Panel",
   "cmd.log.showBranch": "Show Branch in Log",
   "cmd.commit.refresh": "Refresh Commit View",
+  "cmd.commit.groupBy": "Group Changes By…",
+  "cmd.commit.toggleDiffPreview": "Toggle Diff Preview on Click",
   "cmd.stash.refresh": "Refresh Stashes",
   "cmd.stash.create": "Stash Changes...",
   "cmd.stash.apply": "Apply Stash",

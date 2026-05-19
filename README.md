@@ -36,9 +36,43 @@ to get a webview with drag-to-reorder rows, single-click action cycling
 
 ### Log graph with virtual scrolling
 
-Branch-aware swim-lane graph, refs as colored chips, sticky filter toolbar
-(subject / author / path / branch / since). Renders 10,000 commits without
-breaking a sweat.
+Branch-aware swim-lane graph, refs as colored chips, virtual scrolling for
+10,000+ commits. The sticky filter toolbar matches IntelliJ's git log:
+**subject** text search, **author** multi-select (loaded from `git shortlog`,
+filterable in a popover), **path** with a Browse… button that opens VS Code's
+native file dialog, **branch** multi-select with a "Current branch (HEAD)"
+sentinel, **date** presets + a Custom range… mode that reveals from/until
+date pickers, and a separate **commit hash** input (because git's `--grep`
+doesn't match SHAs). All controls use codicons and standard VS Code input
+styling.
+
+![Log filter toolbar](docs/screenshots/log-filter.png)
+
+### Commit view — checkbox staging, group-by, single-button + chevron variants
+
+The Commit panel is a VS Code-native rework of IntelliJ's commit dialog:
+
+- **Unified Changes list** with per-file checkboxes (replaces the old
+  Staged + Changes two-pane). Indeterminate state for partially-staged files.
+- **Group by** toggle in the view title bar — Flat / By directory / By
+  changelist (uses the project's changelist data so files moved between
+  changelists immediately reflect).
+- **Section header bulk rollback** — `↺` button right-aligned next to the
+  `CHANGES n/m` count; rolls back selected files if any, otherwise all.
+- **Multi-select** — Cmd/Ctrl-click toggles, Shift-click range-selects,
+  Cmd+A selects all visible, Delete rolls back selected.
+- **Single primary button + chevron menu** — `Commit` + dropdown for
+  `Commit and Push`, `Commit (amend, no edit)`, `Show Diff`, `Open Hunk
+  Editor`, `Move to changelist…`, `Open Stashes view`, `Rollback…`.
+- **Commit options cog** — popover with Sign-off (`--signoff`), GPG sign
+  (`-S`), Override author (`--author=...`).
+- **Activity-bar badge** — Rebased icon shows the number of locally
+  modified files (queried via `getStatus`, refreshed on every repo change).
+
+Conventional Commits live validation chips, status indicator, and the
+existing Wizard… shortcut all carry over.
+
+![Commit view](docs/screenshots/commit-view.png)
 
 ### Commit details side panel
 
@@ -138,8 +172,8 @@ init / update / sync.
 | Area | Feature |
 |---|---|
 | **Rebase** | Drag-drop editor · ⌘⏎ save · auto-stash on dirty tree |
-| **Log** | Graph · virtual scroll · 5-field filter · refs · context menu (rebase / cherry-pick / checkout) |
-| **Commit** | Stage/unstage · hunk staging · amend · changelists · CC validator · wizard |
+| **Log** | Graph · virtual scroll · IntelliJ-style filter (author multi-select · branch multi-select · path picker · custom date range · commit hash) · refs · context menu |
+| **Commit** | Checkbox staging · group by flat/dir/changelist · multi-select rollback · Commit + chevron variants · sign-off / GPG / author override · CC validator · wizard · activity-bar badge |
 | **Branches** | Sidebar tree with JetBrains-style right-click (checkout · merge · rebase · compare · rename · push · force-push · fetch · reset · delete · copy name) · click-to-Log · QuickPick (⌘⇧B) |
 | **History** | Commit details · file history (`--follow`) · compare branches · commit search (6 modes) |
 | **Blame** | Inline current line · full-file gutter (⌘⌥B) · hover shows commit |

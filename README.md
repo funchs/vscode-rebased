@@ -115,7 +115,7 @@ recoverable.
 
 When you hit conflicts (merge / rebase / stash-pop / orphan-unmerged), a
 JetBrains-style panel lists every conflicted file with per-file actions —
-*采用我方* (--ours), *采用对方* (--theirs), *合并…* (3-way merge editor), *重置*. Bottom bar carries a state-aware finalize button (Mark resolved / Continue rebase / Drop stash).
+*Accept yours* (--ours), *Accept theirs* (--theirs), *Merge…* (3-way merge editor), *Reset*. Bottom bar carries a state-aware finalize button (Mark resolved / Continue rebase / Drop stash).
 
 ![Conflict resolution panel](docs/screenshots/conflict-panel.png)
 
